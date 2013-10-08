@@ -1,0 +1,29 @@
+=== The Development Plan ===
+
+0.1		UI is in presentable state
+		- wxAUI
+		- Output text control (read only).
+		- Input text control (no history).
+		- Source editor (regular text control, read only).
+		- Callstack.
+		- Watch.
+		- Registers.
+
+0.2		PDB plugin
+		- Very basic python debugging.
+
+0.3		GDB Command Line plugin
+		- Attach to android process.
+		- Very basic gdb debugging.
+
+0.4		Source editor.
+		- Scintilla with syntax highlighting.
+
+0.5		UI polish.
+
+0.9		JDB plugin
+
+1.0		[Alpha]
+
+
+=== Known Bugs ===

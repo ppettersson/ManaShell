@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{1f2617d3-2176-47b6-b3a1-0ef2416d72b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\GUI">
+      <UniqueIdentifier>{75ac7727-929f-470e-b17b-82c6af51518f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Plugins">
+      <UniqueIdentifier>{a95f83f6-5bf3-4cd3-aa32-ebdc1f1d2869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Plugins\PDB">
+      <UniqueIdentifier>{50c4e1df-d724-42ee-912b-e7456174bac2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Plugins\JDB">
+      <UniqueIdentifier>{f3b0ec0e-dccf-413f-aa04-86b0893cee2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Plugins\GDB">
+      <UniqueIdentifier>{170d04d3-bfb0-45b7-ba43-d0c37e92944d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{15c5b096-acac-452a-95ff-1195bcd8868b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\GUI\MainFrame.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Plugins\PDB\PDB.cpp">
+      <Filter>Source\Plugins\PDB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\ManaShell.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\PipedProcess.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Docs\Building.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\..\Docs\ToDo.txt">
+      <Filter>Docs</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\GUI\MainFrame.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\ManaShell.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\PipedProcess.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
