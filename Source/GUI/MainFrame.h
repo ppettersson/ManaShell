@@ -2,8 +2,18 @@
 #define MAIN_FRAME_H
 
 #include "wx/wx.h"
+#include "wx/aui/aui.h"
 
+class Breakpoints;
+class Callstack;
+class Input;
+class Locals;
+class Output;
 class PipedProcess;
+class Registers;
+class SourceEditor;
+class Threads;
+class Watch;
 
 WX_DEFINE_ARRAY_PTR(PipedProcess *, PipedProcessContainer);
 
@@ -13,6 +23,9 @@ class MainFrame : public wxFrame
 public:
 	MainFrame();
 	virtual ~MainFrame();
+
+	// Redo the layout for the UI components.
+	void UpdateFrames();
 
 	// Callbacks from running child processes.
 	void OnProcessTerminated(PipedProcess *process, int pid, int status);
@@ -28,12 +41,16 @@ private:
 		// -- Menu identifiers -----------------------------------------------
 		//kFile_Exit,				// Use pre-defined value.
 
-		kView_Breakpoints,
-		kView_Callstack,
 		kView_EditorSource,
 		kView_EditorAssembly,
 		kView_EditorMixed,
+		kView_Breakpoints,
+		kView_Callstack,
+		kView_Threads,
+		kView_Output,
+		kView_Input,
 		kView_Registers,
+		kView_Locals,
 		kView_Watch,
 		kView_Fullscreen,
 
@@ -67,16 +84,34 @@ private:
 	// One shot timer used to kick start idle processing.
 	wxTimer							idleWakeUpTimer;
 
+	// Dockable frame's manager.
+	wxAuiManager					dockingManager;
+
+	// Frames.
+	Breakpoints						*breakpoints;
+	Callstack						*callstack;
+	Input							*input;
+	Locals							*locals;
+	Output							*output;
+	Registers						*registers;
+	SourceEditor					*sourceEditor;
+	Threads							*threads;
+	Watch							*watch;
+
 
 	// -- Menu handlers ------------------------------------------------------
 	void OnFileExit(wxCommandEvent &event);
 
-	void OnViewBreakpoints(wxCommandEvent &event);
-	void OnViewCallstack(wxCommandEvent &event);
 	void OnViewEditorSource(wxCommandEvent &event);
 	void OnViewEditorAssembly(wxCommandEvent &event);
 	void OnViewEditorMixed(wxCommandEvent &event);
+	void OnViewBreakpoints(wxCommandEvent &event);
+	void OnViewCallstack(wxCommandEvent &event);
+	void OnViewThreads(wxCommandEvent &event);
+	void OnViewOutput(wxCommandEvent &event);
+	void OnViewInput(wxCommandEvent &event);
 	void OnViewRegisters(wxCommandEvent &event);
+	void OnViewLocals(wxCommandEvent &event);
 	void OnViewWatch(wxCommandEvent &event);
 	void OnViewFullscreen(wxCommandEvent &event);
 
@@ -108,6 +143,7 @@ private:
 
 	// -- User interface ------------------------------------------------------
 	void SetupMenu();
+	void SetupInitialView();
 
 
 	// -- Internal ----------------------------------------------------------

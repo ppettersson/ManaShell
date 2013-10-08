@@ -92,7 +92,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw30ud_adv.lib;wxmsw30ud_aui.lib;wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,7 +109,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw30ud_adv.lib;wxmsw30ud_aui.lib;wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -130,7 +130,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw30u_adv.lib;wxmsw30u_aui.lib;wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,10 +151,19 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw30u_adv.lib;wxmsw30u_aui.lib;wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\GUI\Frames\Breakpoints.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Callstack.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Input.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Locals.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Output.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Registers.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\SourceEditor.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Threads.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Watch.cpp" />
     <ClCompile Include="..\..\Source\GUI\MainFrame.cpp" />
     <ClCompile Include="..\..\Source\GUI\ManaShell.cpp" />
     <ClCompile Include="..\..\Source\GUI\PipedProcess.cpp" />
@@ -165,6 +174,15 @@
     <Text Include="..\..\Docs\ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\GUI\Frames\Breakpoints.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Callstack.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Input.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Locals.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Output.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Registers.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\SourceEditor.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Threads.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Watch.h" />
     <ClInclude Include="..\..\Source\GUI\MainFrame.h" />
     <ClInclude Include="..\..\Source\GUI\ManaShell.h" />
     <ClInclude Include="..\..\Source\GUI\PipedProcess.h" />

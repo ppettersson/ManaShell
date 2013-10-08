@@ -22,6 +22,9 @@
     <Filter Include="Docs">
       <UniqueIdentifier>{15c5b096-acac-452a-95ff-1195bcd8868b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GUI\Frames">
+      <UniqueIdentifier>{e449af9b-32ca-45b2-b567-1b72375c949b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\GUI\MainFrame.cpp">
@@ -35,6 +38,33 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\GUI\PipedProcess.cpp">
       <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Breakpoints.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Callstack.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Input.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Locals.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Output.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Registers.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\SourceEditor.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Threads.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Watch.cpp">
+      <Filter>Source\GUI\Frames</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +84,33 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\GUI\PipedProcess.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Breakpoints.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Callstack.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Input.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Locals.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Output.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Registers.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\SourceEditor.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Threads.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Watch.h">
+      <Filter>Source\GUI\Frames</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
