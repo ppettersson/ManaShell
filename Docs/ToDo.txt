@@ -3,7 +3,6 @@
 0.1	[done]	UI in a presentable state.
 
 0.2	[todo]	Piped process with both input and output.
-			- Orc editor.
 			- wxbook sample.
 			- wx/exec sample.
 
@@ -21,11 +20,13 @@
 			- Toolbar.
 			- Save/Load perspectives.
 			- Output text control.
+				- monospace font.
 				- Local toolbar:
 					- Clear all.
 					- Word wrap.
 					- Save as...
 			- Input text control:
+				- monospace font.
 				- history.
 				- read only if no active process running.
 			- Menu.

@@ -29,6 +29,8 @@ public:
 
 	// Callbacks from running child processes.
 	void OnProcessTerminated(PipedProcess *process, int pid, int status);
+	void OnOutputFromProcess(const wxString &message);
+	void OnErrorFromProcess(const wxString &message);
 
 
 private:
@@ -91,6 +93,7 @@ private:
 
 	// All running processes with redirected Input-Output.
 	PipedProcessContainer			runningProcesses;
+	long							activeProcessId;
 
 	// One shot timer used to kick start idle processing.
 	wxTimer							idleWakeUpTimer;
@@ -165,5 +168,7 @@ private:
 
 	wxDECLARE_EVENT_TABLE();
 };
+
+#define	TRACE_LOG(str)		;//OutputDebugStringA(str)
 
 #endif // MAIN_FRAME_H

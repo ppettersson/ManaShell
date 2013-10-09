@@ -7,11 +7,14 @@ PipedProcess::PipedProcess(MainFrame *h)
 	: wxProcess(h)
 	, host(h)
 {
+	TRACE_LOG("PipedProcess::PipedProcess()\n");
 	Redirect();
 }
 
 void PipedProcess::OnTerminate(int pid, int status)
 {
+	TRACE_LOG("PipedProcess::OnTerminate()\n");
+
 	// Capture all the output before we let the process go.
 	while (HasInput())
 		;
@@ -21,6 +24,8 @@ void PipedProcess::OnTerminate(int pid, int status)
 
 bool PipedProcess::HasInput()
 {
+	TRACE_LOG("PipedProcess::HasInput()\n");
+
 	bool result = false;
 	if (IsInputAvailable())
 	{
@@ -31,7 +36,7 @@ bool PipedProcess::HasInput()
 		msg << tis.ReadLine();
 
 		msg += "\n";
-		//host->Log(msg);
+		host->OnOutputFromProcess(msg);
 		result = true;
 	}
 	if (IsErrorAvailable())
@@ -43,7 +48,7 @@ bool PipedProcess::HasInput()
 		msg << tis.ReadLine();
 
 		msg += "\n";
-		//host->Log(msg);
+		host->OnErrorFromProcess(msg);
 		result = true;
 	}
 	return result;

@@ -45,6 +45,7 @@ END_EVENT_TABLE()
 
 MainFrame::MainFrame()
 	: wxFrame(NULL, wxID_ANY, "ManaShell - alpha")
+	, activeProcessId(0)
 	, idleWakeUpTimer(this, kTimer_Idle)
 	, breakpoints(NULL)
 	, callstack(NULL)
@@ -82,11 +83,28 @@ void MainFrame::UpdateFrames()
 // Callbacks from running child processes.
 void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 {
+	TRACE_LOG("MainFrame::OnProcessTerminated()\n");
 	RemovePipedProcess(process);
 	delete process;
 
-	//if (pid == converterProcessId)
-	//	OnFileImportObjFinished(status);
+	if (pid == activeProcessId)
+	{
+		TRACE_LOG(" - it was the active process\n");
+		activeProcessId = 0;
+	}
+}
+
+void MainFrame::OnOutputFromProcess(const wxString &message)
+{
+	TRACE_LOG("MainFrame::OnOutputFromProcess()\n");
+	output->AppendText(message);
+}
+
+void MainFrame::OnErrorFromProcess(const wxString &message)
+{
+	TRACE_LOG("MainFrame::OnErrorFromProcess()\n");
+	output->AppendText("Error: ");
+	output->AppendText(message);
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)
@@ -146,9 +164,9 @@ void MainFrame::OnViewInput(wxCommandEvent &event)
 
 void MainFrame::OnViewRegisters(wxCommandEvent &event)
 {
-	//wxAuiPaneInfo &pane = dockingManager.GetPane(registers);
-	//pane.Show(!pane.IsShown());
-	//dockingManager.Update();
+	wxAuiPaneInfo &pane = dockingManager.GetPane(registers);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewLocals(wxCommandEvent &event)
@@ -178,6 +196,36 @@ void MainFrame::OnDebugAttach(wxCommandEvent &event)
 
 void MainFrame::OnDebugStart(wxCommandEvent &event)
 {
+	// The UI shouldn't allow more than one process to be active but guard
+	// against accidents.
+	if (activeProcessId)
+		return;
+
+	// Get the command to run.
+	// ToDo...
+	wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
+		"c:/code/orc4/engine/platform/windows/vs2012/output/objconverter.exe");
+	if (command.empty())
+		return;
+
+	// Show wait cursor to indicate that we're working.
+	// Starting a process can take some time.
+	wxBusyCursor wait;
+
+	// Remove all output from the last run before we start.
+	output->Clear();
+
+	// Run the command and attach to the input and output.
+	PipedProcess *process = new PipedProcess(this);
+	activeProcessId = wxExecute(command, wxEXEC_ASYNC, process);
+	if (!activeProcessId)
+	{
+		wxMessageBox("Failed to start the debugger", "Error");
+		delete process;
+		return;
+	}
+
+	AddPipedProcess(process);
 }
 
 void MainFrame::OnDebugStop(wxCommandEvent &event)
@@ -237,19 +285,38 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	case kView_Locals:			event.Check(dockingManager.GetPane(locals).IsShown());		break;
 	case kView_Watch:			event.Check(dockingManager.GetPane(watch).IsShown());		break;
 	case kView_Fullscreen:		event.Check(IsFullScreen());								break;
+
+	case kDebug_Attach:
+	case kDebug_Start:
+		event.Enable(activeProcessId == 0);
+		break;
+
+	case kDebug_Stop:
+	case kDebug_StepIn:
+	case kDebug_StepOver:
+	case kDebug_StepOut:
+	case kDebug_Break:
+	case kDebug_Continue:
+	case kDebug_ToggleBreakpoint:
+		event.Enable(activeProcessId != 0);
+		break;
 	}
 }
 
 void MainFrame::OnIdle(wxIdleEvent &event)
 {
-	//size_t numProcesses = runningProcesses.GetCount();
-	//for (size_t i = 0; i < numProcesses; ++i)
-	//	if (runningProcesses[i]->HasInput())
-	//		event.RequestMore();
+	size_t numProcesses = runningProcesses.GetCount();
+	for (size_t i = 0; i < numProcesses; ++i)
+		if (runningProcesses[i]->HasInput())
+		{
+			TRACE_LOG("MainFrame::OnIdle() - requesting more\n");
+			event.RequestMore();
+		}
 }
 
 void MainFrame::OnTimerIdle(wxTimerEvent &event)
 {
+	TRACE_LOG("MainFrame::OnTimerIdle()\n");
 	wxWakeUpIdle();
 }
 
@@ -272,21 +339,31 @@ void MainFrame::OnClose(wxCloseEvent &event)
 
 void MainFrame::AddPipedProcess(PipedProcess *process)
 {
+	TRACE_LOG("MainFrame::AddPipedProcess()\n");
+
 	// Do IO for all child processes in the idle event.
 	// This timer is used to kick start that processing.
 	if (runningProcesses.IsEmpty())
+	{
+		TRACE_LOG(" - starting the idle wake up timer\n");
 		idleWakeUpTimer.Start(100);
+	}
 
 	runningProcesses.Add(process);
 }
 
 void MainFrame::RemovePipedProcess(PipedProcess *process)
 {
+	TRACE_LOG("MainFrame::RemovePipedProcess()\n");
+
 	runningProcesses.Remove(process);
 
 	// Stop the idle timer if this was the last running process.
 	if (runningProcesses.IsEmpty())
+	{
+		TRACE_LOG(" - stopping the idle wake up timer\n");
 		idleWakeUpTimer.Stop();
+	}
 }
 
 void MainFrame::SetupMenu()
