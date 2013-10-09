@@ -35,11 +35,26 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kDebug_ToggleBreakpoint,	MainFrame::OnDebugToggleBreakpoint)
 	EVT_MENU(kTools_Options,			MainFrame::OnToolsOptions)
 	EVT_MENU(kHelp_About,				MainFrame::OnHelpAbout)
+	EVT_UPDATE_UI_RANGE(kFirstMenuId,
+						kLastMenuId,	MainFrame::OnUpdateUI)
+	EVT_IDLE(							MainFrame::OnIdle)
+	EVT_TIMER(kTimer_Idle,				MainFrame::OnTimerIdle)
+	EVT_CLOSE(							MainFrame::OnClose)
 END_EVENT_TABLE()
+
 
 MainFrame::MainFrame()
 	: wxFrame(NULL, wxID_ANY, "ManaShell - alpha")
 	, idleWakeUpTimer(this, kTimer_Idle)
+	, breakpoints(NULL)
+	, callstack(NULL)
+	, input(NULL)
+	, output(NULL)
+	, registers(NULL)
+	, sourceEditor(NULL)
+	, threads(NULL)
+	, watch(NULL)
+	, sourceEditorMode(kSource)
 {
 	SetClientSize(1280, 720);
 
@@ -81,46 +96,73 @@ void MainFrame::OnFileExit(wxCommandEvent &event)
 
 void MainFrame::OnViewEditorSource(wxCommandEvent &event)
 {
+	sourceEditorMode = kSource;
 }
 
 void MainFrame::OnViewEditorAssembly(wxCommandEvent &event)
 {
+	sourceEditorMode = kAssembly;
 }
 
 void MainFrame::OnViewEditorMixed(wxCommandEvent &event)
 {
+	sourceEditorMode = kMixed;
 }
 
 void MainFrame::OnViewBreakpoints(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(breakpoints);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewCallstack(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(callstack);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewThreads(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(threads);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewOutput(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(output);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewInput(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(input);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewRegisters(wxCommandEvent &event)
 {
+	//wxAuiPaneInfo &pane = dockingManager.GetPane(registers);
+	//pane.Show(!pane.IsShown());
+	//dockingManager.Update();
 }
 
 void MainFrame::OnViewLocals(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(locals);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewWatch(wxCommandEvent &event)
 {
+	wxAuiPaneInfo &pane = dockingManager.GetPane(watch);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
 }
 
 void MainFrame::OnViewFullscreen(wxCommandEvent &event)
@@ -172,10 +214,33 @@ void MainFrame::OnToolsOptions(wxCommandEvent &event)
 
 void MainFrame::OnHelpAbout(wxCommandEvent &event)
 {
-	wxMessageBox("Mana Shell 0.0\n\nA fast and flexible debugger front-end.\n\n(c) 2013 Peter Pettersson. All rights reserved.", "About Mana Shell");
+	wxMessageBox("Mana Shell 0.1\n\n"
+				 "A fast and flexible debugger front-end.\n\n"
+				 "(c) 2013 Peter Pettersson. All rights reserved.\n\n"
+				 "https://github.com/ppettersson/ManaShell",
+				 "About Mana Shell");
 }
 
-void MainFrame::OnIdle(wxCommandEvent &event)
+void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
+{
+	switch (event.GetId())
+	{
+	case kView_EditorSource:	event.Check(sourceEditorMode == kSource);					break;
+	case kView_EditorAssembly:	event.Check(sourceEditorMode == kAssembly);					break;
+	case kView_EditorMixed:		event.Check(sourceEditorMode == kMixed);					break;
+	case kView_Breakpoints:		event.Check(dockingManager.GetPane(breakpoints).IsShown());	break;
+	case kView_Callstack:		event.Check(dockingManager.GetPane(callstack).IsShown());	break;
+	case kView_Threads:			event.Check(dockingManager.GetPane(threads).IsShown());		break;
+	case kView_Output:			event.Check(dockingManager.GetPane(output).IsShown());		break;
+	case kView_Input:			event.Check(dockingManager.GetPane(input).IsShown());		break;
+	case kView_Registers:		event.Check(dockingManager.GetPane(registers).IsShown());	break;
+	case kView_Locals:			event.Check(dockingManager.GetPane(locals).IsShown());		break;
+	case kView_Watch:			event.Check(dockingManager.GetPane(watch).IsShown());		break;
+	case kView_Fullscreen:		event.Check(IsFullScreen());								break;
+	}
+}
+
+void MainFrame::OnIdle(wxIdleEvent &event)
 {
 	//size_t numProcesses = runningProcesses.GetCount();
 	//for (size_t i = 0; i < numProcesses; ++i)
@@ -237,24 +302,24 @@ void MainFrame::SetupMenu()
 	menu = new wxMenu;
 
 	wxMenu *subMenu = new wxMenu;
-	subMenu->Append(kView_EditorSource, "&Source");
-	subMenu->Append(kView_EditorAssembly, "&Assembly");
-	subMenu->Append(kView_EditorMixed, "&Mixed");
+	subMenu->AppendCheckItem(kView_EditorSource, "&Source");
+	subMenu->AppendCheckItem(kView_EditorAssembly, "&Assembly");
+	subMenu->AppendCheckItem(kView_EditorMixed, "&Mixed");
 	menu->AppendSubMenu(subMenu, "&Editor");
 
 	subMenu = new wxMenu;
-	subMenu->Append(kView_Breakpoints, "&Breakpoints");
-	subMenu->Append(kView_Callstack, "&Callstack");
-	subMenu->Append(kView_Threads, "&Threads");
-	subMenu->Append(kView_Output, "&Output");
-	subMenu->Append(kView_Input, "&Input");
-	subMenu->Append(kView_Registers, "&Registers");
-	subMenu->Append(kView_Locals, "&Locals");
-	subMenu->Append(kView_Watch, "&Watch");
+	subMenu->AppendCheckItem(kView_Breakpoints, "&Breakpoints");
+	subMenu->AppendCheckItem(kView_Callstack, "&Callstack");
+	subMenu->AppendCheckItem(kView_Threads, "&Threads");
+	subMenu->AppendCheckItem(kView_Output, "&Output");
+	subMenu->AppendCheckItem(kView_Input, "&Input");
+	subMenu->AppendCheckItem(kView_Registers, "&Registers");
+	subMenu->AppendCheckItem(kView_Locals, "&Locals");
+	subMenu->AppendCheckItem(kView_Watch, "&Watch");
 	menu->AppendSubMenu(subMenu, "&Frames");
 
 	menu->AppendSeparator();
-	menu->Append(kView_Fullscreen, "&Fullscreen");
+	menu->AppendCheckItem(kView_Fullscreen, "&Fullscreen");
 	menuBar->Append(menu, "&View");
 
 	menu = new wxMenu;
@@ -296,6 +361,13 @@ void MainFrame::SetupInitialView()
 	sourceEditor = new SourceEditor(this);
 	dockingManager.AddPane(sourceEditor, sourceEditorPane);
 
+	wxAuiPaneInfo localsPane;
+	localsPane.Name("locals");
+	localsPane.Caption("Local Variables");
+	localsPane.Bottom();
+	locals = new Locals(this);
+	dockingManager.AddPane(locals, localsPane);
+
 	wxAuiPaneInfo watchPane;
 	watchPane.Name("watch");
 	watchPane.Caption("Watch");
@@ -331,12 +403,24 @@ void MainFrame::SetupInitialView()
 	threads = new Threads(this);
 	dockingManager.AddPane(threads, threadsPane);
 
+	wxAuiPaneInfo registersPane;
+	registersPane.Name("registers");
+	registersPane.Caption("Registers");
+	registersPane.Right();
+	registers = new Registers(this);
+	dockingManager.AddPane(registers, registersPane);
+
 	wxAuiPaneInfo breakpointsPane;
 	breakpointsPane.Name("breakpoints");
 	breakpointsPane.Caption("Breakpoints");
 	breakpointsPane.Right();
 	breakpoints = new Breakpoints(this);
 	dockingManager.AddPane(breakpoints, breakpointsPane);
+
+	// dbg
+	sourceEditor->LoadFile("C:/Code/ManaShell/Source/GUI/MainFrame.cpp");
+	output->LoadFile("C:/Code/ManaShell/Build/VS2012/x64/Debug/cl.command.1.tlog");
+	// end
 
 	dockingManager.Update();
 }

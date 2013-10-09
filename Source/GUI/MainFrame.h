@@ -71,10 +71,21 @@ private:
 		// -- Special identifiers --------------------------------------------
 		kTimer_Idle,
 
+		kFirstMenuId				= kView_EditorSource,
+		kLastMenuId					= kTools_Options,
+
+
 		// -- Pre-defined values ---------------------------------------------
 		// These should be defined last to not pollute the enumeration id's.
 		kFile_Exit					= wxID_CLOSE,
 		kHelp_About					= wxID_ABOUT
+	};
+
+	enum SourceEditorMode
+	{
+		kSource,
+		kAssembly,
+		kMixed
 	};
 
 
@@ -97,6 +108,8 @@ private:
 	SourceEditor					*sourceEditor;
 	Threads							*threads;
 	Watch							*watch;
+
+	SourceEditorMode				sourceEditorMode;
 
 
 	// -- Menu handlers ------------------------------------------------------
@@ -131,7 +144,8 @@ private:
 
 
 	// -- Event handlers -----------------------------------------------------
-	void OnIdle(wxCommandEvent &event);
+	void OnUpdateUI(wxUpdateUIEvent &event);
+	void OnIdle(wxIdleEvent &event);
 	void OnTimerIdle(wxTimerEvent &event);
 	void OnClose(wxCloseEvent &event);
 

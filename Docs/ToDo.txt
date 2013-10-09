@@ -1,31 +1,6 @@
 === The Development Plan ===
 
-0.1	[todo]	UI in a presentable state.
-			- wxAUI
-				- Toggle all views.
-			- Output text control.
-				- Clear.
-			- Input text control.
-				- One line, trap enter and send to running process if active.
-			- Source editor.
-				- Regular text control.
-				- Read only.
-			- Callstack.
-				- Grid (reusable baseclass).
-			- Registers.
-				- Grid.
-			- Threads.
-				- Grid.
-			- Locals.
-				- Grid.
-			- Watch.
-				- Grid.
-			- Breakpoints.
-				- Grid.
-
-			- Menu:
-				OnUpdateUI - checkboxes.
-			- Fill out UI with sample values.
+0.1	[done]	UI in a presentable state.
 
 0.2	[todo]	Piped process with both input and output.
 			- Orc editor.
@@ -45,6 +20,11 @@
 0.6	[todo]	UI polish.
 			- Toolbar.
 			- Save/Load perspectives.
+			- Output text control.
+				- Local toolbar:
+					- Clear all.
+					- Word wrap.
+					- Save as...
 			- Input text control:
 				- history.
 				- read only if no active process running.
@@ -52,6 +32,15 @@
 				- disable unavailable options.
 			- Options.
 				- Persistent on disc.
+			- Callstack.
+				- Option to toggle:
+					- return type.
+					- argument values.
+					- argument names.
+					- argument types.
+			- Grid polish.
+				- Automatic size adjustments of grid cells.
+				- Reduce height of the header.
 
 0.7	[todo]	JDB plugin
 			- Very basic java debugging.
