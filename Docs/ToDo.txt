@@ -1,33 +1,84 @@
 === The Development Plan ===
 
-0.1		UI is in presentable state
-		- wxAUI
-		- Output text control (read only).
-		- Input text control (no history).
-		- Source editor (regular text control, read only).
-		- Callstack.
-		- Registers.
-		- Threads.
-		- Locals.
-		- Watch.
-		- Breakpoints.
+0.1	[todo]	UI in a presentable state.
+			- wxAUI
+				- Toggle all views.
+			- Output text control.
+				- Clear.
+			- Input text control.
+				- One line, trap enter and send to running process if active.
+			- Source editor.
+				- Regular text control.
+				- Read only.
+			- Callstack.
+				- Grid (reusable baseclass).
+			- Registers.
+				- Grid.
+			- Threads.
+				- Grid.
+			- Locals.
+				- Grid.
+			- Watch.
+				- Grid.
+			- Breakpoints.
+				- Grid.
 
-0.2		PDB plugin
-		- Very basic python debugging.
+			- Menu:
+				OnUpdateUI - checkboxes.
+			- Fill out UI with sample values.
 
-0.3		GDB Command Line plugin
-		- Attach to android process.
-		- Very basic gdb debugging.
+0.2	[todo]	Piped process with both input and output.
+			- Orc editor.
+			- wxbook sample.
+			- wx/exec sample.
 
-0.4		Source editor.
-		- Scintilla with syntax highlighting.
+0.3	[todo]	PDB plugin
+			- Very basic python debugging.
 
-0.5		UI polish.
-		- Toolbar.
+0.4	[todo]	Source editor.
+			- Scintilla with syntax highlighting.
 
-0.9		JDB plugin
+0.5	[todo]	GDB Command Line plugin
+			- Attach to android process.
+			- Very basic gdb debugging.
 
-1.0		[Alpha]
+0.6	[todo]	UI polish.
+			- Toolbar.
+			- Save/Load perspectives.
+			- Input text control:
+				- history.
+				- read only if no active process running.
+			- Menu.
+				- disable unavailable options.
+			- Options.
+				- Persistent on disc.
+
+0.7	[todo]	JDB plugin
+			- Very basic java debugging.
+
+0.8	[todo]	Port.
+			- Linux.
+			- OSX.
+			- Windows.
+			- Installers.
+
+0.9	[todo]	Write docs.
+			- Installing.
+			- Tutorials.
+				- Debugging a python script.
+				- Debugging an Android NDK sample, both java and native.
+			- Reference.
+			- Troubleshooting.
+
+1.0	[todo]	Beta.
+			- Create a project homepage.
+				- Overview.
+				- Downloads.
+				- Bugtracker.
+				- Forum.
+			- Release tag for master branch.
+
+1.0.x		Final.
 
 
 === Known Bugs ===
