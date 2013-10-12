@@ -274,8 +274,8 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	switch (event.GetId())
 	{
 	case kView_EditorSource:	event.Check(sourceEditorMode == kSource);					break;
-	case kView_EditorAssembly:	event.Check(sourceEditorMode == kAssembly);					break;
-	case kView_EditorMixed:		event.Check(sourceEditorMode == kMixed);					break;
+	case kView_EditorAssembly:	event.Check(sourceEditorMode == kAssembly); event.Enable(false); break;
+	case kView_EditorMixed:		event.Check(sourceEditorMode == kMixed); event.Enable(false); break;
 	case kView_Breakpoints:		event.Check(dockingManager.GetPane(breakpoints).IsShown());	break;
 	case kView_Callstack:		event.Check(dockingManager.GetPane(callstack).IsShown());	break;
 	case kView_Threads:			event.Check(dockingManager.GetPane(threads).IsShown());		break;
@@ -307,11 +307,13 @@ void MainFrame::OnIdle(wxIdleEvent &event)
 {
 	size_t numProcesses = runningProcesses.GetCount();
 	for (size_t i = 0; i < numProcesses; ++i)
-		if (runningProcesses[i]->HasInput())
+		if (runningProcesses[i]->IsActive())
 		{
 			TRACE_LOG("MainFrame::OnIdle() - requesting more\n");
 			event.RequestMore();
 		}
+
+	event.Skip();
 }
 
 void MainFrame::OnTimerIdle(wxTimerEvent &event)
@@ -341,15 +343,16 @@ void MainFrame::AddPipedProcess(PipedProcess *process)
 {
 	TRACE_LOG("MainFrame::AddPipedProcess()\n");
 
+	runningProcesses.Add(process);
+
 	// Do IO for all child processes in the idle event.
 	// This timer is used to kick start that processing.
 	if (runningProcesses.IsEmpty())
 	{
 		TRACE_LOG(" - starting the idle wake up timer\n");
-		idleWakeUpTimer.Start(100);
+		if (!idleWakeUpTimer.IsRunning())
+			idleWakeUpTimer.Start(100);
 	}
-
-	runningProcesses.Add(process);
 }
 
 void MainFrame::RemovePipedProcess(PipedProcess *process)
@@ -362,7 +365,8 @@ void MainFrame::RemovePipedProcess(PipedProcess *process)
 	if (runningProcesses.IsEmpty())
 	{
 		TRACE_LOG(" - stopping the idle wake up timer\n");
-		idleWakeUpTimer.Stop();
+		if (idleWakeUpTimer.IsRunning())
+			idleWakeUpTimer.Stop();
 	}
 }
 
@@ -415,7 +419,7 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&Debug");
 
 	menu = new wxMenu;
-	menu->Append(kTools_Options, "&Options...");
+	menu->Append(kTools_Options, "&Options...")->Enable(false);
 	menuBar->Append(menu, "&Tools");
 
 	menu = new wxMenu;

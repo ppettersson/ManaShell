@@ -6,20 +6,23 @@
 			- wxbook sample.
 			- wx/exec sample.
 
-0.3	[todo]	PDB plugin
+0.3	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
 			- Very basic python debugging.
 
 0.4	[todo]	Source editor.
 			- Scintilla with syntax highlighting.
 
-0.5	[todo]	GDB Command Line plugin
+0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
+			- Not using the Machine Interpreter mode (that would be a separate plugin).
 			- Attach to android process.
 			- Very basic gdb debugging.
 
 0.6	[todo]	UI polish.
+			- Keyboard shortcuts.
 			- Toolbar.
 			- Save/Load perspectives.
 			- Output text control.
+				- Separate output for debugger and process?
 				- monospace font.
 				- Local toolbar:
 					- Clear all.
@@ -43,7 +46,7 @@
 				- Automatic size adjustments of grid cells.
 				- Reduce height of the header.
 
-0.7	[todo]	JDB plugin
+0.7	[todo]	JDB plugin: http://docs.oracle.com/javase/1.3/docs/tooldocs/solaris/jdb.html
 			- Very basic java debugging.
 
 0.8	[todo]	Port.
@@ -54,6 +57,7 @@
 
 0.9	[todo]	Write docs.
 			- Installing.
+				- Building from source.
 			- Tutorials.
 				- Debugging a python script.
 				- Debugging an Android NDK sample, both java and native.
@@ -69,6 +73,18 @@
 			- Release tag for master branch.
 
 1.0.x		Final.
+
+
+=== Wishlist for Future versions ===
+
+- Tools:
+	- logcat viewer with filters.
+	- debug image viewer (wxImageView).
+- Plugins:
+	- gdb/mi
+	- lldb
+	- make: http://www.cmcrossroads.com/article/interactive-gnu-make-debugger
+	- bash: http://bashdb.sourceforge.net
 
 
 === Known Bugs ===

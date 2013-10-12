@@ -11,7 +11,7 @@ public:
 	PipedProcess(MainFrame *host);
 
 	virtual void OnTerminate(int pid, int status);
-	virtual bool HasInput();
+	virtual bool IsActive();
 
 protected:
 	MainFrame	*host;
