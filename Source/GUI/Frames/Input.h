@@ -3,11 +3,22 @@
 
 #include "wx/wx.h"
 
+class MainFrame;
+
 class Input : public wxTextCtrl
 {
 public:
-	Input(wxWindow *parent);
+	Input(MainFrame *parent);
 	virtual ~Input();
+
+
+private:
+	MainFrame	*host;
+
+
+	void OnEnter(wxCommandEvent &event);
+
+	wxDECLARE_EVENT_TABLE();
 };
 
 #endif // INPUT_H

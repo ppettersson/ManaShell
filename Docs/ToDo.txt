@@ -2,15 +2,17 @@
 
 0.1	[done]	UI in a presentable state.
 
-0.2	[todo]	Piped process with both input and output.
-			- wxbook sample.
-			- wx/exec sample.
+0.2	[done]	Piped process with both input and output.
 
-0.3	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
-			- Very basic python debugging.
-
-0.4	[todo]	Source editor.
+0.3	[todo]	Source editor.
 			- Scintilla with syntax highlighting.
+				- cpp, python and java
+			- Highlight current line.
+			- Load file and center on a specific line.
+				- some smarts here to avoid unnecessary reloading etc.
+
+0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
+			- Very basic python debugging.
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).
@@ -88,3 +90,8 @@
 
 
 === Known Bugs ===
+
+- Text input stream in piped process assumes the output from the inferior
+  process is unicode when it's really ascii. Investigate if it's our bug,
+  a wx bug or maybe a Windows bug.
+- Crash on shutdown if a process is running.

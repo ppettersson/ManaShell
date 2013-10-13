@@ -32,6 +32,8 @@ public:
 	void OnOutputFromProcess(const wxString &message);
 	void OnErrorFromProcess(const wxString &message);
 
+	void SendCommand(const wxString &command);
+
 
 private:
 	enum Constants

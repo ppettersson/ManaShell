@@ -91,6 +91,8 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 	{
 		TRACE_LOG(" - it was the active process\n");
 		activeProcessId = 0;
+		output->AppendText("\nProcess was terminated.\n");
+		input->Enable(false);
 	}
 }
 
@@ -103,8 +105,16 @@ void MainFrame::OnOutputFromProcess(const wxString &message)
 void MainFrame::OnErrorFromProcess(const wxString &message)
 {
 	TRACE_LOG("MainFrame::OnErrorFromProcess()\n");
-	output->AppendText("Error: ");
+	output->AppendText("\nError: ");
 	output->AppendText(message);
+}
+
+void MainFrame::SendCommand(const wxString &command)
+{
+	TRACE_LOG("MainFrame::SendCommand()\n");
+
+	if (runningProcesses.GetCount())
+		runningProcesses[0]->SendCommand(command);
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)
@@ -204,7 +214,9 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	// Get the command to run.
 	// ToDo...
 	wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
-		"c:/code/orc4/engine/platform/windows/vs2012/output/objconverter.exe");
+		//"c:/code/orc4/engine/platform/windows/vs2012/output/objconverter.exe");
+		"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
+		//"c:/python33/python.exe -i");
 	if (command.empty())
 		return;
 
@@ -226,6 +238,8 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	}
 
 	AddPipedProcess(process);
+
+	input->Enable(true);
 }
 
 void MainFrame::OnDebugStop(wxCommandEvent &event)
@@ -307,7 +321,7 @@ void MainFrame::OnIdle(wxIdleEvent &event)
 {
 	size_t numProcesses = runningProcesses.GetCount();
 	for (size_t i = 0; i < numProcesses; ++i)
-		if (runningProcesses[i]->IsActive())
+		if (runningProcesses[i]->Process())
 		{
 			TRACE_LOG("MainFrame::OnIdle() - requesting more\n");
 			event.RequestMore();
@@ -347,7 +361,7 @@ void MainFrame::AddPipedProcess(PipedProcess *process)
 
 	// Do IO for all child processes in the idle event.
 	// This timer is used to kick start that processing.
-	if (runningProcesses.IsEmpty())
+	if (!runningProcesses.IsEmpty())
 	{
 		TRACE_LOG(" - starting the idle wake up timer\n");
 		if (!idleWakeUpTimer.IsRunning())

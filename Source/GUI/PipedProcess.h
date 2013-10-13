@@ -11,10 +11,17 @@ public:
 	PipedProcess(MainFrame *host);
 
 	virtual void OnTerminate(int pid, int status);
-	virtual bool IsActive();
+
+	bool Process();
+	void SendCommand(const wxString &c);
+
 
 protected:
 	MainFrame	*host;
+	wxString	command;
+
+
+	wxString ReadStream(wxInputStream *stream);
 };
 
 #endif // PIPED_PROCESS_H

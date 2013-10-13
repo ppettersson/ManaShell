@@ -16,43 +16,67 @@ void PipedProcess::OnTerminate(int pid, int status)
 	TRACE_LOG("PipedProcess::OnTerminate()\n");
 
 	// Capture all the output before we let the process go.
-	while (IsActive())
+	while (Process())
 		;
 
 	host->OnProcessTerminated(this, pid, status);
 }
 
-bool PipedProcess::IsActive()
+bool PipedProcess::Process()
 {
-	TRACE_LOG("PipedProcess::HasInput()\n");
-
+	// Return true if we've processed any input or output.
+	// That indicates that we want to be called again soon.
 	bool result = false;
+
+	if (!command.IsEmpty())
+	{
+		wxTextOutputStream os(*GetOutputStream());
+		os.WriteString(command);
+		command.Empty();
+
+		result = true;
+	}
+
 	if (IsErrorAvailable())
 	{
-		wxTextInputStream tis(*GetErrorStream());
-
-		// Note: Assumes line buffered output.
-		wxString msg;
-		msg << tis.ReadLine();
-
-		msg += "\n";
-		host->OnErrorFromProcess(msg);
+		host->OnErrorFromProcess(ReadStream(GetErrorStream()));
 		result = true;
 	}
+
 	if (IsInputAvailable())
 	{
-		wxTextInputStream tis(*GetInputStream());
-
-		// Note: Assumes line buffered output.
-		wxString msg;
-		msg << tis.ReadLine();
-
-		msg += "\n";
-		host->OnOutputFromProcess(msg);
+		host->OnOutputFromProcess(ReadStream(GetInputStream()));
 		result = true;
 	}
-	if (IsInputOpened())
-		result = true;
 
 	return result;
+}
+
+wxString PipedProcess::ReadStream(wxInputStream *stream)
+{
+	// We can't assume that the output has line breaks and instead have to use
+	// a plain buffer and handle line breaks etc on the receiving end.
+	const unsigned kBufferSize	= 4096;
+	static wxChar buffer[kBufferSize];
+
+	// wxChar may be 2 or 4 bytes and we don't want to read any incomplete
+	// characters, that means that we can't use WXSIZEOF.
+	const unsigned kBufferBytes	= (kBufferSize - 1) * sizeof(wxChar);
+
+	// Read as much as we can, up to our max buffer size.
+	stream->Read(buffer, kBufferBytes);
+
+	// Null terminate the buffer so that we can convert it to a string.
+	// ToDo: Not a 100% sure if this works with all encodings?
+	buffer[stream->LastRead()] = 0;
+
+	// ToDo: wxTextInputStream is using wxConvAuto for encoding conversion.
+	// That fails, investigate if this is our bug, a wx bug or a Windows
+	// bug.
+	return wxString::FromAscii((const char *)buffer);
+}
+
+void PipedProcess::SendCommand(const wxString &c)
+{
+	command = c;
 }
