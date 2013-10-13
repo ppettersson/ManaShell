@@ -7,14 +7,11 @@ PipedProcess::PipedProcess(MainFrame *h)
 	: wxProcess(h)
 	, host(h)
 {
-	TRACE_LOG("PipedProcess::PipedProcess()\n");
 	Redirect();
 }
 
 void PipedProcess::OnTerminate(int pid, int status)
 {
-	TRACE_LOG("PipedProcess::OnTerminate()\n");
-
 	// Capture all the output before we let the process go.
 	while (Process())
 		;

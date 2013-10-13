@@ -171,6 +171,4 @@ private:
 	wxDECLARE_EVENT_TABLE();
 };
 
-#define	TRACE_LOG(str)		;//OutputDebugStringA(str)
-
 #endif // MAIN_FRAME_H

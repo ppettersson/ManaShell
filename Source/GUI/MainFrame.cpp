@@ -83,13 +83,11 @@ void MainFrame::UpdateFrames()
 // Callbacks from running child processes.
 void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 {
-	TRACE_LOG("MainFrame::OnProcessTerminated()\n");
 	RemovePipedProcess(process);
 	delete process;
 
 	if (pid == activeProcessId)
 	{
-		TRACE_LOG(" - it was the active process\n");
 		activeProcessId = 0;
 		output->AppendText("\nProcess was terminated.\n");
 		input->Enable(false);
@@ -98,21 +96,17 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 
 void MainFrame::OnOutputFromProcess(const wxString &message)
 {
-	TRACE_LOG("MainFrame::OnOutputFromProcess()\n");
 	output->AppendText(message);
 }
 
 void MainFrame::OnErrorFromProcess(const wxString &message)
 {
-	TRACE_LOG("MainFrame::OnErrorFromProcess()\n");
 	output->AppendText("\nError: ");
 	output->AppendText(message);
 }
 
 void MainFrame::SendCommand(const wxString &command)
 {
-	TRACE_LOG("MainFrame::SendCommand()\n");
-
 	if (runningProcesses.GetCount())
 		runningProcesses[0]->SendCommand(command);
 }
@@ -322,17 +316,13 @@ void MainFrame::OnIdle(wxIdleEvent &event)
 	size_t numProcesses = runningProcesses.GetCount();
 	for (size_t i = 0; i < numProcesses; ++i)
 		if (runningProcesses[i]->Process())
-		{
-			TRACE_LOG("MainFrame::OnIdle() - requesting more\n");
 			event.RequestMore();
-		}
 
 	event.Skip();
 }
 
 void MainFrame::OnTimerIdle(wxTimerEvent &event)
 {
-	TRACE_LOG("MainFrame::OnTimerIdle()\n");
 	wxWakeUpIdle();
 }
 
@@ -355,33 +345,23 @@ void MainFrame::OnClose(wxCloseEvent &event)
 
 void MainFrame::AddPipedProcess(PipedProcess *process)
 {
-	TRACE_LOG("MainFrame::AddPipedProcess()\n");
-
 	runningProcesses.Add(process);
 
 	// Do IO for all child processes in the idle event.
 	// This timer is used to kick start that processing.
 	if (!runningProcesses.IsEmpty())
-	{
-		TRACE_LOG(" - starting the idle wake up timer\n");
 		if (!idleWakeUpTimer.IsRunning())
 			idleWakeUpTimer.Start(100);
-	}
 }
 
 void MainFrame::RemovePipedProcess(PipedProcess *process)
 {
-	TRACE_LOG("MainFrame::RemovePipedProcess()\n");
-
 	runningProcesses.Remove(process);
 
 	// Stop the idle timer if this was the last running process.
 	if (runningProcesses.IsEmpty())
-	{
-		TRACE_LOG(" - stopping the idle wake up timer\n");
 		if (idleWakeUpTimer.IsRunning())
 			idleWakeUpTimer.Stop();
-	}
 }
 
 void MainFrame::SetupMenu()
