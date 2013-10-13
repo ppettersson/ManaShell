@@ -12,6 +12,7 @@ Input::Input(MainFrame *parent)
 	, host(parent)
 {
 	Enable(false);
+	SetFont(wxFont(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 }
 
 Input::~Input()

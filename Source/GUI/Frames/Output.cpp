@@ -5,6 +5,7 @@ Output::Output(wxWindow *parent)
 				 wxDefaultSize, wxNO_BORDER | wxTE_MULTILINE |
 				 wxTE_READONLY)
 {
+	SetFont(wxFont(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
 }
 
 Output::~Output()

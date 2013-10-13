@@ -270,7 +270,7 @@ void MainFrame::OnToolsOptions(wxCommandEvent &event)
 
 void MainFrame::OnHelpAbout(wxCommandEvent &event)
 {
-	wxMessageBox("Mana Shell 0.1\n\n"
+	wxMessageBox("Mana Shell 0.2\n\n"
 				 "A fast and flexible debugger front-end.\n\n"
 				 "(c) 2013 Peter Pettersson. All rights reserved.\n\n"
 				 "https://github.com/ppettersson/ManaShell",
