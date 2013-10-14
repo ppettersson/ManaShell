@@ -495,10 +495,5 @@ void MainFrame::SetupInitialView()
 	breakpoints = new Breakpoints(this);
 	dockingManager.AddPane(breakpoints, breakpointsPane);
 
-	// dbg
-	sourceEditor->Load("C:/Code/ManaShell/Source/GUI/MainFrame.cpp");
-	output->LoadFile("C:/Code/ManaShell/Build/VS2012/x64/Debug/cl.command.1.tlog");
-	// end
-
 	dockingManager.Update();
 }

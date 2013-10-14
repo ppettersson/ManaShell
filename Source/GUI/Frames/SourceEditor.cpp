@@ -125,12 +125,18 @@ void SourceEditor::SetupHighlighting()
 		"h", "hh", "hpp", "hxx", "h++"
 	};
 
+	const char *pythonPatterns[] =
+	{
+		"py"
+	};
+
 	wxString ext = wxFileName(currentFile).GetExt().MakeLower();
 
 	enum Syntax
 	{
 		kInvalid,
-		kCpp
+		kCpp,
+		kPython
 	} syntax = kInvalid;
 
 	for (int i = 0; i < WXSIZEOF(cppPatterns); ++i)
@@ -139,10 +145,20 @@ void SourceEditor::SetupHighlighting()
 			syntax = kCpp;
 			break;
 		}
+	if (syntax == kInvalid)
+	{
+		for (int i = 0; i < WXSIZEOF(pythonPatterns); ++i)
+			if (ext == pythonPatterns[i])
+			{
+				syntax = kPython;
+				break;
+			}
+	}
 
 	switch (syntax)
 	{
-	case kCpp:	SetupCpp();	break;
+	case kCpp:		SetupCpp();		break;
+	case kPython:	SetupPython();	break;
 	}
 }
 
@@ -204,6 +220,46 @@ void SourceEditor::SetupCpp()
 					"throw true try typedef typeid typename union unsigned "
 					"using virtual void volatile wchar_t while xor xor_eq");
 	SetKeyWords(1,	"override final");
+}
+
+void SourceEditor::SetupPython()
+{
+	SetLexer(wxSTC_LEX_PYTHON);
+
+	//StyleSetForeground(wxSTC_P_DEFAULT, wxColour(0, 0, 0));
+
+	wxColour comment(0, 128, 0);
+	StyleSetForeground(wxSTC_P_COMMENTLINE, comment);
+	StyleSetForeground(wxSTC_P_COMMENTBLOCK, comment);
+
+	StyleSetForeground(wxSTC_P_WORD, wxColour(0, 0, 255));
+
+	StyleSetForeground(wxSTC_P_CLASSNAME, wxColour(32, 0, 0));
+	StyleSetForeground(wxSTC_P_DEFNAME, wxColour(0, 32, 0));
+	StyleSetForeground(wxSTC_P_OPERATOR, wxColour(0, 0, 150));
+	StyleSetForeground(wxSTC_P_IDENTIFIER, wxColour(0, 0, 32));
+	StyleSetForeground(wxSTC_P_DECORATOR, wxColour(0, 0, 64));
+
+	wxColour num(150, 0, 150);
+	wxColour str(150, 0, 0);
+	StyleSetForeground(wxSTC_P_NUMBER, num);
+	StyleSetForeground(wxSTC_P_STRING, str);
+	//StyleSetForeground(wxSTC_P_STRINGEOL, str);
+	StyleSetForeground(wxSTC_P_CHARACTER, num);
+	StyleSetForeground(wxSTC_P_TRIPLE, num);
+	StyleSetForeground(wxSTC_P_TRIPLEDOUBLE, num);
+
+	StyleSetItalic(wxSTC_P_COMMENTLINE, true);
+	StyleSetItalic(wxSTC_P_COMMENTBLOCK, true);
+
+	StyleSetBold(wxSTC_P_WORD, true);
+	StyleSetBold(wxSTC_P_WORD2, true);
+	StyleSetBold(wxSTC_P_OPERATOR, true);
+
+	SetKeyWords(0,	"and as assert break class continue def del elif else "
+					"except exec finally for from global if import in is "
+					"lambda not or pass print raise return try while with "
+					"yield");
 }
 
 void SourceEditor::OnMarginClick(wxStyledTextEvent &event)

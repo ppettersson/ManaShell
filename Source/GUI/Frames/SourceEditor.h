@@ -30,6 +30,7 @@ private:
 	void SetupMargins();
 	void SetupHighlighting();
 	void SetupCpp();
+	void SetupPython();
 
 	void OnMarginClick(wxStyledTextEvent &event);
 };
