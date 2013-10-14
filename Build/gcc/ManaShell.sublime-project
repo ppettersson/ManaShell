@@ -1,0 +1,42 @@
+{
+	"folders":
+	[
+		{
+			"path": "${project_path}/../../../",
+			"name": "ManaShell",
+			"file_exclude_patterns":
+			[
+			],
+			"folder_exclude_patterns":
+			[
+				"obj"
+			]
+		}
+	],
+	"settings":
+	{
+		// ToDo: Relative path doesn't work...
+		//"sublimegdb_workingdir": "${folder:${project_path}/../../../../../Output}",
+		"sublimegdb_workingdir": "/home/peter/Code/github/ManaShell/Build/gcc",
+		"sublimegdb_commandline": "gdb --interpreter=mi ./ManaShell_x86_64_debug"
+	},
+	"build_systems":
+	[
+		// ToDo: Don't want to duplicate shared settings (working_dir, file_regex).
+		// ToDo: The current file_regex is only for gcc errors/warnings.
+		// Want to handle javac errors/warnings as well.
+		{
+			"name": "Build ManaShell Debug",
+			"cmd": ["make", "BUILD=debug", "-j8"],
+			"working_dir": "${project_path}",
+			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$"
+			// "file_regex": "/([^/:]+):(\\d+):(\\d+): "
+		},
+		{
+			"name": "Build ManaShell Release",
+			"cmd": ["make", "BUILD=release", "-j8"],
+			"working_dir": "${project_path}",
+			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$"
+		}
+	]
+}

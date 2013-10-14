@@ -1,0 +1,10 @@
+* Linux
+
+	git clone https://github.com/ppettersson/wxWidgets.git
+	cd wxWidgets
+	mkdir build-debug ; cd build-debug ; ../configure --enable-debug --with-gtk --enable-unicode --disable-shared ; make -j8 ; cd ..
+	mkdir build-release ; cd build-release ; ../configure --with-gtk --enable-unicode --disable-shared ; make -j8
+	export WXWIDGETS=/home/name/code/wxWidgets
+
+	cd /home/name/code/ManaShell/Build/gcc
+	make -j8
