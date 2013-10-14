@@ -33,6 +33,7 @@ public:
 	void OnErrorFromProcess(const wxString &message);
 
 	void SendCommand(const wxString &command);
+	void UpdateSource(const wxString &fileName, unsigned line);
 
 
 private:
@@ -68,6 +69,7 @@ private:
 		kDebug_Continue,
 		kDebug_ToggleBreakpoint,
 
+		kTools_DryCallstack,
 		kTools_Options,
 
 		//kHelp_About,				// Use pre-defined values.
@@ -143,6 +145,7 @@ private:
 	void OnDebugContinue(wxCommandEvent &event);
 	void OnDebugToggleBreakpoint(wxCommandEvent &event);
 
+	void OnToolsDryCallstack(wxCommandEvent &event);
 	void OnToolsOptions(wxCommandEvent &event);
 
 	void OnHelpAbout(wxCommandEvent &event);

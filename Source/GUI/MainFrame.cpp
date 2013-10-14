@@ -33,6 +33,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kDebug_Break,				MainFrame::OnDebugBreak)
 	EVT_MENU(kDebug_Continue,			MainFrame::OnDebugContinue)
 	EVT_MENU(kDebug_ToggleBreakpoint,	MainFrame::OnDebugToggleBreakpoint)
+	EVT_MENU(kTools_DryCallstack,		MainFrame::OnToolsDryCallstack)
 	EVT_MENU(kTools_Options,			MainFrame::OnToolsOptions)
 	EVT_MENU(kHelp_About,				MainFrame::OnHelpAbout)
 	EVT_UPDATE_UI_RANGE(kFirstMenuId,
@@ -112,6 +113,11 @@ void MainFrame::SendCommand(const wxString &command)
 		output->AppendText(command);
 		runningProcesses[0]->SendCommand(command);
 	}
+}
+
+void MainFrame::UpdateSource(const wxString &fileName, unsigned line)
+{
+	sourceEditor->Load(fileName, line);
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)
@@ -267,13 +273,27 @@ void MainFrame::OnDebugToggleBreakpoint(wxCommandEvent &event)
 {
 }
 
+void MainFrame::OnToolsDryCallstack(wxCommandEvent &event)
+{
+	// Browse for the file.
+	wxString fileName = wxFileSelector("Load a callstack from file", wxEmptyString, wxEmptyString, wxEmptyString,
+		"All files (*.*)|*.*",
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	// If the dialog was cancelled then this is empty.
+	if (fileName.empty())
+		return;
+
+	callstack->Load(fileName);
+}
+
 void MainFrame::OnToolsOptions(wxCommandEvent &event)
 {
 }
 
 void MainFrame::OnHelpAbout(wxCommandEvent &event)
 {
-	wxMessageBox("Mana Shell 0.2\n\n"
+	wxMessageBox("Mana Shell 0.3\n\n"
 				 "A fast and flexible debugger front-end.\n\n"
 				 "(c) 2013 Peter Pettersson. All rights reserved.\n\n"
 				 "https://github.com/ppettersson/ManaShell",
@@ -416,6 +436,8 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&Debug");
 
 	menu = new wxMenu;
+	menu->Append(kTools_DryCallstack, "Dry &Callstack...");
+	menu->AppendSeparator();
 	menu->Append(kTools_Options, "&Options...")->Enable(false);
 	menuBar->Append(menu, "&Tools");
 

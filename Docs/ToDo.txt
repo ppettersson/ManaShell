@@ -2,13 +2,7 @@
 
 0.1	[done]	UI in a presentable state.
 0.2	[done]	Piped process with both input and output.
-
-0.3	[todo]	Source editor.
-			- Scintilla with syntax highlighting.
-				- cpp, python and java
-			- Highlight current line.
-			- Load file and center on a specific line.
-				- some smarts here to avoid unnecessary reloading etc.
+0.3	[done]	Source editor.
 
 0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
 			- Very basic python debugging.
@@ -26,6 +20,7 @@
 				- add / remove / edit frame.
 
 0.6	[todo]	UI polish.
+			- Highlight current line in the source editor.
 			- Keyboard shortcuts.
 			- Toolbar.
 			- Save/Load perspectives.
