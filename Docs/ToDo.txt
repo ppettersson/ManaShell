@@ -1,7 +1,6 @@
 === The Development Plan ===
 
 0.1	[done]	UI in a presentable state.
-
 0.2	[done]	Piped process with both input and output.
 
 0.3	[todo]	Source editor.
@@ -19,6 +18,13 @@
 			- Attach to android process.
 			- Very basic gdb debugging.
 
+0.55 [todo]	Post mortem dry-run.
+			- import callstack from text
+				- given at least one source directory, grep to find matching file:line pairs.
+					- configurable format, with scanf: %s|%d
+			- edit manually
+				- add / remove / edit frame.
+
 0.6	[todo]	UI polish.
 			- Keyboard shortcuts.
 			- Toolbar.
@@ -32,6 +38,7 @@
 			- Input text control:
 				- history.
 				- read only if no active process running.
+				- read only if process isn't currently paused.
 			- Menu.
 				- disable unavailable options.
 			- Options.

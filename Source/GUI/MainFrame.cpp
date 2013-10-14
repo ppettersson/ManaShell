@@ -44,7 +44,7 @@ END_EVENT_TABLE()
 
 
 MainFrame::MainFrame()
-	: wxFrame(NULL, wxID_ANY, "ManaShell - alpha")
+	: wxFrame(NULL, wxID_ANY, "ManaShell [alpha version]")
 	, activeProcessId(0)
 	, idleWakeUpTimer(this, kTimer_Idle)
 	, breakpoints(NULL)
@@ -108,7 +108,10 @@ void MainFrame::OnErrorFromProcess(const wxString &message)
 void MainFrame::SendCommand(const wxString &command)
 {
 	if (runningProcesses.GetCount())
+	{
+		output->AppendText(command);
 		runningProcesses[0]->SendCommand(command);
+	}
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)
@@ -453,14 +456,14 @@ void MainFrame::SetupInitialView()
 	wxAuiPaneInfo outputPane;
 	outputPane.Name("output");
 	outputPane.Caption("Output Log");
-	outputPane.Bottom();
+	outputPane.Left();
 	output = new Output(this);
 	dockingManager.AddPane(output, outputPane);
 
 	wxAuiPaneInfo inputPane;
 	inputPane.Name("input");
 	inputPane.Caption("Input Editor");
-	inputPane.Bottom();
+	inputPane.Left();
 	input = new Input(this);
 	dockingManager.AddPane(input, inputPane);
 
@@ -493,7 +496,7 @@ void MainFrame::SetupInitialView()
 	dockingManager.AddPane(breakpoints, breakpointsPane);
 
 	// dbg
-	sourceEditor->LoadFile("C:/Code/ManaShell/Source/GUI/MainFrame.cpp");
+	sourceEditor->Load("C:/Code/ManaShell/Source/GUI/MainFrame.cpp");
 	output->LoadFile("C:/Code/ManaShell/Build/VS2012/x64/Debug/cl.command.1.tlog");
 	// end
 
