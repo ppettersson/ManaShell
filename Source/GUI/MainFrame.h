@@ -72,6 +72,9 @@ private:
 		kTools_DryCallstack,
 		kTools_Options,
 
+		kHelp_JDB,
+		kHelp_GDB,
+		kHelp_PDB,
 		//kHelp_About,				// Use pre-defined values.
 
 		// -- Special identifiers --------------------------------------------
@@ -148,6 +151,9 @@ private:
 	void OnToolsDryCallstack(wxCommandEvent &event);
 	void OnToolsOptions(wxCommandEvent &event);
 
+	void OnHelpJDB(wxCommandEvent &event);
+	void OnHelpGDB(wxCommandEvent &event);
+	void OnHelpPDB(wxCommandEvent &event);
 	void OnHelpAbout(wxCommandEvent &event);
 
 

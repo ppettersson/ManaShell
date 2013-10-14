@@ -9,6 +9,7 @@
 #include "Frames/Watch.h"
 #include "MainFrame.h"
 #include "PipedProcess.h"
+#include "wx/utils.h"
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kFile_Exit,				MainFrame::OnFileExit)
@@ -35,6 +36,9 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kDebug_ToggleBreakpoint,	MainFrame::OnDebugToggleBreakpoint)
 	EVT_MENU(kTools_DryCallstack,		MainFrame::OnToolsDryCallstack)
 	EVT_MENU(kTools_Options,			MainFrame::OnToolsOptions)
+	EVT_MENU(kHelp_JDB,					MainFrame::OnHelpJDB)
+	EVT_MENU(kHelp_GDB,					MainFrame::OnHelpGDB)
+	EVT_MENU(kHelp_PDB,					MainFrame::OnHelpPDB)
 	EVT_MENU(kHelp_About,				MainFrame::OnHelpAbout)
 	EVT_UPDATE_UI_RANGE(kFirstMenuId,
 						kLastMenuId,	MainFrame::OnUpdateUI)
@@ -291,11 +295,26 @@ void MainFrame::OnToolsOptions(wxCommandEvent &event)
 {
 }
 
+void MainFrame::OnHelpJDB(wxCommandEvent &event)
+{
+	wxLaunchDefaultBrowser("http://docs.oracle.com/javase/1.3/docs/tooldocs/solaris/jdb.html");
+}
+
+void MainFrame::OnHelpGDB(wxCommandEvent &event)
+{
+	wxLaunchDefaultBrowser("https://sourceware.org/gdb/current/onlinedocs/gdb/");
+}
+
+void MainFrame::OnHelpPDB(wxCommandEvent &event)
+{
+	wxLaunchDefaultBrowser("http://docs.python.org/3.3/library/pdb.html");
+}
+
 void MainFrame::OnHelpAbout(wxCommandEvent &event)
 {
 	wxMessageBox("Mana Shell 0.3\n\n"
 				 "A fast and flexible debugger front-end.\n\n"
-				 "(c) 2013 Peter Pettersson. All rights reserved.\n\n"
+				 "(c) 2013 Peter Pettersson.\n\n"
 				 "https://github.com/ppettersson/ManaShell",
 				 "About Mana Shell");
 }
@@ -442,6 +461,10 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&Tools");
 
 	menu = new wxMenu;
+	menu->Append(kHelp_JDB, "&JDB");
+	menu->Append(kHelp_GDB, "&GDB");
+	menu->Append(kHelp_PDB, "&PDB");
+	menu->AppendSeparator();
 	menu->Append(kHelp_About, "&About...");
 	menuBar->Append(menu, "&Help");
 
