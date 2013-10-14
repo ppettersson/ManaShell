@@ -29,8 +29,10 @@ private:
 
 	void SetupMargins();
 	void SetupHighlighting();
+
 	void SetupCpp();
 	void SetupPython();
+	void SetupJava();
 
 	void OnMarginClick(wxStyledTextEvent &event);
 };

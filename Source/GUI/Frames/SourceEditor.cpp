@@ -130,21 +130,30 @@ void SourceEditor::SetupHighlighting()
 		"py"
 	};
 
+	const char *javaPatterns[] =
+	{
+		"java"
+	};
+
 	wxString ext = wxFileName(currentFile).GetExt().MakeLower();
 
 	enum Syntax
 	{
 		kInvalid,
 		kCpp,
-		kPython
+		kPython,
+		kJava
 	} syntax = kInvalid;
 
-	for (int i = 0; i < WXSIZEOF(cppPatterns); ++i)
-		if (ext == cppPatterns[i])
-		{
-			syntax = kCpp;
-			break;
-		}
+	if (1)
+	{
+		for (int i = 0; i < WXSIZEOF(cppPatterns); ++i)
+			if (ext == cppPatterns[i])
+			{
+				syntax = kCpp;
+				break;
+			}
+	}
 	if (syntax == kInvalid)
 	{
 		for (int i = 0; i < WXSIZEOF(pythonPatterns); ++i)
@@ -154,11 +163,21 @@ void SourceEditor::SetupHighlighting()
 				break;
 			}
 	}
+	if (syntax == kInvalid)
+	{
+		for (int i = 0; i < WXSIZEOF(javaPatterns); ++i)
+			if (ext == javaPatterns[i])
+			{
+				syntax = kJava;
+				break;
+			}
+	}
 
 	switch (syntax)
 	{
 	case kCpp:		SetupCpp();		break;
 	case kPython:	SetupPython();	break;
+	case kJava:		SetupJava();	break;
 	}
 }
 
@@ -260,6 +279,63 @@ void SourceEditor::SetupPython()
 					"except exec finally for from global if import in is "
 					"lambda not or pass print raise return try while with "
 					"yield");
+}
+
+void SourceEditor::SetupJava()
+{
+	// Java is using the Cpp lexer.
+	SetLexer(wxSTC_LEX_CPP);
+
+	//StyleSetForeground(wxSTC_C_DEFAULT, wxColour(0, 0, 0));
+
+	wxColour comment(0, 128, 0);
+	StyleSetForeground(wxSTC_C_COMMENT, comment);
+	StyleSetForeground(wxSTC_C_COMMENTLINE, comment);
+	StyleSetForeground(wxSTC_C_COMMENTDOC, comment);
+	StyleSetForeground(wxSTC_C_COMMENTLINEDOC, comment);
+	StyleSetForeground(wxSTC_C_COMMENTDOCKEYWORD, comment);
+	StyleSetForeground(wxSTC_C_COMMENTDOCKEYWORDERROR, comment);
+	StyleSetForeground(wxSTC_C_PREPROCESSORCOMMENT, comment);
+
+	StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
+	StyleSetForeground(wxSTC_C_WORD2, wxColour(150, 0, 150));
+
+	StyleSetForeground(wxSTC_C_PREPROCESSOR, wxColour(0, 0, 255));
+	StyleSetForeground(wxSTC_C_OPERATOR, wxColour(0, 0, 150));
+	StyleSetForeground(wxSTC_C_IDENTIFIER, wxColour(0, 0, 32));
+
+	wxColour num(150, 0, 150);
+	wxColour str(150, 0, 0);
+	StyleSetForeground(wxSTC_C_NUMBER, num);
+	StyleSetForeground(wxSTC_C_STRING, str);
+	StyleSetForeground(wxSTC_C_STRINGRAW, str);
+	StyleSetForeground(wxSTC_C_HASHQUOTEDSTRING, str);
+	StyleSetForeground(wxSTC_C_CHARACTER, num);
+	//StyleSetForeground(wxSTC_C_UUID, wxColour(0, 0, 0));
+
+	//StyleSetForeground(wxSTC_C_STRINGEOL, wxColour(0, 0, 0));
+	//StyleSetForeground(wxSTC_C_VERBATIM, wxColour(0, 0, 0));
+	//StyleSetForeground(wxSTC_C_REGEX, wxColour(0, 0, 0));
+	//StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(0, 0, 0));
+	//StyleSetForeground(wxSTC_C_TRIPLEVERBATIM, wxColour(0, 0, 0));
+
+	StyleSetItalic(wxSTC_C_COMMENT, true);
+	StyleSetItalic(wxSTC_C_COMMENTLINE, true);
+	StyleSetItalic(wxSTC_C_COMMENTDOC, true);
+	StyleSetItalic(wxSTC_C_COMMENT, true);
+
+	StyleSetBold(wxSTC_C_WORD, true);
+	StyleSetBold(wxSTC_C_WORD2, true);
+	StyleSetBold(wxSTC_C_OPERATOR, true);
+
+	SetKeyWords(0,	"abstract assert boolean break byte case catch char class "
+					"const continue default do double else enum extends final "
+					"finally float for goto if implements import instanceof "
+					"int interface long native new package private protected "
+					"public return short static strictfp super switch "
+					"synchronized this throw throws transient try void "
+					"volatile while");
+	SetKeyWords(1,	"false null true");
 }
 
 void SourceEditor::OnMarginClick(wxStyledTextEvent &event)
