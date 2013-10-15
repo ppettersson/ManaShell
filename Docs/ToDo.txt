@@ -6,6 +6,44 @@
 
 0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
 			- Very basic python debugging.
+			- Keep it 2.6/7 compatible.
+
+			python -i -m pdb /path/to/script.py
+
+			ui:
+				- option to just pick script (with browse button).
+					- optional arguments.
+					- remember recent scripts.
+				- custom command line.
+					- remember recent command lines.
+
+				- disable frames:
+					- threads
+					- registers
+					- locals
+
+			callstack:
+				w / where
+				d / down
+				u / up
+
+			breakpoints:
+				b / break	filename:line
+				cl / clear	filename:line
+
+			stepping:
+				s / step
+				n / next		(update callstack)
+				r / return		(update callstack)
+
+			watch:
+				p expression
+
+			run
+			c / continue		(update callstack)
+			SIGINT
+			q / quit
+
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).

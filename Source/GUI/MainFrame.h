@@ -6,6 +6,7 @@
 
 class Breakpoints;
 class Callstack;
+class Debugger;
 class Input;
 class Locals;
 class Output;
@@ -33,7 +34,7 @@ public:
 	void OnErrorFromProcess(const wxString &message);
 
 	void SendCommand(const wxString &command);
-	void UpdateSource(const wxString &fileName, unsigned line);
+	void UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker = true);
 
 
 private:
@@ -68,6 +69,7 @@ private:
 		kDebug_Break,
 		kDebug_Continue,
 		kDebug_ToggleBreakpoint,
+		kDebug_ClearAllBreakpoints,
 
 		kTools_DryCallstack,
 		kTools_Options,
@@ -121,6 +123,9 @@ private:
 
 	SourceEditorMode				sourceEditorMode;
 
+	Debugger						*debugger;
+	bool							waitingForResponse;
+
 
 	// -- Menu handlers ------------------------------------------------------
 	void OnFileExit(wxCommandEvent &event);
@@ -147,6 +152,7 @@ private:
 	void OnDebugBreak(wxCommandEvent &event);
 	void OnDebugContinue(wxCommandEvent &event);
 	void OnDebugToggleBreakpoint(wxCommandEvent &event);
+	void OnDebugClearAllBreakpoints(wxCommandEvent &event);
 
 	void OnToolsDryCallstack(wxCommandEvent &event);
 	void OnToolsOptions(wxCommandEvent &event);

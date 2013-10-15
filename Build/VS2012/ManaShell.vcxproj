@@ -167,6 +167,7 @@
     <ClCompile Include="..\..\Source\GUI\MainFrame.cpp" />
     <ClCompile Include="..\..\Source\GUI\ManaShell.cpp" />
     <ClCompile Include="..\..\Source\GUI\PipedProcess.cpp" />
+    <ClCompile Include="..\..\Source\Plugins\Debugger.cpp" />
     <ClCompile Include="..\..\Source\Plugins\PDB\PDB.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +187,8 @@
     <ClInclude Include="..\..\Source\GUI\MainFrame.h" />
     <ClInclude Include="..\..\Source\GUI\ManaShell.h" />
     <ClInclude Include="..\..\Source\GUI\PipedProcess.h" />
+    <ClInclude Include="..\..\Source\Plugins\Debugger.h" />
+    <ClInclude Include="..\..\Source\Plugins\PDB\PDB.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

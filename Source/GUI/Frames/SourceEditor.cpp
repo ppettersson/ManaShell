@@ -23,27 +23,70 @@ SourceEditor::SourceEditor(wxWindow *parent)
 	wxFont font(10, wxMODERN, wxNORMAL, wxNORMAL);
 	StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
+	//SetProperty("Caret.HighlightCurrentLine", "1");
+
 	SetupMargins();
+
+	MarkerDefine(kBreakpoint, wxSTC_MARK_CIRCLE, wxNullColour, wxColour(255, 0, 0));
+	MarkerDefine(kDebuggerNextLine, wxSTC_MARK_SHORTARROW, wxNullColour, wxColour(255, 255, 0));
 }
 
 SourceEditor::~SourceEditor()
 {
 }
 
-bool SourceEditor::Load(const wxString &fileName, unsigned line)
+bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugMarker)
 {
+	// Only reload the file if necessary.
 	if (fileName != currentFile)
 	{
+		// Remove all markers.
+		MarkerDeleteAll(kDebuggerNextLine);
+		MarkerDeleteAll(kBreakpoint);
+
+		// Scintilla won't allow any modifications at all to the buffer if
+		// we're in read only mode.
 		SetReadOnly(false);
 		LoadFile(fileName);
 		SetReadOnly(true);
 
+		// Update the syntax highlighting based on the file extension.
 		currentFile = fileName;
 		SetupHighlighting();
 	}
 
-	GotoLine(line);
+	// Scintilla is 1 based, not 0 based.
+	if (line > 0)
+	{
+		GotoLine(line - 1);
+
+		if (moveDebugMarker)
+		{
+			MarkerDeleteAll(kDebuggerNextLine);
+			MarkerAdd(line - 1, kDebuggerNextLine);
+		}
+	}
 	return true;
+}
+
+void SourceEditor::StopDebugging()
+{
+	MarkerDeleteAll(kDebuggerNextLine);
+}
+
+void SourceEditor::AddBreakpoint(unsigned line)
+{
+	MarkerAdd(line - 1, kBreakpoint);
+}
+
+void SourceEditor::RemoveBreakpoint(unsigned line)
+{
+	MarkerDelete(line - 1, kBreakpoint);
+}
+
+void SourceEditor::RemoveAllBreakpoints()
+{
+	MarkerDeleteAll(kBreakpoint);
 }
 
 void SourceEditor::SetupMargins()
@@ -54,8 +97,8 @@ void SourceEditor::SetupMargins()
 	//	[-]		Block folding, this can be toggled.
 
 	// Breakpoint marker
-	SetMarginWidth(kMarker, 0);	// ToDo!
-	//SetMarginType(kMarker, wxSTC_MARGIN_SYMBOL);
+	SetMarginWidth(kMarker, 16);	// ToDo!
+	SetMarginType(kMarker, wxSTC_MARGIN_SYMBOL);
 	//SetMarginMask()
 
 	// Line number.
@@ -66,46 +109,46 @@ void SourceEditor::SetupMargins()
 	SetMarginType(kLineNumber, wxSTC_MARGIN_NUMBER);
 
 	// Block folding.
-	SetMarginType(kBlockFolding, wxSTC_MARGIN_SYMBOL);
-	SetMarginWidth(kBlockFolding, 15);
-	SetMarginMask(kBlockFolding, wxSTC_MASK_FOLDERS);
-	StyleSetBackground(kBlockFolding, wxColor(200, 200, 200));
-	SetMarginSensitive(kBlockFolding, true);
+	//SetMarginType(kBlockFolding, wxSTC_MARGIN_SYMBOL);
+	//SetMarginWidth(kBlockFolding, 15);
+	//SetMarginMask(kBlockFolding, wxSTC_MASK_FOLDERS);
+	//StyleSetBackground(kBlockFolding, wxColor(200, 200, 200));
+	//SetMarginSensitive(kBlockFolding, true);
 
-	SetProperty("fold", "1");
-	SetProperty("fold.comment", "1");
-	SetProperty("fold.compact", "1");
+	//SetProperty("fold", "1");
+	//SetProperty("fold.comment", "1");
+	//SetProperty("fold.compact", "1");
 
-	wxColor grey(100, 100, 100);
-	MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDER, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDER, grey);
+	//wxColor grey(100, 100, 100);
+	//MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_ARROW);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDER, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDER, grey);
 
-	MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPEN, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPEN, grey);
+	//MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_ARROWDOWN);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPEN, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPEN, grey);
 
-	MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_EMPTY);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDERSUB, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDERSUB, grey);
+	//MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_EMPTY);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDERSUB, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDERSUB, grey);
 
-	MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDEREND, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDEREND, "WHITE");
+	//MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_ARROW);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDEREND, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDEREND, "WHITE");
 
-	MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPENMID, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPENMID, "WHITE");
+	//MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_ARROWDOWN);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPENMID, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPENMID, "WHITE");
 
-	MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_EMPTY);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDERMIDTAIL, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDERMIDTAIL, grey);
+	//MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_EMPTY);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDERMIDTAIL, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDERMIDTAIL, grey);
 
-	MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
-	MarkerSetForeground(wxSTC_MARKNUM_FOLDERTAIL, grey);
-	MarkerSetBackground(wxSTC_MARKNUM_FOLDERTAIL, grey);
+	//MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
+	//MarkerSetForeground(wxSTC_MARKNUM_FOLDERTAIL, grey);
+	//MarkerSetBackground(wxSTC_MARKNUM_FOLDERTAIL, grey);
 
-	Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(SourceEditor::OnMarginClick), NULL, this);
+	//Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(SourceEditor::OnMarginClick), NULL, this);
 
 	// Unused.
 	SetMarginWidth(kUnused0, 0);

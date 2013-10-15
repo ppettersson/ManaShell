@@ -10,7 +10,15 @@ public:
 	SourceEditor(wxWindow *parent);
 	virtual ~SourceEditor();
 
-	bool Load(const wxString &fileName, unsigned line = 0);
+	bool Load(const wxString &fileName, unsigned line = 0, bool moveDebugMarker = true);
+
+	void StopDebugging();
+
+	void AddBreakpoint(unsigned line);
+	void RemoveBreakpoint(unsigned line);
+	void RemoveAllBreakpoints();
+
+	const wxString &GetCurrentFile() const	{ return currentFile; }
 
 
 private:
@@ -23,6 +31,12 @@ private:
 		kBlockFolding,	// Toggleable.
 		kUnused0,
 		kUnused1
+	};
+
+	enum Marker
+	{
+		kBreakpoint,
+		kDebuggerNextLine
 	};
 
 	wxString currentFile;

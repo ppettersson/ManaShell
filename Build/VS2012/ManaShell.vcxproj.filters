@@ -66,6 +66,9 @@
     <ClCompile Include="..\..\Source\GUI\Frames\Watch.cpp">
       <Filter>Source\GUI\Frames</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Plugins\Debugger.cpp">
+      <Filter>Source\Plugins</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Docs\Building.txt">
@@ -111,6 +114,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\GUI\Frames\Watch.h">
       <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Plugins\Debugger.h">
+      <Filter>Source\Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Plugins\PDB\PDB.h">
+      <Filter>Source\Plugins\PDB</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

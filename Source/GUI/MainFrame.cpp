@@ -1,3 +1,4 @@
+#include "../Plugins/Debugger.h"
 #include "Frames/Breakpoints.h"
 #include "Frames/Callstack.h"
 #include "Frames/Input.h"
@@ -12,39 +13,40 @@
 #include "wx/utils.h"
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
-	EVT_MENU(kFile_Exit,				MainFrame::OnFileExit)
-	EVT_MENU(kView_EditorSource,		MainFrame::OnViewEditorSource)
-	EVT_MENU(kView_EditorAssembly,		MainFrame::OnViewEditorAssembly)
-	EVT_MENU(kView_EditorMixed,			MainFrame::OnViewEditorMixed)
-	EVT_MENU(kView_Breakpoints,			MainFrame::OnViewBreakpoints)
-	EVT_MENU(kView_Callstack,			MainFrame::OnViewCallstack)
-	EVT_MENU(kView_Threads,				MainFrame::OnViewThreads)
-	EVT_MENU(kView_Output,				MainFrame::OnViewOutput)
-	EVT_MENU(kView_Input,				MainFrame::OnViewInput)
-	EVT_MENU(kView_Registers,			MainFrame::OnViewRegisters)
-	EVT_MENU(kView_Locals,				MainFrame::OnViewLocals)
-	EVT_MENU(kView_Watch,				MainFrame::OnViewWatch)
-	EVT_MENU(kView_Fullscreen,			MainFrame::OnViewFullscreen)
-	EVT_MENU(kDebug_Attach,				MainFrame::OnDebugAttach)
-	EVT_MENU(kDebug_Start,				MainFrame::OnDebugStart)
-	EVT_MENU(kDebug_Stop,				MainFrame::OnDebugStop)
-	EVT_MENU(kDebug_StepIn,				MainFrame::OnDebugStepIn)
-	EVT_MENU(kDebug_StepOver,			MainFrame::OnDebugStepOver)
-	EVT_MENU(kDebug_StepOut,			MainFrame::OnDebugStepOut)
-	EVT_MENU(kDebug_Break,				MainFrame::OnDebugBreak)
-	EVT_MENU(kDebug_Continue,			MainFrame::OnDebugContinue)
-	EVT_MENU(kDebug_ToggleBreakpoint,	MainFrame::OnDebugToggleBreakpoint)
-	EVT_MENU(kTools_DryCallstack,		MainFrame::OnToolsDryCallstack)
-	EVT_MENU(kTools_Options,			MainFrame::OnToolsOptions)
-	EVT_MENU(kHelp_JDB,					MainFrame::OnHelpJDB)
-	EVT_MENU(kHelp_GDB,					MainFrame::OnHelpGDB)
-	EVT_MENU(kHelp_PDB,					MainFrame::OnHelpPDB)
-	EVT_MENU(kHelp_About,				MainFrame::OnHelpAbout)
+	EVT_MENU(kFile_Exit,					MainFrame::OnFileExit)
+	EVT_MENU(kView_EditorSource,			MainFrame::OnViewEditorSource)
+	EVT_MENU(kView_EditorAssembly,			MainFrame::OnViewEditorAssembly)
+	EVT_MENU(kView_EditorMixed,				MainFrame::OnViewEditorMixed)
+	EVT_MENU(kView_Breakpoints,				MainFrame::OnViewBreakpoints)
+	EVT_MENU(kView_Callstack,				MainFrame::OnViewCallstack)
+	EVT_MENU(kView_Threads,					MainFrame::OnViewThreads)
+	EVT_MENU(kView_Output,					MainFrame::OnViewOutput)
+	EVT_MENU(kView_Input,					MainFrame::OnViewInput)
+	EVT_MENU(kView_Registers,				MainFrame::OnViewRegisters)
+	EVT_MENU(kView_Locals,					MainFrame::OnViewLocals)
+	EVT_MENU(kView_Watch,					MainFrame::OnViewWatch)
+	EVT_MENU(kView_Fullscreen,				MainFrame::OnViewFullscreen)
+	EVT_MENU(kDebug_Attach,					MainFrame::OnDebugAttach)
+	EVT_MENU(kDebug_Start,					MainFrame::OnDebugStart)
+	EVT_MENU(kDebug_Stop,					MainFrame::OnDebugStop)
+	EVT_MENU(kDebug_StepIn,					MainFrame::OnDebugStepIn)
+	EVT_MENU(kDebug_StepOver,				MainFrame::OnDebugStepOver)
+	EVT_MENU(kDebug_StepOut,				MainFrame::OnDebugStepOut)
+	EVT_MENU(kDebug_Break,					MainFrame::OnDebugBreak)
+	EVT_MENU(kDebug_Continue,				MainFrame::OnDebugContinue)
+	EVT_MENU(kDebug_ToggleBreakpoint,		MainFrame::OnDebugToggleBreakpoint)
+	EVT_MENU(kDebug_ClearAllBreakpoints,	MainFrame::OnDebugClearAllBreakpoints)
+	EVT_MENU(kTools_DryCallstack,			MainFrame::OnToolsDryCallstack)
+	EVT_MENU(kTools_Options,				MainFrame::OnToolsOptions)
+	EVT_MENU(kHelp_JDB,						MainFrame::OnHelpJDB)
+	EVT_MENU(kHelp_GDB,						MainFrame::OnHelpGDB)
+	EVT_MENU(kHelp_PDB,						MainFrame::OnHelpPDB)
+	EVT_MENU(kHelp_About,					MainFrame::OnHelpAbout)
 	EVT_UPDATE_UI_RANGE(kFirstMenuId,
-						kLastMenuId,	MainFrame::OnUpdateUI)
-	EVT_IDLE(							MainFrame::OnIdle)
-	EVT_TIMER(kTimer_Idle,				MainFrame::OnTimerIdle)
-	EVT_CLOSE(							MainFrame::OnClose)
+						kLastMenuId,		MainFrame::OnUpdateUI)
+	EVT_IDLE(								MainFrame::OnIdle)
+	EVT_TIMER(kTimer_Idle,					MainFrame::OnTimerIdle)
+	EVT_CLOSE(								MainFrame::OnClose)
 END_EVENT_TABLE()
 
 
@@ -61,6 +63,8 @@ MainFrame::MainFrame()
 	, threads(NULL)
 	, watch(NULL)
 	, sourceEditorMode(kSource)
+	, debugger(NULL)
+	, waitingForResponse(true)
 {
 	SetClientSize(1280, 720);
 
@@ -96,32 +100,54 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 		activeProcessId = 0;
 		output->AppendText("\nProcess was terminated.\n");
 		input->Enable(false);
+
+		if (debugger)
+		{
+			delete debugger;
+			debugger = NULL;
+		}
+
+		breakpoints->ClearAllBreakpoints();
+		sourceEditor->StopDebugging();
+		sourceEditor->RemoveAllBreakpoints();
 	}
 }
 
 void MainFrame::OnOutputFromProcess(const wxString &message)
 {
 	output->AppendText(message);
+	if (debugger)
+		debugger->OnOutput(message);
+	waitingForResponse = false;
+	input->Enable(true);
 }
 
 void MainFrame::OnErrorFromProcess(const wxString &message)
 {
+	// ToDo: Change background color to red instead.
 	output->AppendText("\nError: ");
+
 	output->AppendText(message);
+	if (debugger)
+		debugger->OnError(message);
+	waitingForResponse = false;
+	input->Enable(true);
 }
 
 void MainFrame::SendCommand(const wxString &command)
 {
 	if (runningProcesses.GetCount())
 	{
+		input->Enable(false);
 		output->AppendText(command);
 		runningProcesses[0]->SendCommand(command);
+		waitingForResponse = true;
 	}
 }
 
-void MainFrame::UpdateSource(const wxString &fileName, unsigned line)
+void MainFrame::UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker)
 {
-	sourceEditor->Load(fileName, line);
+	sourceEditor->Load(fileName, line, moveDebugMarker);
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)
@@ -221,11 +247,33 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	// Get the command to run.
 	// ToDo...
 	wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
-		//"c:/code/orc4/engine/platform/windows/vs2012/output/objconverter.exe");
-		"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
-		//"c:/python33/python.exe -i");
+		//"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
+		"c:/python33/python.exe -i -m pdb C:/Code/python_test/raytracer.py");
 	if (command.empty())
 		return;
+
+	debugger = Debugger::Create(this);
+	if (!debugger)
+		return;
+	if (!debugger->Start())
+		return;
+
+	// Hide frames that aren't supported by this debugger.
+	const Debugger::Support &support = debugger->GetSupportedFeatures();
+	if (!support.breakpoints)
+		dockingManager.GetPane(breakpoints).Show(false);
+	if (!support.callstack)
+		dockingManager.GetPane(callstack).Show(false);
+	if (!support.registers)
+		dockingManager.GetPane(registers).Show(false);
+	if (!support.threads)
+		dockingManager.GetPane(threads).Show(false);
+	if (!support.watch)
+		dockingManager.GetPane(watch).Show(false);
+	if (!support.locals)
+		dockingManager.GetPane(locals).Show(false);
+	dockingManager.Update();
+
 
 	// Show wait cursor to indicate that we're working.
 	// Starting a process can take some time.
@@ -251,30 +299,78 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 
 void MainFrame::OnDebugStop(wxCommandEvent &event)
 {
+	if (debugger)
+		debugger->Stop();
 }
 
 void MainFrame::OnDebugStepIn(wxCommandEvent &event)
 {
+	if (debugger)
+		debugger->StepIn();
 }
 
 void MainFrame::OnDebugStepOver(wxCommandEvent &event)
 {
+	if (debugger)
+		debugger->StepOver();
 }
 
 void MainFrame::OnDebugStepOut(wxCommandEvent &event)
 {
+	if (debugger)
+		debugger->StepOut();
 }
 
 void MainFrame::OnDebugBreak(wxCommandEvent &event)
 {
+	if (debugger)
+		debugger->Break();
 }
 
 void MainFrame::OnDebugContinue(wxCommandEvent &event)
 {
+	if (debugger)
+		debugger->Continue();
 }
 
 void MainFrame::OnDebugToggleBreakpoint(wxCommandEvent &event)
 {
+	if (debugger)
+	{
+		wxString fileName = sourceEditor->GetCurrentFile();
+		unsigned line = (unsigned)std::max(sourceEditor->GetCurrentLine(), 0);
+
+		// GetCurrentLine is 0-based, while both scintilla and most debuggers are
+		// 1-based, so fix up that here.
+		++line;
+
+		Breakpoints::ToggleResult result = breakpoints->ToggleBreak(fileName, line);
+		switch (result)
+		{
+		case Breakpoints::kAdded:
+			debugger->AddBreakpoint(fileName, line);
+			sourceEditor->AddBreakpoint(line);		// Assume it's the current file.
+			break;
+
+		case Breakpoints::kRemoved:
+			debugger->RemoveBreakpoint(fileName, line);
+			sourceEditor->RemoveBreakpoint(line);	// Assume it's the current file.
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+void MainFrame::OnDebugClearAllBreakpoints(wxCommandEvent &event)
+{
+	if (debugger)
+	{
+		breakpoints->ClearAllBreakpoints();
+		debugger->ClearAllBreakpoints();
+		sourceEditor->RemoveAllBreakpoints();		// Assume it's the current file.
+	}
 }
 
 void MainFrame::OnToolsDryCallstack(wxCommandEvent &event)
@@ -342,13 +438,16 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 		break;
 
 	case kDebug_Stop:
+	case kDebug_Break:
+		event.Enable(activeProcessId != 0);
+		break;
+
 	case kDebug_StepIn:
 	case kDebug_StepOver:
 	case kDebug_StepOut:
-	case kDebug_Break:
 	case kDebug_Continue:
 	case kDebug_ToggleBreakpoint:
-		event.Enable(activeProcessId != 0);
+		event.Enable((activeProcessId != 0) && !waitingForResponse);
 		break;
 	}
 }
@@ -442,16 +541,17 @@ void MainFrame::SetupMenu()
 	menu = new wxMenu;
 	menu->Append(kDebug_Attach, "&Attach...");
 	menu->Append(kDebug_Start, "&Start...");
-	menu->Append(kDebug_Stop, "Sto&p");
+	menu->Append(kDebug_Stop, "Sto&p\tShift+F5");
 	menu->AppendSeparator();
-	menu->Append(kDebug_StepIn, "Step &In");
-	menu->Append(kDebug_StepOver, "Step &Over");
-	menu->Append(kDebug_StepOut, "Step Ou&t");
+	menu->Append(kDebug_StepIn, "Step &In\tF11");
+	menu->Append(kDebug_StepOver, "Step &Over\tF10");
+	menu->Append(kDebug_StepOut, "Step Ou&t\tShift+F11");
 	menu->AppendSeparator();
 	menu->Append(kDebug_Break, "&Break");
-	menu->Append(kDebug_Continue, "&Continue");
+	menu->Append(kDebug_Continue, "&Continue\tF5");
 	menu->AppendSeparator();
-	menu->Append(kDebug_ToggleBreakpoint, "Toggle &Breakpoint");
+	menu->Append(kDebug_ToggleBreakpoint, "Toggle &Breakpoint\tF9");
+	menu->Append(kDebug_ClearAllBreakpoints, "Clear All Breakpoints\tCtrl+Shift+F9");
 	menuBar->Append(menu, "&Debug");
 
 	menu = new wxMenu;
