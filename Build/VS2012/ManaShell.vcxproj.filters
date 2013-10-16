@@ -25,6 +25,9 @@
     <Filter Include="Source\GUI\Frames">
       <UniqueIdentifier>{e449af9b-32ca-45b2-b567-1b72375c949b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\GUI\Dialogs">
+      <UniqueIdentifier>{b9f066b8-1e08-45f6-8e7b-7dd23aa5cc71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\GUI\MainFrame.cpp">
@@ -68,6 +71,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Plugins\Debugger.cpp">
       <Filter>Source\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Plugins\JDB\JDB.cpp">
+      <Filter>Source\Plugins\JDB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Plugins\GDB\GDB.cpp">
+      <Filter>Source\Plugins\GDB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Dialogs\DebuggerDialog.cpp">
+      <Filter>Source\GUI\Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +132,15 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\Plugins\PDB\PDB.h">
       <Filter>Source\Plugins\PDB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Plugins\JDB\JDB.h">
+      <Filter>Source\Plugins\JDB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Plugins\GDB\GDB.h">
+      <Filter>Source\Plugins\GDB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Dialogs\DebuggerDialog.h">
+      <Filter>Source\GUI\Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\GUI\Dialogs\DebuggerDialog.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Breakpoints.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Callstack.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Input.cpp" />
@@ -168,6 +169,8 @@
     <ClCompile Include="..\..\Source\GUI\ManaShell.cpp" />
     <ClCompile Include="..\..\Source\GUI\PipedProcess.cpp" />
     <ClCompile Include="..\..\Source\Plugins\Debugger.cpp" />
+    <ClCompile Include="..\..\Source\Plugins\GDB\GDB.cpp" />
+    <ClCompile Include="..\..\Source\Plugins\JDB\JDB.cpp" />
     <ClCompile Include="..\..\Source\Plugins\PDB\PDB.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +178,7 @@
     <Text Include="..\..\Docs\ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\GUI\Dialogs\DebuggerDialog.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Breakpoints.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Callstack.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Input.h" />
@@ -188,6 +192,8 @@
     <ClInclude Include="..\..\Source\GUI\ManaShell.h" />
     <ClInclude Include="..\..\Source\GUI\PipedProcess.h" />
     <ClInclude Include="..\..\Source\Plugins\Debugger.h" />
+    <ClInclude Include="..\..\Source\Plugins\GDB\GDB.h" />
+    <ClInclude Include="..\..\Source\Plugins\JDB\JDB.h" />
     <ClInclude Include="..\..\Source\Plugins\PDB\PDB.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

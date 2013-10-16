@@ -1,8 +1,9 @@
 #ifndef DEBUGGER_H
 #define DEBUGGER_H
 
+#include "wx/wx.h"
+
 class MainFrame;
-class wxString;
 
 class Debugger
 {
@@ -42,9 +43,12 @@ public:
 
 	const Support &GetSupportedFeatures()			{ return support; }
 
+	const wxString &GetCommand() const				{ return command; }
+
 
 protected:
-	Support	support;
+	Support		support;
+	wxString	command;
 
 
 	Debugger(MainFrame *host)						{ }

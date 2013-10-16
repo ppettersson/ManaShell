@@ -51,7 +51,7 @@ END_EVENT_TABLE()
 
 
 MainFrame::MainFrame()
-	: wxFrame(NULL, wxID_ANY, "ManaShell [alpha version]")
+	: wxFrame(NULL, wxID_ANY, "ManaShell [alpha]")
 	, activeProcessId(0)
 	, idleWakeUpTimer(this, kTimer_Idle)
 	, breakpoints(NULL)
@@ -246,15 +246,18 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 
 	// Get the command to run.
 	// ToDo...
-	wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
-		//"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
-		"c:/python33/python.exe -i -m pdb C:/Code/python_test/raytracer.py");
-	if (command.empty())
-		return;
+	//wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
+	//	//"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
+	//	"c:/python33/python.exe -i -m pdb C:/Code/python_test/raytracer.py");
+	//if (command.empty())
+	//	return;
 
+	// Show a UI to let the user pick one of the debugger plugins
+	// and the options to run.
 	debugger = Debugger::Create(this);
 	if (!debugger)
 		return;
+
 	if (!debugger->Start())
 		return;
 
@@ -284,7 +287,7 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 
 	// Run the command and attach to the input and output.
 	PipedProcess *process = new PipedProcess(this);
-	activeProcessId = wxExecute(command, wxEXEC_ASYNC, process);
+	activeProcessId = wxExecute(debugger->GetCommand(), wxEXEC_ASYNC, process);
 	if (!activeProcessId)
 	{
 		wxMessageBox("Failed to start the debugger", "Error");
