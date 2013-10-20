@@ -11,6 +11,8 @@
 #include "MainFrame.h"
 #include "PipedProcess.h"
 #include "wx/utils.h"
+#include <algorithm>
+
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kFile_Exit,					MainFrame::OnFileExit)

@@ -1,10 +1,33 @@
-* Linux
+This program depends on wxWidgets. It should work with the latest version, but
+to minimize compatibility problems you can get the version that was used for
+development here:
 
 	git clone https://github.com/ppettersson/wxWidgets.git
 	cd wxWidgets
-	mkdir build-debug ; cd build-debug ; ../configure --enable-debug --with-gtk --enable-unicode --disable-shared ; make -j8 ; cd ..
-	mkdir build-release ; cd build-release ; ../configure --with-gtk --enable-unicode --disable-shared ; make -j8
-	export WXWIDGETS=/home/name/code/wxWidgets
+	git checkout ppettersson.0
 
-	cd /home/name/code/ManaShell/Build/gcc
+That branch has some minor fixes to the project file when using Visual Studio
+but it otherwise unmodified.
+
+
+* Linux
+
+	mkdir build-debug ; cd build-debug ; ../configure --enable-debug --with-gtk --enable-unicode --disable-shared ; make -j8 ; cd ..
+	mkdir build-release ; cd build-release ; ../configure --with-gtk --enable-unicode --disable-shared ; make -j8 ; cd ..
+	export WXWIDGETS=/full/path/to/wxWidgets
+
+	cd ManaShell/Build/gcc
 	make -j8
+
+
+* Windows (VS2013)
+
+	Open wxWidgets/build/msw/wx_vc10.sln and build the combinations you'll use:
+		Debug|Release, Win32|x64
+
+	Set the following environment variable:
+		WXWIDGETS	c:\full\path\to\wxWidgets
+
+	Restart Visual Studio for it to pick up the new environment variable.
+
+	Open ManaShell/Build/VS2013/ManaShell.sln and build.
