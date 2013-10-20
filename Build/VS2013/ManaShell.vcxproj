@@ -85,7 +85,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>__WXMSW__;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/mswud;$(WXWIDGETS)/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS)\lib\vc_lib\$(PlatformName)\mswud;$(WXWIDGETS)\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -102,7 +102,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>__WXMSW__;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/mswud;$(WXWIDGETS)/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS)\lib\vc_lib\$(PlatformName)\mswud;$(WXWIDGETS)\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -121,7 +121,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>__WXMSW__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/mswu;$(WXWIDGETS)/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS)\lib\vc_lib\$(PlatformName)\mswu;$(WXWIDGETS)\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -142,7 +142,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>__WXMSW__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WXWIDGETS)/lib/vc_lib/$(PlatformName)/mswu;$(WXWIDGETS)/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIDGETS)\lib\vc_lib\$(PlatformName)\mswu;$(WXWIDGETS)\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
