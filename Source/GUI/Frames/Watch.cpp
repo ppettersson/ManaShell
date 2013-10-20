@@ -1,7 +1,7 @@
 #include "Watch.h"
 
 Watch::Watch(wxWindow *parent)
-	: wxGrid(parent, wxID_ANY)
+	: wxGrid(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 200))
 	, numVariables(0)
 {
 	CreateGrid(0, 3);

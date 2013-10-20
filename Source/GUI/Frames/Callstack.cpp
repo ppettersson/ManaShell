@@ -10,7 +10,7 @@ END_EVENT_TABLE()
 
 
 Callstack::Callstack(MainFrame *parent)
-	: wxListBox(parent, wxID_ANY)
+	: wxListBox(parent, wxID_ANY, wxDefaultPosition, wxSize(200, -1))
 	, host(parent)
 {
 }

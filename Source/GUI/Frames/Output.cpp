@@ -2,7 +2,7 @@
 
 Output::Output(wxWindow *parent)
 	: wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition,
-				 wxDefaultSize, wxNO_BORDER | wxTE_MULTILINE |
+				 wxSize(400, -1), wxNO_BORDER | wxTE_MULTILINE |
 				 wxTE_READONLY)
 {
 	SetFont(wxFont(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
