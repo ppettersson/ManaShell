@@ -13,6 +13,13 @@ PDB::PDB(MainFrame *h)
 	support.threads		= false;
 	support.watch		= true;
 	support.locals		= false;
+
+#ifdef __WXMSW__
+	executable			= "C:\\python33\\python.exe";
+#else
+	executable			= "python";
+#endif
+	script				= "script.py";
 }
 
 PDB::~PDB()
@@ -93,6 +100,18 @@ void PDB::OnError(const wxString &message)
 {
 	if (quitting)
 		host->SendCommand("quit()\n");
+}
+
+wxString PDB::GetCommand() const
+{
+	if (useCustomCommand)
+		return customCommand;
+
+	wxString result = executable;
+	result += " -i -m pdb ";
+	result += script;
+	// ToDo: arguments?
+	return result;
 }
 
 void PDB::ParseUpdateSource(const wxString &message)

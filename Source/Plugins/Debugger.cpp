@@ -5,17 +5,30 @@
 
 Debugger *Debugger::Create(MainFrame *host)
 {
-	wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
-		//"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
-		"c:/python33/python.exe -i -m pdb C:/Code/python_test/raytracer.py");
-	if (command.empty())
-		return NULL;
+	std::vector<Debugger *> debuggers;
+	//debuggers.push_back(new GDB(host));
+	//debuggers.push_back(new JDB(host));
+	debuggers.push_back(new PDB(host));
+	debuggers.push_back(new Debugger(host));
 
-	Debugger *debugger = new PDB(host);
-	debugger->command = command;
-	return debugger;
+	DebuggerDialog dialog(host, debuggers);
+	if (wxID_OK == dialog.ShowModal())
+		return dialog.GetDebugger();
 
-	//DebuggerDialog dialog(host);
-	//int result = dialog.ShowModal();
-	//return NULL;
+	return NULL;
+}
+
+// Build up the full command from the current executable, script and
+// parameters with any extra glue that is necessary.
+wxString Debugger::GetCommand() const
+{
+	if (useCustomCommand)
+		return customCommand;
+
+	wxString result = executable;
+	result += " ";
+	result += script;
+	result += " ";
+	result += arguments;
+	return result;
 }

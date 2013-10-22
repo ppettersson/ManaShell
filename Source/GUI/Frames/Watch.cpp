@@ -13,10 +13,8 @@ Watch::Watch(wxWindow *parent)
 	SetColLabelValue(2, "Type");
 	SetDefaultColSize(160);
 
-	// tmp
-	AddVariable("my_variable", "10", "int");
-	AddVariable("foo", "0xdeadbeef", "void *");
-	AddVariable("bar", "\"this is a string\"", "char *");
+	// There will always be one empty cell.
+	AddVariable("", "", "");
 }
 
 Watch::~Watch()

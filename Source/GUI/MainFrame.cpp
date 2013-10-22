@@ -68,12 +68,13 @@ MainFrame::MainFrame()
 	, debugger(NULL)
 	, waitingForResponse(true)
 {
-	SetClientSize(1280, 720);
+	SetClientSize(1600, 900);
 
 	SetupMenu();
 	SetupInitialView();
 
 	Show();
+	Center();
 }
 
 MainFrame::~MainFrame()

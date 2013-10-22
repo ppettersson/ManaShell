@@ -1,146 +1,155 @@
+#include "../../Plugins/Debugger.h"
 #include "DebuggerDialog.h"
 #include "wx/valgen.h"
 #include "wx/valnum.h"
 #include "wx/valtext.h"
-
-IMPLEMENT_CLASS(DebuggerDialog, wxDialog)
+#include "wx/statline.h"
 
 BEGIN_EVENT_TABLE(DebuggerDialog, wxDialog)
 	EVT_UPDATE_UI(wxID_OK, DebuggerDialog::OnUpdateUI)
 END_EVENT_TABLE()
 
 
-DebuggerDialog::DebuggerDialog(wxWindow *parent)
-	: wxDialog(parent, wxID_ANY, "Select Debugger Plugin", wxDefaultPosition, wxDefaultSize,
-				wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxTAB_TRAVERSAL)
+DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
+	: wxDialog(parent, wxID_ANY, "Select Debugger Plugin", wxDefaultPosition,
+			   wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	, debuggers(d)
 {
+	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	SetDefaults();
 
 	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
-	SetSizer(topSizer);
-
-	topSizer->Add(CreateTab(this), 1, wxGROW | wxALL, 5);
-	topSizer->SetSizeHints(this);
-}
-
-wxPanel *DebuggerDialog::CreateTab(wxWindow *parent)
-{
-	wxPanel *panel = new wxPanel(this);
-
-	wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
-	panel->SetSizer(verticalSizer);
 	{
-		int spacing = wxLEFT | wxRIGHT | wxUP;
+		wxArrayString debuggerNames;
+		for (auto i = debuggers.begin(); i != debuggers.end(); ++i)
+			debuggerNames.Add((*i)->GetName());
+		debuggerControl = new wxChoice(this, kDebuggerId, wxDefaultPosition, wxDefaultSize, debuggerNames);
+		debuggerControl->SetValidator(wxGenericValidator(&debugger));
+		debuggerControl->Bind(wxEVT_CHOICE, &DebuggerDialog::OnDebugger, this);
+		topSizer->Add(debuggerControl, 0, wxGROW | wxALL, 5);
 
-		wxChoice *debuggerPlugin = new wxChoice(panel, kDebuggerId);
-		debuggerPlugin->Append("Python");
-		debuggerPlugin->Append("Custom");
-		debuggerPlugin->Select(0);
-		debuggerPlugin->SetValidator(wxGenericValidator(&debugger));
-		debuggerPlugin->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &DebuggerDialog::OnDebugger, this);
-		verticalSizer->Add(debuggerPlugin, 1, wxGROW | spacing, 5);
-
-		wxBoxSizer *executableSizer = new wxBoxSizer(wxHORIZONTAL);
-		verticalSizer->Add(executableSizer, 1, wxGROW | spacing, 5);
+		wxStaticBoxSizer *parametersSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Parameters:"), wxVERTICAL);
+		topSizer->Add(parametersSizer, 0, wxGROW | wxALL, 5);
 		{
-			wxStaticText *description = new wxStaticText(panel, wxID_STATIC, "Executable:");
-			executableSizer->Add(description, 0, wxALIGN_CENTER_VERTICAL | spacing, 5);
+			wxBoxSizer *executableSizer = new wxBoxSizer(wxHORIZONTAL);
+			parametersSizer->Add(executableSizer, 0, wxGROW | wxALL, 5);
+			{
+				wxStaticText *itemStaticText6 = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Executable:");
+				executableSizer->Add(itemStaticText6, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
-			executableControl = new wxTextCtrl(panel, kExecutableId);
-			executableControl->SetValidator(wxGenericValidator(&executable));
-			executableControl->SetValue(executable);
-			executableControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
-			executableSizer->Add(executableControl, 1, wxGROW | spacing, 5);
+				executableControl = new wxTextCtrl(parametersSizer->GetStaticBox(), kExecutableId);
+				executableControl->SetValidator(wxTextValidator(wxFILTER_NONE, &executable));
+				executableControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
+				executableSizer->Add(executableControl, 1, wxGROW | wxALL, 5);
 
-			executableBrowse = new wxButton(panel, kExecutableBrowseId, "...");
-			executableBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DebuggerDialog::OnBrowse, this);
-			executableSizer->Add(executableBrowse, 0, wxALIGN_CENTER_VERTICAL | spacing, 5);
+				executableBrowse = new wxButton(parametersSizer->GetStaticBox(), kExecutableBrowseId, "...");
+				executableBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DebuggerDialog::OnBrowse, this);
+				executableSizer->Add(executableBrowse, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+			}
+
+			wxBoxSizer *scriptSizer = new wxBoxSizer(wxHORIZONTAL);
+			parametersSizer->Add(scriptSizer, 0, wxGROW | wxALL, 5);
+			{
+				wxStaticText *itemStaticText10 = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Script:");
+				scriptSizer->Add(itemStaticText10, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+				scriptControl = new wxTextCtrl(parametersSizer->GetStaticBox(), kScriptId);
+				scriptControl->SetValidator(wxTextValidator(wxFILTER_NONE, &script));
+				scriptControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
+				scriptSizer->Add(scriptControl, 1, wxGROW | wxALL, 5);
+
+				scriptBrowse = new wxButton(parametersSizer->GetStaticBox(), kScriptBrowseId, "...");
+				scriptBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DebuggerDialog::OnBrowse, this);
+				scriptSizer->Add(scriptBrowse, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+			}
+
+			wxBoxSizer *argumentsSizer = new wxBoxSizer(wxHORIZONTAL);
+			parametersSizer->Add(argumentsSizer, 0, wxGROW | wxALL, 5);
+			{
+				wxStaticText *description = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Arguments:");
+				argumentsSizer->Add(description, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+				argumentsControl = new wxTextCtrl(parametersSizer->GetStaticBox(), kArgumentsId);
+				argumentsControl->SetValidator(wxTextValidator(wxFILTER_NONE, &arguments));
+				argumentsControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
+				argumentsSizer->Add(argumentsControl, 1, wxGROW | wxALL, 5);
+			}
 		}
 
-		wxBoxSizer *scriptSizer = new wxBoxSizer(wxHORIZONTAL);
-		verticalSizer->Add(scriptSizer, 1, wxGROW | spacing, 5);
+		wxStaticBoxSizer *commandSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Command:"), wxHORIZONTAL);
+		topSizer->Add(commandSizer, 0, wxGROW | wxALL, 5);
 		{
-			wxStaticText *description = new wxStaticText(panel, wxID_STATIC, "Script to debug:");
-			scriptSizer->Add(description, 0, wxALIGN_CENTER_VERTICAL | spacing, 5);
+			customControl = new wxCheckBox(commandSizer->GetStaticBox(), kCustomId, "Custom");
+			customControl->SetValidator(wxGenericValidator(&custom));
+			customControl->Bind(wxEVT_CHECKBOX, &DebuggerDialog::OnCustomChanged, this);
+			commandSizer->Add(customControl, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
-			scriptControl = new wxTextCtrl(panel, kScriptId);
-			scriptControl->SetValidator(wxGenericValidator(&script));
-			scriptControl->SetValue(script);
-			scriptControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
-			scriptSizer->Add(scriptControl, 1, wxGROW | spacing, 5);
-
-			scriptBrowse = new wxButton(panel, kScriptBrowseId, "...");
-			scriptBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DebuggerDialog::OnBrowse, this);
-			scriptSizer->Add(scriptBrowse, 0, wxALIGN_CENTER_VERTICAL | spacing, 5);
-		}
-
-		wxBoxSizer *argumentsSizer = new wxBoxSizer(wxHORIZONTAL);
-		verticalSizer->Add(argumentsSizer, 1, wxGROW | spacing, 5);
-		{
-			wxStaticText *description = new wxStaticText(panel, wxID_STATIC, "Arguments to script:");
-			argumentsSizer->Add(description, 0, wxALIGN_CENTER_VERTICAL | spacing, 5);
-
-			argumentsControl = new wxTextCtrl(panel, kArgumentsId);
-			argumentsControl->SetValidator(wxGenericValidator(&arguments));
-			argumentsControl->SetValue(arguments);
-			argumentsControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
-			argumentsSizer->Add(argumentsControl, 1, wxGROW | spacing, 5);
-		}
-
-		wxBoxSizer *commandSizer = new wxBoxSizer(wxHORIZONTAL);
-		verticalSizer->Add(commandSizer, 1, wxGROW | spacing, 5);
-		{
-			wxCheckBox *check = new wxCheckBox(panel, kCustomId, "Custom");
-			check->SetValidator(wxGenericValidator(&custom));
-			check->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &DebuggerDialog::OnCustomChanged, this);
-			commandSizer->Add(check, 0, wxALIGN_CENTER_VERTICAL | spacing, 5);
-
-			commandControl = new wxTextCtrl(panel, kCommandId);
-			commandControl->SetValidator(wxGenericValidator(&command));
+			commandControl = new wxTextCtrl(commandSizer->GetStaticBox(), kCommandId);
 			commandControl->Enable(false);
-			commandControl->SetValue(command);
+			commandControl->SetValidator(wxTextValidator(wxFILTER_NONE, &command));
 			commandControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
-			commandSizer->Add(commandControl, 1, wxGROW | spacing, 5);
+			commandSizer->Add(commandControl, 1, wxGROW | wxALL, 5);
 		}
 
-		verticalSizer->AddSpacer(15);
+		topSizer->Add(5, 5, 1, wxGROW | wxALL, 5);
 
-		wxButton *run = new wxButton(panel, wxID_OK, "Run");
-		verticalSizer->Add(run, 0, wxALIGN_RIGHT | wxALL, 5);
+		wxButton *okControl = new wxButton(this, wxID_OK, "OK");
+		okControl->SetDefault();
+		topSizer->Add(okControl, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
 	}
 
-	return panel;
+	topSizer->SetMinSize(wxSize(600, -1));
+	SetSizerAndFit(topSizer);
+	Center();
+}
+
+DebuggerDialog::~DebuggerDialog()
+{
+}
+
+Debugger *DebuggerDialog::GetDebugger()
+{
+	// Delete the ones that aren't going to be used.
+	Debugger *result = debuggers[debugger];
+	for (size_t i = 0; i < debuggers.size(); ++i)
+		if (i != debugger)
+			delete debuggers[i];
+	debuggers.clear();
+
+	return result;
 }
 
 void DebuggerDialog::SetDefaults()
 {
-	debugger	= kPython;
-	executable	= wxEmptyString;
-	script		= wxEmptyString;
-	arguments	= wxEmptyString;
+	debugger	= 0;
+	arguments	= "";
 	custom		= false;
 
-	switch (debugger)
+	if (debugger < debuggers.size())
 	{
-	case kPython:
-		executable	= "python";
-		script		= "script.py";
-		break;
-	}
+		Debugger *plugin = debuggers[debugger];
 
-	UpdateCommand();
+		executable	= plugin->GetExecutable();
+		script		= plugin->GetScript();
+		command		= plugin->GetCommand();
+	}
 }
 
 void DebuggerDialog::UpdateCommand()
 {
-	switch (debugger)
+	if (debugger < debuggers.size())
 	{
-	case kPython:
-		command = executable;
-		command += " -i -m pdb ";
-		command += script;
-		break;
-	};
+		Debugger *plugin = debuggers[debugger];
+
+		plugin->SetExecutable(executable);
+		plugin->SetScript(script);
+		plugin->SetArguments(arguments);
+		plugin->SetUseCustomCommand(custom);
+		if (custom)
+			plugin->SetCustomCommand(command);
+
+		command = plugin->GetCommand();
+	}
 }
 
 void DebuggerDialog::OnBrowse(wxCommandEvent &event)
@@ -151,16 +160,39 @@ void DebuggerDialog::OnBrowse(wxCommandEvent &event)
 
 	// If the dialog was cancelled then this is empty.
 	if (!result.IsEmpty())
+	{
+		bool update = false;
+
 		switch (event.GetId())
 		{
-		case kExecutableBrowseId:	executableControl->SetValue(result);	break;
-		case kScriptBrowseId:		scriptControl->SetValue(result);		break;
+		case kExecutableBrowseId:
+			executable = result;
+			update = true;
+			break;
+
+		case kScriptBrowseId:
+			script = result;
+			update = true;
+			break;
 		}
+
+		if (update)
+		{
+			UpdateCommand();
+			TransferDataToWindow();
+		}
+	}
 }
 
 void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 {
-	bool custom = event.IsChecked();
+	custom = event.IsChecked();
+
+	if (debugger < debuggers.size())
+	{
+		Debugger *plugin = debuggers[debugger];
+		plugin->SetUseCustomCommand(custom);
+	}
 
 	executableControl->Enable(!custom);
 	executableBrowse->Enable(!custom);
@@ -173,42 +205,83 @@ void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 	if (!custom)
 	{
 		UpdateCommand();
-		commandControl->SetValue(command);
+		TransferDataToWindow();
 	}
 }
 
 void DebuggerDialog::OnDebugger(wxCommandEvent &event)
 {
+	if (event.GetInt() != debugger)
+	{
+		Debugger *plugin = debuggers[debugger];
+
+		plugin->SetExecutable(executable);
+		plugin->SetScript(script);
+		plugin->SetArguments(arguments);
+		plugin->SetUseCustomCommand(custom);
+		if (custom)
+			plugin->SetCustomCommand(command);
+
+		debugger	= event.GetInt();
+		plugin		= debuggers[debugger];
+
+		executable	= plugin->GetExecutable();
+		script		= plugin->GetScript();
+		arguments	= plugin->GetArguments();
+
+		wxCommandEvent dummy;
+		dummy.SetInt(0);
+		OnCustomChanged(dummy);
+
+		TransferDataToWindow();
+	}
 }
 
 void DebuggerDialog::OnLostFocus(wxFocusEvent &event)
 {
+	bool update = false;
+
 	switch (event.GetId())
 	{
 	case kExecutableId:
+		executable = executableControl->GetValue();
+		update = true;
+		break;
+
 	case kScriptId:
+		script = scriptControl->GetValue();
+		update = true;
+		break;
+
 	case kArgumentsId:
-		UpdateCommand();
-		commandControl->SetValue(command);
+		arguments = argumentsControl->GetValue();
+		update = true;
+		break;
+
+	case kCommandId:
+		command = commandControl->GetValue();
+		update = true;
 		break;
 	}
+
+	if (update)
+	{
+		UpdateCommand();
+		TransferDataToWindow();
+	}
+
+	event.Skip();
 }
 
 void DebuggerDialog::OnUpdateUI(wxUpdateUIEvent &event)
 {
-	if (event.GetId() == wxID_OK)
+	switch (event.GetId())
 	{
-		bool enable = false;
-		switch (debugger)
-		{
-		case kPython:
-			if (custom)
-				enable = !commandControl->GetValue().IsEmpty();
-			else
-				enable = !executableControl->GetValue().IsEmpty() &&
-						 !scriptControl->GetValue().IsEmpty();
-			break;
-		}
-		event.Enable(enable);
+	case wxID_OK:
+		if (custom)
+			event.Enable(!commandControl->GetValue().IsEmpty());
+		else
+			event.Enable(!executableControl->GetValue().IsEmpty() && !scriptControl->GetValue().IsEmpty());
+		break;
 	}
 }

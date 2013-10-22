@@ -74,6 +74,7 @@
 
 			- Fix initial sizes and positions of frames.
 				- will probably have to be tweaked per OS.
+				- Input should only be one line high.
 
 			- Highlight current line in the source editor.
 			- Keyboard shortcuts.

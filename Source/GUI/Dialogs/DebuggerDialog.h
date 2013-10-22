@@ -2,23 +2,17 @@
 #define DEBUGGER_DIALOG_H
 
 #include "wx/wx.h"
+#include <vector>
+
+class Debugger;
 
 class DebuggerDialog : public wxDialog
 {
 public:
-	enum Debugger
-	{
-		kPython,
-		kCustom
-	};
+	DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &debuggers);
+	virtual ~DebuggerDialog();
 
-
-	DebuggerDialog(wxWindow *parent);
-
-
-	Debugger GetDebugger() const			{ return (Debugger)debugger; }
-	const wxString &GetCommand() const		{ return command; }
-
+	Debugger *GetDebugger();
 
 private:
 	enum Constants
@@ -33,23 +27,25 @@ private:
 		kCommandId
 	};
 
+	wxChoice				*debuggerControl;
+	wxTextCtrl				*executableControl;
+	wxButton				*executableBrowse;
+	wxTextCtrl				*scriptControl;
+	wxButton				*scriptBrowse;
+	wxTextCtrl				*argumentsControl;
+	wxCheckBox				*customControl;
+	wxTextCtrl				*commandControl;
 
-	int			debugger;
-	wxString	executable,
-				script,
-				arguments,
-				command;
-	bool		custom;
+	int						debugger;
+	wxString				executable,
+							script,
+							arguments,
+							command;
+	bool					custom;
 
-	wxTextCtrl	*executableControl,
-				*scriptControl,
-				*argumentsControl,
-				*commandControl;
-	wxButton	*executableBrowse,
-				*scriptBrowse;
+	std::vector<Debugger *>	debuggers;
 
 
-	wxPanel *CreateTab(wxWindow *parent);
 	void SetDefaults();
 	void UpdateCommand();
 
@@ -60,8 +56,8 @@ private:
 	void OnUpdateUI(wxUpdateUIEvent &event);
 
 
-	DECLARE_CLASS(DebuggerDialog)
 	DECLARE_EVENT_TABLE()
+	wxDECLARE_NO_COPY_CLASS(DebuggerDialog);
 };
 
 #endif // DEBUGGER_DIALOG_H
