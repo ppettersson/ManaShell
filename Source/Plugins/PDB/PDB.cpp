@@ -108,9 +108,17 @@ wxString PDB::GetCommand() const
 		return customCommand;
 
 	wxString result = executable;
-	result += " -i -m pdb ";
-	result += script;
-	// ToDo: arguments?
+	result += " -i -m pdb";
+	if (!script.IsEmpty())
+	{
+		result += " ";
+		result += script;
+	}
+	if (!arguments.IsEmpty())
+	{
+		result += " ";
+		result += arguments;
+	}
 	return result;
 }
 
