@@ -64,6 +64,7 @@ void PDB::StepOut()
 void PDB::Break()
 {
 	// SIGINT?
+	host->SendInterrupt();
 }
 
 void PDB::Continue()

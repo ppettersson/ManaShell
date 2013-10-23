@@ -34,6 +34,7 @@ public:
 	void OnErrorFromProcess(const wxString &message);
 
 	void SendCommand(const wxString &command);
+	void SendInterrupt();
 	void UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker = true);
 
 

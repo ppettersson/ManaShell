@@ -148,6 +148,15 @@ void MainFrame::SendCommand(const wxString &command)
 	}
 }
 
+void MainFrame::SendInterrupt()
+{
+	//if (runningProcesses.GetCount())
+	//{
+	//	wxProcess::Kill(runningProcesses[0]->GetPid(), wxSIGINT);
+	//	waitingForResponse = true;
+	//}
+}
+
 void MainFrame::UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker)
 {
 	sourceEditor->Load(fileName, line, moveDebugMarker);
@@ -444,8 +453,11 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 		break;
 
 	case kDebug_Stop:
-	case kDebug_Break:
 		event.Enable(activeProcessId != 0);
+		break;
+
+	case kDebug_Break:
+		event.Enable((activeProcessId != 0) && waitingForResponse);
 		break;
 
 	case kDebug_StepIn:
@@ -453,6 +465,7 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	case kDebug_StepOut:
 	case kDebug_Continue:
 	case kDebug_ToggleBreakpoint:
+	case kDebug_ClearAllBreakpoints:
 		event.Enable((activeProcessId != 0) && !waitingForResponse);
 		break;
 	}

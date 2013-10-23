@@ -47,6 +47,9 @@
 			run
 			c / continue		(update callstack)
 			SIGINT
+				http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
+				http://forums.wxwidgets.org/viewtopic.php?t=35304&p=144458
+				http://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/dc9586ab-1ee8-41aa-a775-cf4828ac1239/how-to-send-ctrlc-signal-to-detached-commandline-process?forum=windowsgeneraldevelopmentissues
 			q / quit
 
 			input:
