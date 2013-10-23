@@ -37,6 +37,8 @@ public:
 	void SendInterrupt();
 	void UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker = true);
 
+	Callstack *GetCallstack()			{ return callstack; }
+
 
 private:
 	enum Constants

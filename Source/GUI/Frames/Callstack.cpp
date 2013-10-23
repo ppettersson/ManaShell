@@ -35,6 +35,18 @@ void Callstack::PopFrame()
 	frames.pop_back();
 }
 
+void Callstack::UpdateFrame(unsigned line)
+{
+	Frame &frame = frames.back();
+	frame.line = line;
+}
+
+const wxString &Callstack::CurrentFrame() const
+{
+	const Frame &frame = frames.back();
+	return frame.description;
+}
+
 bool Callstack::Load(const wxString &fileName)
 {
 	wxTextFile file;

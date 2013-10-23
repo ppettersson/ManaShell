@@ -3,6 +3,8 @@
 
 #include "../Debugger.h"
 
+class wxStringTokenizer;
+
 class PDB : public Debugger
 {
 public:
@@ -42,11 +44,41 @@ public:
 
 
 private:
-	MainFrame	*host;
-	bool		quitting;
+	enum ExpectedOutput
+	{
+		kBreakpoint,	// Expecting an update about current breakpoints.
+		kFullRefresh,	// Completely lost, need to know everything.
+		kUnknown,		// Uninitialized state, do nothing.
+		kStepping,		// Update the callstack interactively.
+		kQuitting		// About to terminate the debugger.
+	};
 
 
-	void ParseUpdateSource(const wxString &message);
+	// Access to the GUI and process handler.
+	MainFrame		*host;
+
+	// We parse the output depending on the last command we sent to the
+	// debugger.
+	ExpectedOutput	expectedOutput;
+
+	// This is used to track the current stack frame. It's used to detect when
+	// we should request a full stack.
+	wxString		currentFrame;
+
+	// This flag means that when the current stack frame changes then we should
+	// expect it to be a pop instead of a push.
+	bool			returningFromCall;
+
+
+	void ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);
+	void ParseFullRefreshOutput(wxStringTokenizer &lineTokenizer);
+	void ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+
+	void PushStackFrame(const wxString &frame, const wxString &fileName, unsigned lineNr);
+	void PopStackFrame();
+	void UpdateStackFrame(unsigned lineNr);
+
+	void UpdateWatchedExpressions();
 };
 
 #endif // PDB_H
