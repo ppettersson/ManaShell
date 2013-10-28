@@ -15,6 +15,7 @@ public:
 	void PushFrame(const wxString &description, const wxString &fileName, unsigned line);
 	void PopFrame();
 	void UpdateFrame(unsigned line);
+	void ClearAllFrames();
 
 	bool Load(const wxString &fileName);
 

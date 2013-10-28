@@ -29,8 +29,8 @@ public:
 	virtual void RemoveBreakpoint(const wxString &fileName, unsigned line);
 	virtual void ClearAllBreakpoints();
 
-	virtual void OnOutput(const wxString &message);
-	virtual void OnError(const wxString &message);
+	virtual bool OnOutput(const wxString &message);
+	virtual bool OnError(const wxString &message);
 
 
 	// -- User interface ------------------------------------------------------
@@ -47,7 +47,7 @@ private:
 	enum ExpectedOutput
 	{
 		kBreakpoint,	// Expecting an update about current breakpoints.
-		kFullRefresh,	// Completely lost, need to know everything.
+		kCallstack,		// Parse the full callstack.
 		kUnknown,		// Uninitialized state, do nothing.
 		kStepping,		// Update the callstack interactively.
 		kQuitting		// About to terminate the debugger.
@@ -69,10 +69,14 @@ private:
 	// expect it to be a pop instead of a push.
 	bool			returningFromCall;
 
+	// Immediately get the full callstack.
+	bool			getFullCallstack;
+
 
 	void ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);
-	void ParseFullRefreshOutput(wxStringTokenizer &lineTokenizer);
+	void ParseCallstackOutput(wxStringTokenizer &lineTokenizer);
 	void ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
 
 	void PushStackFrame(const wxString &frame, const wxString &fileName, unsigned lineNr);
 	void PopStackFrame();

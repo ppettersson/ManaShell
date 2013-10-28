@@ -41,6 +41,12 @@ void Callstack::UpdateFrame(unsigned line)
 	frame.line = line;
 }
 
+void Callstack::ClearAllFrames()
+{
+	Clear();
+	frames.clear();
+}
+
 const wxString &Callstack::CurrentFrame() const
 {
 	const Frame &frame = frames.back();

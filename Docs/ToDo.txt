@@ -55,6 +55,7 @@
 			input:
 				- parse the message and match against any backtrace etc
 				  that we can pick up for free.
+				- good workaround to reset the UI when the state gets messes up.
 
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/

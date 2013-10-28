@@ -8,6 +8,7 @@ PDB::PDB(MainFrame *h)
 	, host(h)
 	, expectedOutput(kUnknown)
 	, returningFromCall(false)
+	, getFullCallstack(false)
 {
 	support.breakpoints	= true;
 	support.callstack	= true;
@@ -35,7 +36,8 @@ bool PDB::Attach()
 
 bool PDB::Start()
 {
-	expectedOutput = kStepping;	// kFullRefresh?
+	expectedOutput		= kStepping;
+	getFullCallstack	= true;
 	return true;
 }
 
@@ -71,14 +73,16 @@ void PDB::Break()
 {
 	// SIGINT?
 	host->SendInterrupt();
-	expectedOutput = kFullRefresh;
+	expectedOutput		= kStepping;
+	getFullCallstack	= true;
 }
 
 void PDB::Continue()
 {
 	// Short hand for "continue".
 	host->SendCommand("c\n");
-	expectedOutput = kFullRefresh;
+	expectedOutput		= kStepping;
+	getFullCallstack	= true;
 }
 
 void PDB::AddBreakpoint(const wxString &fileName, unsigned line)
@@ -103,7 +107,7 @@ void PDB::ClearAllBreakpoints()
 	expectedOutput = kBreakpoint;
 }
 
-void PDB::OnOutput(const wxString &message)
+bool PDB::OnOutput(const wxString &message)
 {
 	// Break apart the message into lines.
 	// Note that we match against any kind of line ending found on Linux, Mac and
@@ -114,15 +118,27 @@ void PDB::OnOutput(const wxString &message)
 	switch (expectedOutput)
 	{
 	case kBreakpoint:	ParseBreakpointOutput(lineTokenizer);	break;
-	case kFullRefresh:	ParseFullRefreshOutput(lineTokenizer);	break;
+	case kCallstack:	ParseCallstackOutput(lineTokenizer);	break;
 	case kStepping:		ParseSteppingOutput(lineTokenizer);		break;
 	}
+
+	if (getFullCallstack)
+	{
+		host->SendCommand(wxString::Format("w\n"));
+		expectedOutput		= kCallstack;
+		getFullCallstack	= false;
+		return true;
+	}
+
+	return false;
 }
 
-void PDB::OnError(const wxString &message)
+bool PDB::OnError(const wxString &message)
 {
 	if (expectedOutput == kQuitting)
 		host->SendCommand("quit()\n");
+
+	return false;
 }
 
 wxString PDB::GetCommand() const
@@ -151,9 +167,33 @@ void PDB::ParseBreakpointOutput(wxStringTokenizer &lineTokenizer)
 	// assuming.
 }
 
-void PDB::ParseFullRefreshOutput(wxStringTokenizer &lineTokenizer)
+void PDB::ParseCallstackOutput(wxStringTokenizer &lineTokenizer)
 {
-	// ToDo: Get callstack.
+	wxString	fileName;
+	long		lineNr;
+	wxString	frame;
+
+	host->GetCallstack()->ClearAllFrames();
+
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line.Matches("  ?*(?*)?*()") ||
+			line.Matches("> ?*(?*)?*()"))
+		{
+			ParseFrame(line, fileName, lineNr, frame);
+			host->GetCallstack()->PushFrame(frame, fileName, lineNr);
+		}
+		else if (line.Matches("-> ?*"))
+		{
+			// Ignore?
+		}
+		else
+		{
+			// Error!
+		}
+	}
 }
 
 void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
@@ -185,18 +225,10 @@ void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 		else if (line.Matches("> ?*(?*)?*()") ||	// fileName:lineNr:frame
 				 line.Matches("> ?*(?*)?*()->?*"))	// fileName:lineNr:frame:result
 		{
-			// Read out the fileName after the prompt and before the first
-			// paranthesis.
-			wxString tail;
-			wxString fileName = line.Mid(2).BeforeFirst('(', &tail);
-
-			// Read out the line number between the paranthesises.
-			long lineNr = 0;
-			wxString tail2;
-			tail.BeforeFirst(')', &tail2).ToLong(&lineNr);
-
-			// Read out the frame before the paranthesises.
-			wxString frame = tail2.BeforeFirst('(');
+			wxString	fileName;
+			long		lineNr;
+			wxString	frame;
+			ParseFrame(line, fileName, lineNr, frame);
 
 			host->UpdateSource(fileName, lineNr);
 
@@ -238,6 +270,22 @@ void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 
 	// If we get here then we failed to parse out any line information.
 	// For now we let it pass and hope for better luck the next time.
+}
+
+void PDB::ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame)
+{
+	// Read out the fileName after the prompt and before the first
+	// paranthesis.
+	wxString tail;
+	fileName = line.Mid(2).BeforeFirst('(', &tail);
+
+	// Read out the line number between the paranthesises.
+	lineNr = 0;
+	wxString tail2;
+	tail.BeforeFirst(')', &tail2).ToLong(&lineNr);
+
+	// Read out the frame before the paranthesises.
+	frame = tail2.BeforeFirst('(');
 }
 
 void PDB::PushStackFrame(const wxString &frame, const wxString &fileName, unsigned lineNr)

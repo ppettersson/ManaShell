@@ -119,22 +119,33 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 void MainFrame::OnOutputFromProcess(const wxString &message)
 {
 	output->AppendText(message);
+
+	bool more = false;
 	if (debugger)
-		debugger->OnOutput(message);
-	waitingForResponse = false;
-	input->Enable(true);
+		more = debugger->OnOutput(message);
+
+	if (!more)
+	{
+		waitingForResponse = false;
+		input->Enable(true);
+	}
 }
 
 void MainFrame::OnErrorFromProcess(const wxString &message)
 {
 	// ToDo: Change background color to red instead.
 	output->AppendText("\nError: ");
-
 	output->AppendText(message);
+
+	bool more = false;
 	if (debugger)
-		debugger->OnError(message);
-	waitingForResponse = false;
-	input->Enable(true);
+		more = debugger->OnError(message);
+
+	if (!more)
+	{
+		waitingForResponse = false;
+		input->Enable(true);
+	}
 }
 
 void MainFrame::SendCommand(const wxString &command)
