@@ -1,6 +1,6 @@
 #include "Locals.h"
 
-Locals::Locals(wxWindow *parent)
+Locals::Locals(MainFrame *parent)
 	: Watch(parent)
 {
 }

@@ -111,6 +111,8 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 		}
 
 		breakpoints->ClearAllBreakpoints();
+		callstack->ClearAllFrames();
+		watch->ClearAll();
 		sourceEditor->StopDebugging();
 		sourceEditor->RemoveAllBreakpoints();
 	}
@@ -171,6 +173,12 @@ void MainFrame::SendInterrupt()
 void MainFrame::UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker)
 {
 	sourceEditor->Load(fileName, line, moveDebugMarker);
+}
+
+void MainFrame::GetWatchValue(unsigned index, const wxString &variable)
+{
+	if (debugger)
+		debugger->GetWatchValue(index, variable);
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)

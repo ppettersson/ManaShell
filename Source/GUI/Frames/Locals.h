@@ -6,7 +6,7 @@
 class Locals : public Watch
 {
 public:
-	Locals(wxWindow *parent);
+	Locals(MainFrame *parent);
 	virtual ~Locals();
 };
 

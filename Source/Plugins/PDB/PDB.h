@@ -29,6 +29,8 @@ public:
 	virtual void RemoveBreakpoint(const wxString &fileName, unsigned line);
 	virtual void ClearAllBreakpoints();
 
+	virtual void GetWatchValue(unsigned index, const wxString &variable);
+
 	virtual bool OnOutput(const wxString &message);
 	virtual bool OnError(const wxString &message);
 
@@ -50,6 +52,8 @@ private:
 		kCallstack,		// Parse the full callstack.
 		kUnknown,		// Uninitialized state, do nothing.
 		kStepping,		// Update the callstack interactively.
+		kWatching,		// Updating watched variables or expressions.
+		kWatchOne,		// Update one specific variable or expression.
 		kQuitting		// About to terminate the debugger.
 	};
 
@@ -72,17 +76,24 @@ private:
 	// Immediately get the full callstack.
 	bool			getFullCallstack;
 
+	// Get the values for all watched variables or expressions.
+	bool			updateWatches;
+
+	// Current index of the watched variables or expressions.
+	unsigned		currentWatch;
+
 
 	void ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);
 	void ParseCallstackOutput(wxStringTokenizer &lineTokenizer);
 	void ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+	void ParseWatchingOutput(wxStringTokenizer &lineTokenizer);
 	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
 
 	void PushStackFrame(const wxString &frame, const wxString &fileName, unsigned lineNr);
 	void PopStackFrame();
 	void UpdateStackFrame(unsigned lineNr);
 
-	void UpdateWatchedExpressions();
+	bool UpdateWatchedExpressions();
 };
 
 #endif // PDB_H

@@ -47,15 +47,15 @@
 			run
 			c / continue		(update callstack)
 			SIGINT
-				http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
 				http://forums.wxwidgets.org/viewtopic.php?t=35304&p=144458
+				http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
 				http://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/dc9586ab-1ee8-41aa-a775-cf4828ac1239/how-to-send-ctrlc-signal-to-detached-commandline-process?forum=windowsgeneraldevelopmentissues
 			q / quit
 
 			input:
 				- parse the message and match against any backtrace etc
 				  that we can pick up for free.
-				- good workaround to reset the UI when the state gets messes up.
+				- good workaround to reset the UI when the state gets messed up.
 
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
@@ -109,6 +109,8 @@
 				- Automatic size adjustments of grid cells.
 				- Reduce height of the header.
 			- Source editor:
+				- Goto line.
+				- Find.
 				- Should not have a window frame, look at wx/samples/aui
 				- Markers are positioned wrong horizontally.
 				- Code folding.
@@ -154,6 +156,7 @@
 	- bash: http://bashdb.sourceforge.net
 - Optional project view:
 	- Make it easier when setting breakpoints.
+		- Optionally remember them across debug settings.
 	- Find and open file (fuzzy search).
 	- Nested Include/Exclude of folders and filetypes.
 - Optional build system:

@@ -42,6 +42,8 @@ public:
 	virtual void RemoveBreakpoint(const wxString &fileName, unsigned line)	{ }
 	virtual void ClearAllBreakpoints()						{ }
 
+	virtual void GetWatchValue(unsigned index, const wxString &variable)	{ }
+
 	// Parse and possibly respond to the output from the debugger process.
 	// Returning true means that the UI won't accept input.
 	virtual bool OnOutput(const wxString &message)			{ return false; }

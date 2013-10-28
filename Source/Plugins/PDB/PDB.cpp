@@ -1,4 +1,5 @@
 #include "../../GUI/Frames/Callstack.h"
+#include "../../GUI/Frames/Watch.h"
 #include "../../GUI/MainFrame.h"
 #include "PDB.h"
 #include "wx/tokenzr.h"
@@ -9,6 +10,8 @@ PDB::PDB(MainFrame *h)
 	, expectedOutput(kUnknown)
 	, returningFromCall(false)
 	, getFullCallstack(false)
+	, updateWatches(false)
+	, currentWatch(0)
 {
 	support.breakpoints	= true;
 	support.callstack	= true;
@@ -52,21 +55,24 @@ void PDB::StepIn()
 {
 	// Short hand for "step".
 	host->SendCommand("s\n");
-	expectedOutput = kStepping;
+	expectedOutput	= kStepping;
+	updateWatches	= true;
 }
 
 void PDB::StepOver()
 {
 	// Short hand for "next".
 	host->SendCommand("n\n");
-	expectedOutput = kStepping;
+	expectedOutput	= kStepping;
+	updateWatches	= true;
 }
 
 void PDB::StepOut()
 {
 	// Short hand for "return".
 	host->SendCommand("r\n");
-	expectedOutput = kStepping;	// ToDo: kFullRefresh?
+	expectedOutput	= kStepping;
+	updateWatches	= true;
 }
 
 void PDB::Break()
@@ -75,6 +81,7 @@ void PDB::Break()
 	host->SendInterrupt();
 	expectedOutput		= kStepping;
 	getFullCallstack	= true;
+	updateWatches		= true;
 }
 
 void PDB::Continue()
@@ -83,10 +90,13 @@ void PDB::Continue()
 	host->SendCommand("c\n");
 	expectedOutput		= kStepping;
 	getFullCallstack	= true;
+	updateWatches		= true;
 }
 
 void PDB::AddBreakpoint(const wxString &fileName, unsigned line)
 {
+	wxASSERT(!fileName.IsEmpty());
+
 	// b/break filename:line
 	host->SendCommand(wxString::Format("b %s:%d\n", fileName, line));
 	expectedOutput = kBreakpoint;
@@ -94,6 +104,8 @@ void PDB::AddBreakpoint(const wxString &fileName, unsigned line)
 
 void PDB::RemoveBreakpoint(const wxString &fileName, unsigned line)
 {
+	wxASSERT(!fileName.IsEmpty());
+
 	// cl/clear filename:line
 	host->SendCommand(wxString::Format("cl %s:%d\n", fileName, line));
 	expectedOutput = kBreakpoint;
@@ -107,6 +119,16 @@ void PDB::ClearAllBreakpoints()
 	expectedOutput = kBreakpoint;
 }
 
+void PDB::GetWatchValue(unsigned index, const wxString &variable)
+{
+	wxASSERT(!variable.IsEmpty());
+
+	// A one off watch.
+	host->SendCommand(wxString::Format("p %s\n", variable));
+	expectedOutput	= kWatchOne;
+	currentWatch	= index;
+}
+
 bool PDB::OnOutput(const wxString &message)
 {
 	// Break apart the message into lines.
@@ -117,17 +139,33 @@ bool PDB::OnOutput(const wxString &message)
 
 	switch (expectedOutput)
 	{
-	case kBreakpoint:	ParseBreakpointOutput(lineTokenizer);	break;
+	case kBreakpoint:
+		ParseBreakpointOutput(lineTokenizer);
+		return false;
+
+	case kWatchOne:
+		ParseWatchingOutput(lineTokenizer);
+		return false;
+
 	case kCallstack:	ParseCallstackOutput(lineTokenizer);	break;
 	case kStepping:		ParseSteppingOutput(lineTokenizer);		break;
+	case kWatching:		ParseWatchingOutput(lineTokenizer);		break;
 	}
 
 	if (getFullCallstack)
 	{
-		host->SendCommand(wxString::Format("w\n"));
+		host->SendCommand("w\n");
 		expectedOutput		= kCallstack;
 		getFullCallstack	= false;
 		return true;
+	}
+
+	if (updateWatches)
+	{
+		if (UpdateWatchedExpressions())
+			return true;
+
+		updateWatches = false;
 	}
 
 	return false;
@@ -137,6 +175,14 @@ bool PDB::OnError(const wxString &message)
 {
 	if (expectedOutput == kQuitting)
 		host->SendCommand("quit()\n");
+	else
+	{
+		// Abort the current expect result.
+		expectedOutput		= kUnknown;
+		returningFromCall	= false;
+		getFullCallstack	= false;
+		updateWatches		= false;
+	}
 
 	return false;
 }
@@ -258,7 +304,6 @@ void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 				UpdateStackFrame(lineNr);
 			}
 
-			UpdateWatchedExpressions();
 			return;
 		}
 		else
@@ -270,6 +315,33 @@ void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 
 	// If we get here then we failed to parse out any line information.
 	// For now we let it pass and hope for better luck the next time.
+}
+
+void PDB::ParseWatchingOutput(wxStringTokenizer &lineTokenizer)
+{
+	// For now we just take the output as it is and make no effort trying to
+	// parse it.
+	wxString value;
+
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line == "(Pdb) ")
+		{
+			// This marks the end.
+		}
+		else
+		{
+			if (!value.IsEmpty())
+				value.Append("\n");
+			value.Append(line);
+		}
+	}
+
+	host->GetWatch()->Update(currentWatch, value, "");
+
+	++currentWatch;
 }
 
 void PDB::ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame)
@@ -303,6 +375,19 @@ void PDB::UpdateStackFrame(unsigned lineNr)
 	host->GetCallstack()->UpdateFrame(lineNr);
 }
 
-void PDB::UpdateWatchedExpressions()
+bool PDB::UpdateWatchedExpressions()
 {
+	// Reset the index the first time.
+	if (expectedOutput != kWatching)
+		currentWatch = 0;
+
+	// Get the next variable to watch.
+	wxString variable;
+	if (!host->GetWatch()->GetNext(currentWatch, variable))
+		return false;
+
+	wxASSERT(!variable.IsEmpty());
+	host->SendCommand(wxString::Format("p %s\n", variable));
+	expectedOutput = kWatching;
+	return true;
 }

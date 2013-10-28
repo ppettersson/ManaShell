@@ -38,6 +38,9 @@ public:
 	void UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker = true);
 
 	Callstack *GetCallstack()			{ return callstack; }
+	Watch *GetWatch()					{ return watch; }
+
+	void GetWatchValue(unsigned index, const wxString &variable);
 
 
 private:
