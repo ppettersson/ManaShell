@@ -109,7 +109,6 @@
 				- Automatic size adjustments of grid cells.
 				- Reduce height of the header.
 			- Source editor:
-				- Keep the current line centerish when debugging.
 				- Should not have a window frame, look at wx/samples/aui
 				- Markers are positioned wrong horizontally.
 				- Code folding.

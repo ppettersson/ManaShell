@@ -29,6 +29,9 @@ SourceEditor::SourceEditor(wxWindow *parent)
 
 	MarkerDefine(kBreakpoint, wxSTC_MARK_CIRCLE, wxNullColour, wxColour(255, 0, 0));
 	MarkerDefine(kDebuggerNextLine, wxSTC_MARK_SHORTARROW, wxNullColour, wxColour(255, 255, 0));
+
+	// Try to keep the current line centered.
+	SetYCaretPolicy(wxSTC_CARET_STRICT | wxSTC_CARET_EVEN, 0);
 }
 
 SourceEditor::~SourceEditor()
