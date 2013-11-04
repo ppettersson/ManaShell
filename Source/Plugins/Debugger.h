@@ -44,6 +44,9 @@ public:
 
 	virtual void GetWatchValue(unsigned index, const wxString &variable)	{ }
 
+	// Parse the command sent from the user to the debugger.
+	virtual bool OnInterceptInput(const wxString &message)	{ return false; }
+
 	// Parse and possibly respond to the output from the debugger process.
 	// Returning true means that the UI won't accept input.
 	virtual bool OnOutput(const wxString &message)			{ return false; }

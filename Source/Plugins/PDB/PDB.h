@@ -31,6 +31,7 @@ public:
 
 	virtual void GetWatchValue(unsigned index, const wxString &variable);
 
+	virtual bool OnInterceptInput(const wxString &message);
 	virtual bool OnOutput(const wxString &message);
 	virtual bool OnError(const wxString &message);
 
@@ -48,13 +49,29 @@ public:
 private:
 	enum ExpectedOutput
 	{
+		kUnknown,		// Uninitialized state, do nothing.
+
 		kBreakpoint,	// Expecting an update about current breakpoints.
 		kCallstack,		// Parse the full callstack.
-		kUnknown,		// Uninitialized state, do nothing.
 		kStepping,		// Update the callstack interactively.
 		kWatching,		// Updating watched variables or expressions.
 		kWatchOne,		// Update one specific variable or expression.
 		kQuitting		// About to terminate the debugger.
+	};
+
+	enum Command
+	{
+		kNone,
+
+		kBreak,
+		kClear,
+		kContinue,
+		kNext,
+		kPrint,
+		kQuit,
+		kReturn,
+		kStep,
+		kWhere
 	};
 
 
@@ -81,6 +98,9 @@ private:
 
 	// Current index of the watched variables or expressions.
 	unsigned		currentWatch;
+
+	// Interpreter.
+	Command			lastCommand;
 
 
 	void ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);

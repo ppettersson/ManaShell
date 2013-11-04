@@ -63,13 +63,6 @@
 			- Attach to android process.
 			- Very basic gdb debugging.
 
-0.55 [todo]	Post mortem dry-run.
-			- import callstack from text
-				- given at least one source directory, grep to find matching file:line pairs.
-					- configurable format, with scanf: %s|%d
-			- edit manually
-				- add / remove / edit frame.
-
 0.6	[todo]	UI polish.
 			- More plugin-ish:
 				- Automatically enumerate all enabled debuggers.
@@ -123,8 +116,14 @@
 			- OSX.
 			- Windows.
 			- Installers.
+			- Clean up code.
+				- Look over C++ 11 stuff.
+					- override
+					- auto
+					- is it worth it to loose portability?
 
 0.9	[todo]	Write docs.
+			- License (BSD 2 clause).
 			- Installing.
 				- Building from source.
 			- Tutorials.
@@ -148,7 +147,13 @@
 
 - Tools:
 	- logcat viewer with filters.
-	- debug image viewer (wxImageView).
+	- debug image viewer (extract code from wxImageView, then remove that repository).
+	- Post mortem dry-run.
+		- import callstack from text
+			- given at least one source directory, grep to find matching file:line pairs.
+				- configurable format, with scanf: %s|%d
+		- edit manually
+			- add / remove / edit frame.
 - Plugins:
 	- gdb/mi
 	- lldb

@@ -172,6 +172,7 @@
     <ClCompile Include="..\..\Source\Plugins\GDB\GDB.cpp" />
     <ClCompile Include="..\..\Source\Plugins\JDB\JDB.cpp" />
     <ClCompile Include="..\..\Source\Plugins\PDB\PDB.cpp" />
+    <ClCompile Include="..\..\Source\Plugins\PDB\PDB_InterceptInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Docs\Building.txt" />

@@ -67,6 +67,7 @@ MainFrame::MainFrame()
 	, sourceEditorMode(kSource)
 	, debugger(NULL)
 	, waitingForResponse(true)
+	, refocusInput(false)
 {
 	SetClientSize(1600, 900);
 
@@ -130,6 +131,8 @@ void MainFrame::OnOutputFromProcess(const wxString &message)
 	{
 		waitingForResponse = false;
 		input->Enable(true);
+		if (refocusInput)
+			input->SetFocus();
 	}
 }
 
@@ -150,14 +153,17 @@ void MainFrame::OnErrorFromProcess(const wxString &message)
 	}
 }
 
-void MainFrame::SendCommand(const wxString &command)
+void MainFrame::SendCommand(const wxString &command, bool fromUser)
 {
 	if (runningProcesses.GetCount())
 	{
 		input->Enable(false);
 		output->AppendText(command);
+		if (fromUser && debugger)
+			debugger->OnInterceptInput(command);
 		runningProcesses[0]->SendCommand(command);
 		waitingForResponse = true;
+		refocusInput = fromUser;
 	}
 }
 
@@ -466,7 +472,7 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	case kView_Watch:			event.Check(dockingManager.GetPane(watch).IsShown());		break;
 	case kView_Fullscreen:		event.Check(IsFullScreen());								break;
 
-	case kDebug_Attach:
+	//case kDebug_Attach:
 	case kDebug_Start:
 		event.Enable(activeProcessId == 0);
 		break;
@@ -577,7 +583,7 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&View");
 
 	menu = new wxMenu;
-	menu->Append(kDebug_Attach, "&Attach...");
+	menu->Append(kDebug_Attach, "&Attach...")->Enable(false);
 	menu->Append(kDebug_Start, "&Start...");
 	menu->Append(kDebug_Stop, "Sto&p\tShift+F5");
 	menu->AppendSeparator();

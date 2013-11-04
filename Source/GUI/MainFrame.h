@@ -33,7 +33,7 @@ public:
 	void OnOutputFromProcess(const wxString &message);
 	void OnErrorFromProcess(const wxString &message);
 
-	void SendCommand(const wxString &command);
+	void SendCommand(const wxString &command, bool fromUser = false);
 	void SendInterrupt();
 	void UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker = true);
 
@@ -130,7 +130,8 @@ private:
 	SourceEditorMode				sourceEditorMode;
 
 	Debugger						*debugger;
-	bool							waitingForResponse;
+	bool							waitingForResponse,
+									refocusInput;
 
 
 	// -- Menu handlers ------------------------------------------------------

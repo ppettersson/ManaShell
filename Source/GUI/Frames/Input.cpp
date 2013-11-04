@@ -24,5 +24,5 @@ void Input::OnEnter(wxCommandEvent &event)
 	wxString command = GetLineText(0);
 	command += "\n";
 	Clear();
-	host->SendCommand(command);
+	host->SendCommand(command, true);
 }

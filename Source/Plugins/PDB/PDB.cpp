@@ -12,6 +12,7 @@ PDB::PDB(MainFrame *h)
 	, getFullCallstack(false)
 	, updateWatches(false)
 	, currentWatch(0)
+	, lastCommand(kNone)
 {
 	support.breakpoints	= true;
 	support.callstack	= true;
@@ -48,13 +49,15 @@ void PDB::Stop()
 {
 	// Short hand for "quit".
 	host->SendCommand("q\n");
-	expectedOutput = kQuitting;
+	lastCommand		= kQuit;
+	expectedOutput	= kQuitting;
 }
 
 void PDB::StepIn()
 {
 	// Short hand for "step".
 	host->SendCommand("s\n");
+	lastCommand		= kStep;
 	expectedOutput	= kStepping;
 	updateWatches	= true;
 }
@@ -63,6 +66,7 @@ void PDB::StepOver()
 {
 	// Short hand for "next".
 	host->SendCommand("n\n");
+	lastCommand		= kNext;
 	expectedOutput	= kStepping;
 	updateWatches	= true;
 }
@@ -71,6 +75,7 @@ void PDB::StepOut()
 {
 	// Short hand for "return".
 	host->SendCommand("r\n");
+	lastCommand		= kReturn;
 	expectedOutput	= kStepping;
 	updateWatches	= true;
 }
@@ -79,6 +84,7 @@ void PDB::Break()
 {
 	// SIGINT?
 	host->SendInterrupt();
+	lastCommand			= kBreak;
 	expectedOutput		= kStepping;
 	getFullCallstack	= true;
 	updateWatches		= true;
@@ -88,6 +94,7 @@ void PDB::Continue()
 {
 	// Short hand for "continue".
 	host->SendCommand("c\n");
+	lastCommand			= kContinue;
 	expectedOutput		= kStepping;
 	getFullCallstack	= true;
 	updateWatches		= true;
@@ -99,7 +106,8 @@ void PDB::AddBreakpoint(const wxString &fileName, unsigned line)
 
 	// b/break filename:line
 	host->SendCommand(wxString::Format("b %s:%d\n", fileName, line));
-	expectedOutput = kBreakpoint;
+	lastCommand		= kBreak;
+	expectedOutput	= kBreakpoint;
 }
 
 void PDB::RemoveBreakpoint(const wxString &fileName, unsigned line)
@@ -108,7 +116,8 @@ void PDB::RemoveBreakpoint(const wxString &fileName, unsigned line)
 
 	// cl/clear filename:line
 	host->SendCommand(wxString::Format("cl %s:%d\n", fileName, line));
-	expectedOutput = kBreakpoint;
+	lastCommand		= kClear;
+	expectedOutput	= kBreakpoint;
 }
 
 void PDB::ClearAllBreakpoints()
@@ -116,7 +125,8 @@ void PDB::ClearAllBreakpoints()
 	// Clears all breaks. It normally asks for confirmation but that
 	// should automatically be disabled when we're not in terminal mode.
 	host->SendCommand("cl\n");
-	expectedOutput = kBreakpoint;
+	lastCommand		= kClear;
+	expectedOutput	= kBreakpoint;
 }
 
 void PDB::GetWatchValue(unsigned index, const wxString &variable)
@@ -125,6 +135,7 @@ void PDB::GetWatchValue(unsigned index, const wxString &variable)
 
 	// A one off watch.
 	host->SendCommand(wxString::Format("p %s\n", variable));
+	lastCommand		= kPrint;
 	expectedOutput	= kWatchOne;
 	currentWatch	= index;
 }
@@ -155,6 +166,7 @@ bool PDB::OnOutput(const wxString &message)
 	if (getFullCallstack)
 	{
 		host->SendCommand("w\n");
+		lastCommand			= kWhere;
 		expectedOutput		= kCallstack;
 		getFullCallstack	= false;
 		return true;
@@ -388,6 +400,7 @@ bool PDB::UpdateWatchedExpressions()
 
 	wxASSERT(!variable.IsEmpty());
 	host->SendCommand(wxString::Format("p %s\n", variable));
-	expectedOutput = kWatching;
+	lastCommand		= kPrint;
+	expectedOutput	= kWatching;
 	return true;
 }

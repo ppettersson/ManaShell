@@ -81,6 +81,9 @@
     <ClCompile Include="..\..\Source\GUI\Dialogs\DebuggerDialog.cpp">
       <Filter>Source\GUI\Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Plugins\PDB\PDB_InterceptInput.cpp">
+      <Filter>Source\Plugins\PDB</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Docs\Building.txt">
