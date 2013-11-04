@@ -7,7 +7,7 @@ development here:
 	git checkout ppettersson.0
 
 That branch has some minor fixes to the project file when using Visual Studio
-but it otherwise unmodified.
+but is otherwise unmodified.
 
 
 * Linux
