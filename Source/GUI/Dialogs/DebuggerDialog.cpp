@@ -21,7 +21,7 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
 	{
 		wxArrayString debuggerNames;
-		for (auto i = debuggers.begin(); i != debuggers.end(); ++i)
+		for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
 			debuggerNames.Add((*i)->GetName());
 		debuggerControl = new wxChoice(this, kDebuggerId, wxDefaultPosition, wxDefaultSize, debuggerNames);
 		debuggerControl->SetValidator(wxGenericValidator(&debugger));
