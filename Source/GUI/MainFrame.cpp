@@ -299,21 +299,7 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 		return;
 
 	// Hide frames that aren't supported by this debugger.
-	const Debugger::Support &support = debugger->GetSupportedFeatures();
-	if (!support.breakpoints)
-		dockingManager.GetPane(breakpoints).Show(false);
-	if (!support.callstack)
-		dockingManager.GetPane(callstack).Show(false);
-	if (!support.registers)
-		dockingManager.GetPane(registers).Show(false);
-	if (!support.threads)
-		dockingManager.GetPane(threads).Show(false);
-	if (!support.watch)
-		dockingManager.GetPane(watch).Show(false);
-	if (!support.locals)
-		dockingManager.GetPane(locals).Show(false);
-	dockingManager.Update();
-
+	UpdateViews(debugger->GetSupportedFeatures());
 
 	// Show wait cursor to indicate that we're working.
 	// Starting a process can take some time.
@@ -341,6 +327,9 @@ void MainFrame::OnDebugStop(wxCommandEvent &event)
 {
 	if (debugger)
 		debugger->Stop();
+
+	const SupportedViews views;
+	UpdateViews(views);
 }
 
 void MainFrame::OnDebugStepIn(wxCommandEvent &event)
@@ -684,5 +673,18 @@ void MainFrame::SetupInitialView()
 	breakpoints = new Breakpoints(this);
 	dockingManager.AddPane(breakpoints, breakpointsPane);
 
+	// Hide most of the UI by default.
+	const SupportedViews support;
+	UpdateViews(support);
+}
+
+void MainFrame::UpdateViews(const SupportedViews &support)
+{
+	dockingManager.GetPane(breakpoints).Show(support.breakpoints);
+	dockingManager.GetPane(callstack).Show(support.callstack);
+	dockingManager.GetPane(registers).Show(support.registers);
+	dockingManager.GetPane(threads).Show(support.threads);
+	dockingManager.GetPane(watch).Show(support.watch);
+	dockingManager.GetPane(locals).Show(support.locals);
 	dockingManager.Update();
 }

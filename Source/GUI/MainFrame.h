@@ -3,6 +3,7 @@
 
 #include "wx/wx.h"
 #include "wx/aui/aui.h"
+#include "SupportedViews.h"
 
 class Breakpoints;
 class Callstack;
@@ -185,7 +186,7 @@ private:
 	// -- User interface ------------------------------------------------------
 	void SetupMenu();
 	void SetupInitialView();
-
+	void UpdateViews(const SupportedViews &views);
 
 	// -- Internal ----------------------------------------------------------
 

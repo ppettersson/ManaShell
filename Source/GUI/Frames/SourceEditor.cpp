@@ -75,6 +75,10 @@ bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugM
 void SourceEditor::StopDebugging()
 {
 	MarkerDeleteAll(kDebuggerNextLine);
+
+	SetReadOnly(false);
+	ClearAll();
+	SetReadOnly(true);
 }
 
 void SourceEditor::AddBreakpoint(unsigned line)

@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\Source\GUI\MainFrame.h" />
     <ClInclude Include="..\..\Source\GUI\ManaShell.h" />
     <ClInclude Include="..\..\Source\GUI\PipedProcess.h" />
+    <ClInclude Include="..\..\Source\GUI\SupportedViews.h" />
     <ClInclude Include="..\..\Source\Plugins\Debugger.h" />
     <ClInclude Include="..\..\Source\Plugins\GDB\GDB.h" />
     <ClInclude Include="..\..\Source\Plugins\JDB\JDB.h" />

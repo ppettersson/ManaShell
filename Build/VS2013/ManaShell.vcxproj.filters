@@ -145,5 +145,8 @@
     <ClInclude Include="..\..\Source\GUI\Dialogs\DebuggerDialog.h">
       <Filter>Source\GUI\Dialogs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\SupportedViews.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

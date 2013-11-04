@@ -2,23 +2,13 @@
 #define DEBUGGER_H
 
 #include "wx/wx.h"
+#include "../GUI/SupportedViews.h"
 
 class MainFrame;
 
 class Debugger
 {
 public:
-	struct Support
-	{
-		unsigned	breakpoints	: 1,
-					callstack	: 1,
-					registers	: 1,
-					threads		: 1,
-					watch		: 1,
-					locals		: 1;
-	};
-
-
 	static Debugger *Create(MainFrame *host);
 
 	Debugger(MainFrame *host) : useCustomCommand(false)		{ }
@@ -55,7 +45,7 @@ public:
 
 	// -- User interface ------------------------------------------------------
 
-	const Support &GetSupportedFeatures()					{ return support; }
+	const SupportedViews &GetSupportedFeatures()			{ return support; }
 
 	// The UI name for this plugin.
 	virtual wxString GetName() const						{ return "Custom"; }
@@ -81,13 +71,13 @@ public:
 
 
 protected:
-	Support		support;
+	SupportedViews	support;
 
-	wxString	executable,
-				script,
-				arguments,
-				customCommand;
-	bool		useCustomCommand;
+	wxString		executable,
+					script,
+					arguments,
+					customCommand;
+	bool			useCustomCommand;
 };
 
 #endif // DEBUGGER_H
