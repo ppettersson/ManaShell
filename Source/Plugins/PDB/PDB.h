@@ -54,6 +54,7 @@ private:
 		kBreakpoint,	// Expecting an update about current breakpoints.
 		kCallstack,		// Parse the full callstack.
 		kStepping,		// Update the callstack interactively.
+		kStartupError,	// Failed to launch, terminating debug process.
 		kWatching,		// Updating watched variables or expressions.
 		kWatchOne,		// Update one specific variable or expression.
 		kQuitting		// About to terminate the debugger.
@@ -86,6 +87,10 @@ private:
 	// we should request a full stack.
 	wxString		currentFrame;
 
+	// This flag means that we've just tried to start the debugger and should
+	// look for errors.
+	bool			startup;
+
 	// This flag means that when the current stack frame changes then we should
 	// expect it to be a pop instead of a push.
 	bool			returningFromCall;
@@ -99,7 +104,7 @@ private:
 	// Current index of the watched variables or expressions.
 	unsigned		currentWatch;
 
-	// Interpreter.
+	// Remember the last command so we can better handle manual input.
 	Command			lastCommand;
 
 

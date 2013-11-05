@@ -181,6 +181,12 @@ void MainFrame::UpdateSource(const wxString &fileName, unsigned line, bool moveD
 	sourceEditor->Load(fileName, line, moveDebugMarker);
 }
 
+void MainFrame::DebuggerTermination()
+{
+	const SupportedViews views;
+	UpdateViews(views);
+}
+
 void MainFrame::GetWatchValue(unsigned index, const wxString &variable)
 {
 	if (debugger)
@@ -588,7 +594,7 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&Debug");
 
 	menu = new wxMenu;
-	menu->Append(kTools_DryCallstack, "Dry &Callstack...");
+	menu->Append(kTools_DryCallstack, "Dry &Callstack...")->Enable(false);
 	menu->AppendSeparator();
 	menu->Append(kTools_Options, "&Options...")->Enable(false);
 	menuBar->Append(menu, "&Tools");

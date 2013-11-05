@@ -8,6 +8,7 @@ PDB::PDB(MainFrame *h)
 	: Debugger(h)
 	, host(h)
 	, expectedOutput(kUnknown)
+	, startup(false)
 	, returningFromCall(false)
 	, getFullCallstack(false)
 	, updateWatches(false)
@@ -42,6 +43,7 @@ bool PDB::Start()
 {
 	expectedOutput		= kStepping;
 	getFullCallstack	= true;
+	startup				= true;
 	return true;
 }
 
@@ -142,6 +144,9 @@ void PDB::GetWatchValue(unsigned index, const wxString &variable)
 
 bool PDB::OnOutput(const wxString &message)
 {
+	// If we got this, then it should be running ok.
+	startup = false;
+
 	// Break apart the message into lines.
 	// Note that we match against any kind of line ending found on Linux, Mac and
 	// Windows. On some systems that means that we get extra empty lines that we
@@ -185,6 +190,26 @@ bool PDB::OnOutput(const wxString &message)
 
 bool PDB::OnError(const wxString &message)
 {
+	if (startup)
+	{
+		// Check for known causes first.
+		wxString possibleCause;
+		if (!useCustomCommand && !wxFileExists(script))
+			possibleCause = wxString::Format("Failed to start the debugger, it seems like the script doesn't exist?\n\nScript = %s", script);
+		else
+			possibleCause = wxString::Format("Failed to start the debugger, is the command line correct?\n\nCommandLine = %s", GetCommand());
+
+		wxMessageBox(possibleCause, "PDB Startup Error", wxOK | wxCENTRE | wxICON_ERROR, host);
+
+		// Terminate the process.
+		host->DebuggerTermination();
+		host->SendCommand("quit()\n");
+		lastCommand		= kQuit;
+		expectedOutput	= kStartupError;
+		startup			= false;
+		return true;
+	}
+
 	if (expectedOutput == kQuitting)
 		host->SendCommand("quit()\n");
 	else
@@ -201,7 +226,7 @@ bool PDB::OnError(const wxString &message)
 
 wxString PDB::GetCommand() const
 {
-	if (useCustomCommand)
+	if (useCustomCommand && !customCommand.IsEmpty())
 		return customCommand;
 
 	wxString result = executable;
