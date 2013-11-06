@@ -70,6 +70,16 @@ public:
 	void SetCustomCommand(const wxString &c)				{ customCommand = c; }
 
 
+#ifdef __WXMSW__
+	enum InterruptMethod
+	{
+		kDebugBreakProcess,
+		kGenerateConsoleCtrlEvent
+	};
+
+	virtual InterruptMethod GetInterruptMethod() const		{ return kDebugBreakProcess; }
+#endif
+
 protected:
 	SupportedViews	support;
 

@@ -169,11 +169,43 @@ void MainFrame::SendCommand(const wxString &command, bool fromUser)
 
 void MainFrame::SendInterrupt()
 {
-	//if (runningProcesses.GetCount())
-	//{
-	//	wxProcess::Kill(runningProcesses[0]->GetPid(), wxSIGINT);
-	//	waitingForResponse = true;
-	//}
+	if (runningProcesses.GetCount())
+	{
+		// Process id.
+		int pid = runningProcesses[0]->GetPid();
+#ifdef __WXMSW__
+		if (debugger)
+		{
+			switch (debugger->GetInterruptMethod())
+			{
+			case Debugger::kDebugBreakProcess:
+				{
+					HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
+					if (proc)
+					{
+						BOOL result = DebugBreakProcess(proc);
+						if (!result)
+							output->AppendText("Error: DebugBreakProcess() failed when trying to send interrupt.\n");
+						result = CloseHandle(proc);
+						if (!result)
+							output->AppendText("Error: CloseHandle() failed when trying to send interrupt.\n");
+					}
+					else
+						output->AppendText("Error: OpenProcess() failed when trying to send interrupt.\n");
+				}
+				break;
+
+			case Debugger::kGenerateConsoleCtrlEvent:
+				if (!GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0))
+					output->AppendText("Error: GenerateConsoleCtrlEvent() failed when trying to send interrupt.\n");
+				break;
+			}
+		}
+#else
+		wxProcess::Kill(pid, wxSIGINT);
+#endif
+		waitingForResponse = true;
+	}
 }
 
 void MainFrame::UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker)
