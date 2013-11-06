@@ -230,7 +230,7 @@ wxString PDB::GetCommand() const
 		return customCommand;
 
 	wxString result = executable;
-	result += " -i -m pdb";
+	result += " -i -u -m pdb";
 	if (!script.IsEmpty())
 	{
 		result += " ";

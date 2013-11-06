@@ -39,7 +39,7 @@ public:
 	// -- User interface ------------------------------------------------------
 
 	// The UI name for this plugin.
-	virtual wxString GetName() const						{ return "Python"; }
+	virtual wxString GetName() const						{ return "Python (PDB)"; }
 
 	// Build up the full command from the current executable, script and
 	// parameters with any extra glue that is necessary.
