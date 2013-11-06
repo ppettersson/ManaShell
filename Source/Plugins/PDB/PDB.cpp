@@ -1,4 +1,5 @@
 #include "../../GUI/Frames/Callstack.h"
+#include "../../GUI/Frames/SourceEditor.h"
 #include "../../GUI/Frames/Watch.h"
 #include "../../GUI/MainFrame.h"
 #include "PDB.h"
@@ -87,7 +88,7 @@ void PDB::Break()
 	// SIGINT?
 	host->SendInterrupt();
 	lastCommand			= kBreak;
-	expectedOutput		= kStepping;
+	expectedOutput		= kUnexpected;
 	getFullCallstack	= true;
 	updateWatches		= true;
 }
@@ -95,9 +96,10 @@ void PDB::Break()
 void PDB::Continue()
 {
 	// Short hand for "continue".
+	host->GetSourceEditor()->DisableDebugMarker();
 	host->SendCommand("c\n");
 	lastCommand			= kContinue;
-	expectedOutput		= kStepping;
+	expectedOutput		= kUnexpected;
 	getFullCallstack	= true;
 	updateWatches		= true;
 }
@@ -158,6 +160,31 @@ bool PDB::OnOutput(const wxString &message)
 	case kBreakpoint:
 		ParseBreakpointOutput(lineTokenizer);
 		return false;
+
+	case kUnexpected:
+		switch (ParseUnexpectedOutput(lineTokenizer))
+		{
+		case kUnexpectedUnknown:
+			// Don't enable input etc because of this.
+			return true;
+
+		// ToDo:
+		//case kUnexpectedCrash:
+		//case kUnexpectedUserInterrupt:
+		//	return true;
+
+		case kUnexpectedProgramFinished:
+			// Program finished and got restarted.
+			// We're already in stepping mode and should continue with getting
+			// the callstack etc.
+			break;
+
+		case kUnexpectedProgramFinishedWaiting:
+			// Program finished and is about to be restarted.
+			// We still need more input through.
+			return true;
+		}
+		break;
 
 	case kWatchOne:
 		ParseWatchingOutput(lineTokenizer);
@@ -279,7 +306,7 @@ void PDB::ParseCallstackOutput(wxStringTokenizer &lineTokenizer)
 	}
 }
 
-void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
+bool PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
 	{
@@ -341,7 +368,7 @@ void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 				UpdateStackFrame(lineNr);
 			}
 
-			return;
+			return true;
 		}
 		else
 		{
@@ -352,6 +379,33 @@ void PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 
 	// If we get here then we failed to parse out any line information.
 	// For now we let it pass and hope for better luck the next time.
+	return false;
+}
+
+PDB::UnexpectedResult PDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
+{
+	// ToDo:
+	//	crash, user interrupt or program finished.
+
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line == "The program finished and will be restarted")
+		{
+			expectedOutput = kStepping;
+
+			// It's quite possible that we've already received the stepping
+			// information. To handle that case we continue parsing there
+			// and only stop the parsing if we got the info.
+			if (ParseSteppingOutput(lineTokenizer))
+				return kUnexpectedProgramFinished;
+			else
+				return kUnexpectedProgramFinishedWaiting;
+		}
+	}
+
+	return kUnexpectedUnknown;
 }
 
 void PDB::ParseWatchingOutput(wxStringTokenizer &lineTokenizer)

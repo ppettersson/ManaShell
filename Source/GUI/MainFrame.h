@@ -40,6 +40,7 @@ public:
 	void DebuggerTermination();
 
 	Callstack *GetCallstack()			{ return callstack; }
+	SourceEditor *GetSourceEditor()		{ return sourceEditor; }
 	Watch *GetWatch()					{ return watch; }
 
 	void GetWatchValue(unsigned index, const wxString &variable);

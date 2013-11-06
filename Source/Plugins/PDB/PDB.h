@@ -55,6 +55,7 @@ private:
 		kCallstack,		// Parse the full callstack.
 		kStepping,		// Update the callstack interactively.
 		kStartupError,	// Failed to launch, terminating debug process.
+		kUnexpected,	// Don't expect any output unless there's a crash or user interrupt.
 		kWatching,		// Updating watched variables or expressions.
 		kWatchOne,		// Update one specific variable or expression.
 		kQuitting		// About to terminate the debugger.
@@ -75,6 +76,14 @@ private:
 		kWhere
 	};
 
+	enum UnexpectedResult
+	{
+		kUnexpectedUnknown,					// Probably regular program output, ignore.
+		kUnexpectedCrash,
+		kUnexpectedUserInterrupt,
+		kUnexpectedProgramFinished,			// Program finished and got restarted.
+		kUnexpectedProgramFinishedWaiting	// Program finished and is about to be restarted.
+	};
 
 	// Access to the GUI and process handler.
 	MainFrame		*host;
@@ -110,7 +119,8 @@ private:
 
 	void ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);
 	void ParseCallstackOutput(wxStringTokenizer &lineTokenizer);
-	void ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+	UnexpectedResult ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer);
 	void ParseWatchingOutput(wxStringTokenizer &lineTokenizer);
 	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
 

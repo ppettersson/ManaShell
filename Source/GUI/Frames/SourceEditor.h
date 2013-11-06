@@ -13,6 +13,7 @@ public:
 	bool Load(const wxString &fileName, unsigned line = 0, bool moveDebugMarker = true);
 
 	void StopDebugging();
+	void DisableDebugMarker();
 
 	void AddBreakpoint(unsigned line);
 	void RemoveBreakpoint(unsigned line);

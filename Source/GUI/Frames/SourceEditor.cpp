@@ -81,6 +81,11 @@ void SourceEditor::StopDebugging()
 	SetReadOnly(true);
 }
 
+void SourceEditor::DisableDebugMarker()
+{
+	MarkerDeleteAll(kDebuggerNextLine);
+}
+
 void SourceEditor::AddBreakpoint(unsigned line)
 {
 	MarkerAdd(line - 1, kBreakpoint);
