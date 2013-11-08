@@ -5,18 +5,10 @@
 0.3	[done]	Source editor.
 
 0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
-			SIGINT
-				http://forums.wxwidgets.org/viewtopic.php?t=35304&p=144458
-				http://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
-				http://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/dc9586ab-1ee8-41aa-a775-cf4828ac1239/how-to-send-ctrlc-signal-to-detached-commandline-process?forum=windowsgeneraldevelopmentissues
-				Investigate how qtcreator and code::blocks handle this:
-					https://qt.gitorious.org/qt-creator/qt-creator/source/92008f4b6a9bdfd390eed925d92437bf36e77b88:src/plugins/debugger/procinterrupt.cpp
-					http://sourceforge.net/p/codeblocks/code/HEAD/tree/trunk/src/plugins/debuggergdb/debuggergdb.cpp
-				Probably have to look through the python source to figure out how to call this.
-
-			ParseUnexpected:
-				- crash
-				- user interrupt
+			- ParseUnexpected crash
+			- Stopping needs to send interrupt first.
+			- Set working directory and environment variables.
+			- Ctrl+Alt+Break keyboard shortcut doesn't work.
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).

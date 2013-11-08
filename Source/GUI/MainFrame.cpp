@@ -167,6 +167,14 @@ void MainFrame::SendCommand(const wxString &command, bool fromUser)
 	}
 }
 
+#ifdef __WXMSW__
+BOOL WINAPI InterruptHandler(DWORD type)
+{
+	// Handle this event right here.
+	return TRUE;
+}
+#endif
+
 void MainFrame::SendInterrupt()
 {
 	if (runningProcesses.GetCount())
@@ -176,28 +184,54 @@ void MainFrame::SendInterrupt()
 #ifdef __WXMSW__
 		if (debugger)
 		{
+			const DWORD kErrorIcon = wxICON_ERROR | wxOK | wxCENTRE;
+			const wxString kErrorCaption = "Send interrupt failed";
+
 			switch (debugger->GetInterruptMethod())
 			{
 			case Debugger::kDebugBreakProcess:
 				{
 					HANDLE proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)pid);
-					if (proc)
+					if (!proc)
 					{
-						BOOL result = DebugBreakProcess(proc);
-						if (!result)
-							output->AppendText("Error: DebugBreakProcess() failed when trying to send interrupt.\n");
-						result = CloseHandle(proc);
-						if (!result)
-							output->AppendText("Error: CloseHandle() failed when trying to send interrupt.\n");
+						wxMessageBox("Error: OpenProcess() failed", kErrorCaption, kErrorIcon, this);
+						return;
 					}
-					else
-						output->AppendText("Error: OpenProcess() failed when trying to send interrupt.\n");
+					if (!DebugBreakProcess(proc))
+						wxMessageBox("Error: DebugBreakProcess() failed", kErrorCaption, kErrorIcon, this);
+					if (!CloseHandle(proc))
+						wxMessageBox("Error: CloseHandle() failed", kErrorCaption, kErrorIcon, this);
 				}
 				break;
 
 			case Debugger::kGenerateConsoleCtrlEvent:
+				// Note: If this code is running inside a debugger then it will
+				// break here first. Continue running after the interrupt and
+				// it should propagate to the child processes.
+				if (!hasConsoleAttached)
+				{
+					if (!AttachConsole(pid))
+					{
+						wxMessageBox("Error: AttachConsole() failed", kErrorCaption, kErrorIcon, this);
+						return;
+					}
+					hasConsoleAttached = true;
+				}
+
+				if (!hasInterruptHandlerSet)
+				{
+					if (!SetConsoleCtrlHandler(InterruptHandler, TRUE))
+					{
+						wxMessageBox("Error: SetConsoleCtrlHandler() failed", kErrorCaption, kErrorIcon, this);
+						return;
+					}
+					hasInterruptHandlerSet = true;
+				}
+
 				if (!GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0))
-					output->AppendText("Error: GenerateConsoleCtrlEvent() failed when trying to send interrupt.\n");
+					wxMessageBox("Error: GenerateConsoleCtrlEvent() failed", kErrorCaption, kErrorIcon, this);
+
+				// ToDo? FreeConsole();
 				break;
 			}
 		}
@@ -359,6 +393,11 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	AddPipedProcess(process);
 
 	input->Enable(true);
+
+#ifdef __WXMSW__
+	hasConsoleAttached		= false;
+	hasInterruptHandlerSet	= false;
+#endif
 }
 
 void MainFrame::OnDebugStop(wxCommandEvent &event)
@@ -618,7 +657,7 @@ void MainFrame::SetupMenu()
 	menu->Append(kDebug_StepOver, "Step &Over\tF10");
 	menu->Append(kDebug_StepOut, "Step Ou&t\tShift+F11");
 	menu->AppendSeparator();
-	menu->Append(kDebug_Break, "&Break");
+	menu->Append(kDebug_Break, "&Break\tCtrl+Alt+Break");
 	menu->Append(kDebug_Continue, "&Continue\tF5");
 	menu->AppendSeparator();
 	menu->Append(kDebug_ToggleBreakpoint, "Toggle &Breakpoint\tF9");

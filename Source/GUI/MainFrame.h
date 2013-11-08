@@ -136,6 +136,11 @@ private:
 	bool							waitingForResponse,
 									refocusInput;
 
+#ifdef __WXMSW__
+	bool							hasConsoleAttached,
+									hasInterruptHandlerSet;
+#endif
+
 
 	// -- Menu handlers ------------------------------------------------------
 	void OnFileExit(wxCommandEvent &event);

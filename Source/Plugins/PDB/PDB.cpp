@@ -384,14 +384,12 @@ bool PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 
 PDB::UnexpectedResult PDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
 {
-	// ToDo:
-	//	crash, user interrupt or program finished.
-
 	while (lineTokenizer.HasMoreTokens())
 	{
 		wxString line = lineTokenizer.GetNextToken();
 
-		if (line == "The program finished and will be restarted")
+		if ((line == "The program finished and will be restarted") ||
+			(line == "Program interrupted. (Use 'cont' to resume)."))
 		{
 			expectedOutput = kStepping;
 
@@ -403,6 +401,8 @@ PDB::UnexpectedResult PDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenize
 			else
 				return kUnexpectedProgramFinishedWaiting;
 		}
+
+		// ToDo: crash
 	}
 
 	return kUnexpectedUnknown;
