@@ -7,7 +7,6 @@
 0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
 			- ParseUnexpected crash
 			- Set working directory and environment variables.
-			- Ctrl+Alt+Break keyboard shortcut doesn't work.
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).
@@ -72,10 +71,6 @@
 			- Windows.
 			- Installers.
 			- Clean up code.
-				- Look over C++ 11 stuff.
-					- override
-					- auto
-					- is it worth it to loose portability?
 
 0.9	[todo]	Write docs.
 			- License (BSD 2 clause).
@@ -142,6 +137,9 @@
 	- Restart with current breakpoints and watches.
 	- Support more user inputs.
 
+- UI:
+	- wxWidgets doesn't support the Break keyboard shortcut.
+	  Want to use Ctrl+Alt+Break for breaking the debugger, but can't.
 
 === Known Bugs ===
 

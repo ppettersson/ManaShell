@@ -657,7 +657,7 @@ void MainFrame::SetupMenu()
 	menu->Append(kDebug_StepOver, "Step &Over\tF10");
 	menu->Append(kDebug_StepOut, "Step Ou&t\tShift+F11");
 	menu->AppendSeparator();
-	menu->Append(kDebug_Break, "&Break\tCtrl+Alt+Break");
+	menu->Append(kDebug_Break, "&Break\tCtrl+C");
 	menu->Append(kDebug_Continue, "&Continue\tF5");
 	menu->AppendSeparator();
 	menu->Append(kDebug_ToggleBreakpoint, "Toggle &Breakpoint\tF9");
