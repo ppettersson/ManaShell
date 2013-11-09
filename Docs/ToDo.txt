@@ -6,7 +6,6 @@
 
 0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
 			- ParseUnexpected crash
-			- Stopping needs to send interrupt first.
 			- Set working directory and environment variables.
 			- Ctrl+Alt+Break keyboard shortcut doesn't work.
 

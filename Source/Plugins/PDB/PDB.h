@@ -125,6 +125,7 @@ private:
 	void ParseCallstackOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
 	UnexpectedResult ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer);
+	void ParseQuittingOutput(wxStringTokenizer &lineTokenizer);
 	void ParseWatchingOutput(wxStringTokenizer &lineTokenizer);
 	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
 

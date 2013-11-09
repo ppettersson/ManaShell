@@ -50,8 +50,13 @@ bool PDB::Start()
 
 void PDB::Stop()
 {
-	// Short hand for "quit".
-	host->SendCommand("q\n");
+	// Check if we have to interrupt the program first.
+	if (lastCommand == kContinue)
+		host->SendInterrupt();
+	else
+		// Short hand for "quit".
+		host->SendCommand("q\n");
+
 	lastCommand		= kQuit;
 	expectedOutput	= kQuitting;
 }
@@ -85,7 +90,6 @@ void PDB::StepOut()
 
 void PDB::Break()
 {
-	// SIGINT?
 	host->SendInterrupt();
 	lastCommand			= kBreak;
 	expectedOutput		= kUnexpected;
@@ -188,6 +192,10 @@ bool PDB::OnOutput(const wxString &message)
 
 	case kWatchOne:
 		ParseWatchingOutput(lineTokenizer);
+		return false;
+
+	case kQuitting:
+		ParseQuittingOutput(lineTokenizer);
 		return false;
 
 	case kCallstack:	ParseCallstackOutput(lineTokenizer);	break;
@@ -406,6 +414,23 @@ PDB::UnexpectedResult PDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenize
 	}
 
 	return kUnexpectedUnknown;
+}
+
+void PDB::ParseQuittingOutput(wxStringTokenizer &lineTokenizer)
+{
+	// We should only get here if the program was running and we had to start with
+	// the interrupt before we could issue the quit command.
+	// Otherwise it'll go directly to the error parsing.
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line == "Program interrupted. (Use 'cont' to resume).")
+		{
+			host->SendCommand("q\n");
+			return;
+		}
+	}
 }
 
 void PDB::ParseWatchingOutput(wxStringTokenizer &lineTokenizer)
