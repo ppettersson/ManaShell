@@ -79,6 +79,8 @@ void SourceEditor::StopDebugging()
 	SetReadOnly(false);
 	ClearAll();
 	SetReadOnly(true);
+
+	currentFile = "";
 }
 
 void SourceEditor::DisableDebugMarker()
