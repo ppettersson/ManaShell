@@ -19,9 +19,9 @@ PDB::PDB(MainFrame *h)
 	support.breakpoints	= true;
 	support.callstack	= true;
 	support.registers	= false;
-	support.threads		= false;
+	support.threads		= false;	// ToDo
 	support.watch		= true;
-	support.locals		= false;
+	support.locals		= false;	// ToDo
 
 #ifdef __WXMSW__
 	executable			= "C:\\python33\\python.exe";
@@ -358,7 +358,7 @@ bool PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 			wxString	frame;
 			ParseFrame(line, fileName, lineNr, frame);
 
-			host->UpdateSource(fileName, lineNr);
+			host->UpdateSource(lineNr, fileName);
 
 			// Update the callstack.
 			if (frame != currentFrame)

@@ -85,7 +85,7 @@ void Watch::OnChanged(wxGridEvent &event)
 	if (value.IsEmpty())
 	{
 		// Remove the variable.
-		if (row < variables.size())
+		if (row < (int)variables.size())
 		{
 			variables.erase(variables.begin() + row);
 
@@ -102,7 +102,7 @@ void Watch::OnChanged(wxGridEvent &event)
 	}
 	else
 	{
-		if (row < variables.size())
+		if (row < (int)variables.size())
 		{
 			Variable &v = variables[row];
 
@@ -119,7 +119,7 @@ void Watch::OnChanged(wxGridEvent &event)
 			// Add a new empty row.
 			AddVariable();
 
-			wxASSERT(variables.size() - 1 == row);
+			wxASSERT((int)variables.size() - 1 == row);
 		}
 
 		unsigned index = row;

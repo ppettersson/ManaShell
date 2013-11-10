@@ -63,9 +63,9 @@ void Breakpoints::UpdateUI()
 void Breakpoints::OnDClick(wxCommandEvent &event)
 {
 	int selection = event.GetSelection();
-	if (selection >= 0 && selection < breaks.size())
+	if (selection >= 0 && selection < (int)breaks.size())
 	{
 		const Break &b = breaks[selection];
-		host->UpdateSource(b.fileName, b.line, false);
+		host->UpdateSource(b.line, b.fileName, false);
 	}
 }

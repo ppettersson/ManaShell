@@ -41,7 +41,7 @@ SourceEditor::~SourceEditor()
 bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugMarker)
 {
 	// Only reload the file if necessary.
-	if (fileName != currentFile)
+	if (!fileName.IsEmpty() && (fileName != currentFile))
 	{
 		// Remove all markers.
 		MarkerDeleteAll(kDebuggerNextLine);

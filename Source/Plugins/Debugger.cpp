@@ -1,12 +1,13 @@
 #include "../GUI/Dialogs/DebuggerDialog.h"
 #include "../GUI/MainFrame.h"
 #include "Debugger.h"
+#include "GDB/GDB.h"
 #include "PDB/PDB.h"
 
 Debugger *Debugger::Create(MainFrame *host)
 {
 	std::vector<Debugger *> debuggers;
-	//debuggers.push_back(new GDB(host));
+	debuggers.push_back(new GDB(host));
 	//debuggers.push_back(new JDB(host));
 	debuggers.push_back(new PDB(host));
 	debuggers.push_back(new Debugger(host));
@@ -26,9 +27,15 @@ wxString Debugger::GetCommand() const
 		return customCommand;
 
 	wxString result = executable;
-	result += " ";
-	result += script;
-	result += " ";
-	result += arguments;
+	if (!script.IsEmpty())
+	{
+		result += " ";
+		result += script;
+	}
+	if (!arguments.IsEmpty())
+	{
+		result += " ";
+		result += arguments;
+	}
 	return result;
 }

@@ -36,7 +36,7 @@ public:
 
 	void SendCommand(const wxString &command, bool fromUser = false);
 	void SendInterrupt();
-	void UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker = true);
+	void UpdateSource(unsigned line, const wxString &fileName = wxEmptyString, bool moveDebugMarker = true);
 	void DebuggerTermination();
 
 	Callstack *GetCallstack()			{ return callstack; }

@@ -242,7 +242,7 @@ void MainFrame::SendInterrupt()
 	}
 }
 
-void MainFrame::UpdateSource(const wxString &fileName, unsigned line, bool moveDebugMarker)
+void MainFrame::UpdateSource(unsigned line, const wxString &fileName, bool moveDebugMarker)
 {
 	sourceEditor->Load(fileName, line, moveDebugMarker);
 }
@@ -682,9 +682,9 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&Tools");
 
 	menu = new wxMenu;
-	menu->Append(kHelp_JDB, "&JDB");
-	menu->Append(kHelp_GDB, "&GDB");
-	menu->Append(kHelp_PDB, "&PDB");
+	menu->Append(kHelp_GDB, "&C/C++ (GDB)");
+	menu->Append(kHelp_JDB, "&Java (JDB)");
+	menu->Append(kHelp_PDB, "&Python (PDB)");
 	menu->AppendSeparator();
 	menu->Append(kHelp_About, "&About...");
 	menuBar->Append(menu, "&Help");

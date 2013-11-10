@@ -53,6 +53,15 @@ const wxString &Callstack::CurrentFrame() const
 	return frame.description;
 }
 
+const wxString &Callstack::PreviousFrame() const
+{
+	static wxString empty = wxEmptyString;
+	if (frames.size() > 1)
+		return frames[frames.size() - 2].description;
+	else
+		return empty;
+}
+
 bool Callstack::Load(const wxString &fileName)
 {
 	wxTextFile file;
@@ -100,11 +109,11 @@ void Callstack::LoadLine(const wxString &line)
 void Callstack::OnDClick(wxCommandEvent &event)
 {
 	int selection = event.GetSelection();
-	if (selection >= 0 && selection < frames.size())
+	if (selection >= 0 && selection < (int)frames.size())
 	{
 		selection = frames.size() - selection - 1;
 
 		const Frame &frame = frames[selection];
-		host->UpdateSource(frame.fileName, frame.line);
+		host->UpdateSource(frame.line, frame.fileName);
 	}
 }

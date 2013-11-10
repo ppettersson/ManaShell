@@ -20,6 +20,7 @@ public:
 	bool Load(const wxString &fileName);
 
 	const wxString &CurrentFrame() const;
+	const wxString &PreviousFrame() const;
 
 
 private:
