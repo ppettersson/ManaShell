@@ -93,9 +93,11 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 
 		topSizer->Add(5, 5, 1, wxGROW | wxALL, 5);
 
-		wxButton *okControl = new wxButton(this, wxID_OK, "OK");
-		okControl->SetDefault();
-		topSizer->Add(okControl, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+		wxStdDialogButtonSizer *dialogButtons = new wxStdDialogButtonSizer();
+		dialogButtons->AddButton(new wxButton(this, wxID_OK, "OK"));
+		dialogButtons->AddButton(new wxButton(this, wxID_CANCEL, "Cancel"));
+		dialogButtons->Realize();
+		topSizer->Add(dialogButtons, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
 	}
 
 	topSizer->SetMinSize(wxSize(600, -1));
