@@ -113,7 +113,7 @@ Debugger *DebuggerDialog::GetDebugger()
 {
 	// Delete the ones that aren't going to be used.
 	Debugger *result = debuggers[debugger];
-	for (size_t i = 0; i < debuggers.size(); ++i)
+	for (int i = 0; i < (int)debuggers.size(); ++i)
 		if (i != debugger)
 			delete debuggers[i];
 	debuggers.clear();
@@ -127,7 +127,7 @@ void DebuggerDialog::SetDefaults()
 	arguments	= "";
 	custom		= false;
 
-	if (debugger < debuggers.size())
+	if (debugger < (int)debuggers.size())
 	{
 		Debugger *plugin = debuggers[debugger];
 
@@ -139,7 +139,7 @@ void DebuggerDialog::SetDefaults()
 
 void DebuggerDialog::UpdateCommand()
 {
-	if (debugger < debuggers.size())
+	if (debugger < (int)debuggers.size())
 	{
 		Debugger *plugin = debuggers[debugger];
 
@@ -190,7 +190,7 @@ void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 {
 	custom = event.IsChecked();
 
-	if (debugger < debuggers.size())
+	if (debugger < (int)debuggers.size())
 	{
 		Debugger *plugin = debuggers[debugger];
 		plugin->SetUseCustomCommand(custom);
