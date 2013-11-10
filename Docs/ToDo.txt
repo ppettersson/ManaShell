@@ -3,9 +3,7 @@
 0.1	[done]	UI in a presentable state.
 0.2	[done]	Piped process with both input and output.
 0.3	[done]	Source editor.
-
-0.4	[todo]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
-			- Set working directory and environment variables.
+0.4	[done]	PDB plugin: http://docs.python.org/3.3/library/pdb.html
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).

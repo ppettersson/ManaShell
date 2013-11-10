@@ -7,6 +7,7 @@
 
 BEGIN_EVENT_TABLE(DebuggerDialog, wxDialog)
 	EVT_UPDATE_UI(wxID_OK, DebuggerDialog::OnUpdateUI)
+	EVT_BUTTON(wxID_OK, DebuggerDialog::OnOK)
 END_EVENT_TABLE()
 
 
@@ -76,19 +77,39 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 			}
 		}
 
-		wxStaticBoxSizer *commandSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Command:"), wxHORIZONTAL);
+		wxStaticBoxSizer *commandSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Command:"), wxVERTICAL);
 		topSizer->Add(commandSizer, 0, wxGROW | wxALL, 5);
 		{
-			customControl = new wxCheckBox(commandSizer->GetStaticBox(), kCustomId, "Custom");
-			customControl->SetValidator(wxGenericValidator(&custom));
-			customControl->Bind(wxEVT_CHECKBOX, &DebuggerDialog::OnCustomChanged, this);
-			commandSizer->Add(customControl, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+			wxBoxSizer *customSizer = new wxBoxSizer(wxHORIZONTAL);
+			commandSizer->Add(customSizer, 0, wxGROW | wxALL, 5);
+			{
+				customControl = new wxCheckBox(commandSizer->GetStaticBox(), kCustomId, "Custom");
+				customControl->SetValidator(wxGenericValidator(&custom));
+				customControl->Bind(wxEVT_CHECKBOX, &DebuggerDialog::OnCustomChanged, this);
+				customSizer->Add(customControl, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
-			commandControl = new wxTextCtrl(commandSizer->GetStaticBox(), kCommandId);
-			commandControl->Enable(false);
-			commandControl->SetValidator(wxTextValidator(wxFILTER_NONE, &command));
-			commandControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
-			commandSizer->Add(commandControl, 1, wxGROW | wxALL, 5);
+				commandControl = new wxTextCtrl(commandSizer->GetStaticBox(), kCommandId);
+				commandControl->Enable(false);
+				commandControl->SetValidator(wxTextValidator(wxFILTER_NONE, &command));
+				commandControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
+				customSizer->Add(commandControl, 1, wxGROW | wxALL, 5);
+			}
+
+			wxBoxSizer *workingDirSizer = new wxBoxSizer(wxHORIZONTAL);
+			commandSizer->Add(workingDirSizer, 0, wxGROW | wxALL, 5);
+			{
+				wxStaticText *description = new wxStaticText(commandSizer->GetStaticBox(), wxID_STATIC, "Working Dir:");
+				workingDirSizer->Add(description, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+				workingDirControl = new wxTextCtrl(commandSizer->GetStaticBox(), kWorkingDirId);
+				workingDirControl->SetValidator(wxTextValidator(wxFILTER_NONE, &workingDir));
+				workingDirControl->Bind(wxEVT_KILL_FOCUS, &DebuggerDialog::OnLostFocus, this);
+				workingDirSizer->Add(workingDirControl, 1, wxGROW | wxALL, 5);
+
+				workingDirBrowse = new wxButton(commandSizer->GetStaticBox(), kWorkingDirBrowseId, "...");
+				workingDirBrowse->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DebuggerDialog::OnBrowseDir, this);
+				workingDirSizer->Add(workingDirBrowse, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+			}
 		}
 
 		topSizer->Add(5, 5, 1, wxGROW | wxALL, 5);
@@ -124,20 +145,22 @@ Debugger *DebuggerDialog::GetDebugger()
 void DebuggerDialog::SetDefaults()
 {
 	debugger	= 0;
-	arguments	= "";
 	custom		= false;
 
-	if (debugger < (int)debuggers.size())
-	{
-		Debugger *plugin = debuggers[debugger];
-
-		executable	= plugin->GetExecutable();
-		script		= plugin->GetScript();
-		command		= plugin->GetCommand();
-	}
+	TransferDataFromDebugger();
 }
 
 void DebuggerDialog::UpdateCommand()
+{
+	if (debugger < (int)debuggers.size())
+	{
+		TransferDataToDebugger();
+
+		command = debuggers[debugger]->GetCommand();
+	}
+}
+
+void DebuggerDialog::TransferDataToDebugger()
 {
 	if (debugger < (int)debuggers.size())
 	{
@@ -149,8 +172,20 @@ void DebuggerDialog::UpdateCommand()
 		plugin->SetUseCustomCommand(custom);
 		if (custom)
 			plugin->SetCustomCommand(command);
+		plugin->SetWorkingDir(workingDir);
+	}
+}
 
-		command = plugin->GetCommand();
+void DebuggerDialog::TransferDataFromDebugger()
+{
+	if (debugger < (int)debuggers.size())
+	{
+		Debugger *plugin = debuggers[debugger];
+
+		executable = plugin->GetExecutable();
+		script = plugin->GetScript();
+		arguments = plugin->GetArguments();
+		workingDir = plugin->GetWorkingDir();
 	}
 }
 
@@ -186,6 +221,19 @@ void DebuggerDialog::OnBrowse(wxCommandEvent &event)
 	}
 }
 
+void DebuggerDialog::OnBrowseDir(wxCommandEvent &event)
+{
+	// Browse for the directory.
+	wxString result = wxDirSelector("Choose a directory");
+
+	// If the dialog was cancelled then this is empty.
+	if (!result.IsEmpty())
+	{
+		workingDir = result;
+		TransferDataToWindow();
+	}
+}
+
 void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 {
 	custom = event.IsChecked();
@@ -215,21 +263,9 @@ void DebuggerDialog::OnDebugger(wxCommandEvent &event)
 {
 	if (event.GetInt() != debugger)
 	{
-		Debugger *plugin = debuggers[debugger];
-
-		plugin->SetExecutable(executable);
-		plugin->SetScript(script);
-		plugin->SetArguments(arguments);
-		plugin->SetUseCustomCommand(custom);
-		if (custom)
-			plugin->SetCustomCommand(command);
-
+		TransferDataToDebugger();
 		debugger	= event.GetInt();
-		plugin		= debuggers[debugger];
-
-		executable	= plugin->GetExecutable();
-		script		= plugin->GetScript();
-		arguments	= plugin->GetArguments();
+		TransferDataFromDebugger();
 
 		wxCommandEvent dummy;
 		dummy.SetInt(0);
@@ -264,6 +300,10 @@ void DebuggerDialog::OnLostFocus(wxFocusEvent &event)
 		command = commandControl->GetValue();
 		update = true;
 		break;
+
+	case kWorkingDirId:
+		workingDir = workingDirControl->GetValue();
+		break;
 	}
 
 	if (update)
@@ -286,4 +326,11 @@ void DebuggerDialog::OnUpdateUI(wxUpdateUIEvent &event)
 			event.Enable(!executableControl->GetValue().IsEmpty() && !scriptControl->GetValue().IsEmpty());
 		break;
 	}
+}
+
+void DebuggerDialog::OnOK(wxCommandEvent &event)
+{
+	TransferDataToDebugger();
+
+	event.Skip();
 }

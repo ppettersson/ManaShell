@@ -24,7 +24,9 @@ private:
 		kScriptBrowseId,
 		kArgumentsId,
 		kCustomId,
-		kCommandId
+		kCommandId,
+		kWorkingDirId,
+		kWorkingDirBrowseId
 	};
 
 	wxChoice				*debuggerControl;
@@ -35,12 +37,15 @@ private:
 	wxTextCtrl				*argumentsControl;
 	wxCheckBox				*customControl;
 	wxTextCtrl				*commandControl;
+	wxTextCtrl				*workingDirControl;
+	wxButton				*workingDirBrowse;
 
 	int						debugger;
 	wxString				executable,
 							script,
 							arguments,
-							command;
+							command,
+							workingDir;
 	bool					custom;
 
 	std::vector<Debugger *>	debuggers;
@@ -48,12 +53,16 @@ private:
 
 	void SetDefaults();
 	void UpdateCommand();
+	void TransferDataToDebugger();
+	void TransferDataFromDebugger();
 
 	void OnBrowse(wxCommandEvent &event);
+	void OnBrowseDir(wxCommandEvent &event);
 	void OnCustomChanged(wxCommandEvent &event);
 	void OnDebugger(wxCommandEvent &event);
 	void OnLostFocus(wxFocusEvent &event);
 	void OnUpdateUI(wxUpdateUIEvent &event);
+	void OnOK(wxCommandEvent &event);
 
 
 	DECLARE_EVENT_TABLE()

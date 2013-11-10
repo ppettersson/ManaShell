@@ -69,6 +69,9 @@ public:
 	const wxString &GetCustomCommand() const				{ return customCommand; }
 	void SetCustomCommand(const wxString &c)				{ customCommand = c; }
 
+	const wxString &GetWorkingDir() const					{ return workingDir; }
+	void SetWorkingDir(const wxString &w)					{ workingDir = w; }
+
 
 #ifdef __WXMSW__
 	enum InterruptMethod
@@ -86,7 +89,8 @@ protected:
 	wxString		executable,
 					script,
 					arguments,
-					customCommand;
+					customCommand,
+					workingDir;
 	bool			useCustomCommand;
 };
 

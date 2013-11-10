@@ -380,9 +380,20 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	// Remove all output from the last run before we start.
 	output->Clear();
 
+	// Check if we should set the current working directory.
+	wxExecuteEnv *env = NULL;
+	wxExecuteEnv environment;
+	if (!debugger->GetWorkingDir().IsEmpty())
+	{
+		// ToDo: Should also support environment variables here.
+
+		environment.cwd = debugger->GetWorkingDir();
+		env = &environment;
+	}
+
 	// Run the command and attach to the input and output.
 	PipedProcess *process = new PipedProcess(this);
-	activeProcessId = wxExecute(debugger->GetCommand(), wxEXEC_ASYNC, process);
+	activeProcessId = wxExecute(debugger->GetCommand(), wxEXEC_ASYNC, process, env);
 	if (!activeProcessId)
 	{
 		wxMessageBox("Failed to start the debugger", "Error");
@@ -514,7 +525,7 @@ void MainFrame::OnHelpPDB(wxCommandEvent &event)
 
 void MainFrame::OnHelpAbout(wxCommandEvent &event)
 {
-	wxMessageBox("Mana Shell 0.3\n\n"
+	wxMessageBox("Mana Shell 0.4\n\n"
 				 "A fast and flexible debugger front-end.\n\n"
 				 "(c) 2013 Peter Pettersson.\n\n"
 				 "https://github.com/ppettersson/ManaShell",
