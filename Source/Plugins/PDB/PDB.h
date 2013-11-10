@@ -84,7 +84,6 @@ private:
 	{
 		kUnexpectedUnknown,					// Probably regular program output, ignore.
 		kUnexpectedCrash,
-		kUnexpectedUserInterrupt,
 		kUnexpectedProgramFinished,			// Program finished and got restarted.
 		kUnexpectedProgramFinishedWaiting	// Program finished and is about to be restarted.
 	};
@@ -127,6 +126,7 @@ private:
 	UnexpectedResult ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer);
 	void ParseQuittingOutput(wxStringTokenizer &lineTokenizer);
 	void ParseWatchingOutput(wxStringTokenizer &lineTokenizer);
+	wxString ParseTraceback(wxStringTokenizer &lineTokenizer);
 	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
 
 	void PushStackFrame(const wxString &frame, const wxString &fileName, unsigned lineNr);

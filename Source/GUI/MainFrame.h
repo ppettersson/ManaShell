@@ -42,6 +42,7 @@ public:
 	Callstack *GetCallstack()			{ return callstack; }
 	SourceEditor *GetSourceEditor()		{ return sourceEditor; }
 	Watch *GetWatch()					{ return watch; }
+	bool IsWaitingForResponse() const	{ return waitingForResponse; }
 
 	void GetWatchValue(unsigned index, const wxString &variable);
 

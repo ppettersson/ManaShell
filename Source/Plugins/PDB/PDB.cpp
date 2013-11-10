@@ -51,7 +51,7 @@ bool PDB::Start()
 void PDB::Stop()
 {
 	// Check if we have to interrupt the program first.
-	if (lastCommand == kContinue)
+	if (host->IsWaitingForResponse())
 		host->SendInterrupt();
 	else
 		// Short hand for "quit".
@@ -168,14 +168,10 @@ bool PDB::OnOutput(const wxString &message)
 	case kUnexpected:
 		switch (ParseUnexpectedOutput(lineTokenizer))
 		{
+		case kUnexpectedCrash:
 		case kUnexpectedUnknown:
 			// Don't enable input etc because of this.
 			return true;
-
-		// ToDo:
-		//case kUnexpectedCrash:
-		//case kUnexpectedUserInterrupt:
-		//	return true;
 
 		case kUnexpectedProgramFinished:
 			// Program finished and got restarted.
@@ -246,7 +242,21 @@ bool PDB::OnError(const wxString &message)
 	}
 
 	if (expectedOutput == kQuitting)
-		host->SendCommand("quit()\n");
+	{
+		// Wait a command prompt before we send the final quit() command.
+		wxStringTokenizer lineTokenizer(message, "\r\n");
+		while (lineTokenizer.HasMoreTokens())
+		{
+			wxString line = lineTokenizer.GetNextToken();
+			if ((line == "(Pdb) ") || (line == ">>> "))
+			{
+				host->SendCommand("quit()\n");
+				return true;
+			}
+		}
+	}
+	else if (expectedOutput == kUnexpected)
+		return OnOutput(message);
 	else
 	{
 		// Abort the current expect result.
@@ -392,12 +402,17 @@ bool PDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 
 PDB::UnexpectedResult PDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
 {
+	UnexpectedResult result = kUnexpectedUnknown;
+
 	while (lineTokenizer.HasMoreTokens())
 	{
 		wxString line = lineTokenizer.GetNextToken();
 
+// ToDo: Ugh, this is not ok, should clean up this mess...
+restart_unexpected_output_parsing:
 		if ((line == "The program finished and will be restarted") ||
-			(line == "Program interrupted. (Use 'cont' to resume)."))
+			(line == "Program interrupted. (Use 'cont' to resume).") ||
+			(line == "Uncaught exception. Entering post mortem debugging"))
 		{
 			expectedOutput = kStepping;
 
@@ -409,11 +424,20 @@ PDB::UnexpectedResult PDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenize
 			else
 				return kUnexpectedProgramFinishedWaiting;
 		}
-
-		// ToDo: crash
+		else if (line == "Traceback (most recent call last):")
+		{
+			line = ParseTraceback(lineTokenizer);
+			if (!line.IsEmpty())
+				goto restart_unexpected_output_parsing;
+		}
+		else if (line.Matches("TypeError: ?*"))	// ToDo: Add the other types of errors...
+		{
+			// No special handling for this.
+			result = kUnexpectedCrash;
+		}
 	}
 
-	return kUnexpectedUnknown;
+	return result;
 }
 
 void PDB::ParseQuittingOutput(wxStringTokenizer &lineTokenizer)
@@ -458,6 +482,51 @@ void PDB::ParseWatchingOutput(wxStringTokenizer &lineTokenizer)
 	host->GetWatch()->Update(currentWatch, value, "");
 
 	++currentWatch;
+}
+
+wxString PDB::ParseTraceback(wxStringTokenizer &lineTokenizer)
+{
+	// Reset the callstack and rebuilt it.
+	getFullCallstack = false;
+	host->GetCallstack()->ClearAllFrames();
+
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line.Matches("  File \"?*\", line ?*, in ?*"))
+		{
+			// Stack frame on this form:
+			// '  File "c:\path\to\file.py", line 1234, in frame'
+
+			wxString tail;	// Will contain ', line 1234, in frame'.
+			wxString fileName = line.BeforeLast('\"', &tail).AfterFirst('\"');
+
+			long lineNr = 0;
+			wxString tail2;	// Will contain ', in frame'.
+			tail.BeforeLast(',', &tail2).AfterLast(' ').ToLong(&lineNr);
+
+			wxString frame = tail2.AfterLast(' ');
+
+			// We got all the info we need to add this frame to the callstack.
+			host->GetCallstack()->PushFrame(frame, fileName, lineNr);
+			currentFrame = frame;
+		}
+		else if (line.Matches("    ?*") )
+		{
+			// Ignore the source on that stack frame.
+		}
+		else
+		{
+			// Traceback is finished, don't consume more lines.
+			// Unfortunately there's no way to put back the last token into
+			// lineTokenizer, so instead we have to return that string to
+			// the caller if they're interested.
+			return line;
+		}
+	}
+
+	return "";
 }
 
 void PDB::ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame)
