@@ -21,6 +21,10 @@ public:
 
 	const wxString &CurrentFrame() const;
 	const wxString &PreviousFrame() const;
+	bool PopIfPreviousFrame(const wxString &description);
+
+	void ResetToFrame(unsigned frame);
+	void Sync(const wxString &description, const wxString &fileName, unsigned line);
 
 
 private:

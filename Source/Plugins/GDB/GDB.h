@@ -57,6 +57,7 @@ private:
 
 		kStartup,				// Waiting for gdb to load symbols etc.
 		kStepping,				// Update the callstack interactively.
+		kSteppingOut,			// Returning from a frame.
 		kUnexpected,
 		kTemporaryBreakpoint	// Controlled interrupt.
 	};
@@ -89,6 +90,8 @@ private:
 
 	void ParseStartupOutput(wxStringTokenizer &lineTokenizer);
 	void ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+	void ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer);
+	void ParseSteppingOutError(wxStringTokenizer &lineTokenizer);
 	void ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer);
 
 	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);

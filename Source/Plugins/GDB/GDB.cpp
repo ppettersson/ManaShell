@@ -63,9 +63,9 @@ void GDB::StepOver()
 
 void GDB::StepOut()
 {
-	host->SendCommand("fini\n");
+	host->SendCommand("fin\n");
 	lastCommand		= kFinish;
-	expectedOutput	= kStepping;
+	expectedOutput	= kSteppingOut;
 }
 
 void GDB::Break()
@@ -91,7 +91,6 @@ void GDB::RemoveBreakpoint(const wxString &fileName, unsigned line)
 void GDB::ClearAllBreakpoints()
 {
 }
-
 
 void GDB::GetWatchValue(unsigned index, const wxString &variable)
 {
@@ -123,6 +122,10 @@ bool GDB::OnOutput(const wxString &message)
 		ParseSteppingOutput(lineTokenizer);
 		break;
 
+	case kSteppingOut:
+		ParseSteppingOutOutput(lineTokenizer);
+		break;
+
 	case kTemporaryBreakpoint:
 		ParseTemporaryBreakpointOutput(lineTokenizer);
 		break;
@@ -135,6 +138,15 @@ bool GDB::OnOutput(const wxString &message)
 
 bool GDB::OnError(const wxString &message)
 {
+	wxStringTokenizer lineTokenizer(message, "\r\n");
+
+	switch (expectedOutput)
+	{
+	case kSteppingOut:
+		ParseSteppingOutError(lineTokenizer);
+		break;
+	}
+
 	return false;
 }
 
@@ -233,18 +245,87 @@ void GDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 
 			if (frame != currentFrame)
 			{
-				currentFrame = frame;
-
 				// ToDo: Same problem as with PDB, there's no information about
-				// stepping from an outer frame directly to another outer frame...
+				// stepping from an outer frame directly to another outer
+				// frame... Empirically it seems to work best to just search
+				// for a matching frame.
 
 				// Check if it's a step up or down.
 				Callstack *callstack = host->GetCallstack();
-				if (frame == callstack->PreviousFrame())
-					callstack->PopFrame();
-				else
+				if (!callstack->PopIfPreviousFrame(frame))
 					callstack->PushFrame(frame, fileName, lineNr);
+
+				currentFrame = frame;
 			}
+		}
+	}
+}
+
+void GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
+{
+	Callstack *callstack = host->GetCallstack();
+
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		// Run till exit from #0  func (r=..., id=@0x28f514: 0) at path/to/file.cpp:45
+		if (line.Matches("Run till exit from #?* ?* at ?*:?*"))
+		{
+			// Go back one step in the callstack.
+			callstack->PopFrame();
+			currentFrame = callstack->CurrentFrame();
+		}
+		// 0x004013bc in func (r=..., E=1) at path/to/file.cpp:9
+		else if (line.Matches("?* in ?* at ?*:?*"))
+		{
+			// Sync up which frame we're actually in.
+
+			// Search for the split markers in the string.
+			size_t frameStart = line.Find(" in ");
+
+			wxString	frame,
+						fileName;
+			long		lineNr = 0;
+			ParseFrame(line.Mid(frameStart + 4), fileName, lineNr, frame);
+
+			callstack->Sync(frame, fileName, lineNr);
+		}
+		// 123\t  if (!intersect(r, id))
+		else if (line.Matches("?*\t?*"))
+		{
+			long lineNr = -1;
+			line.BeforeFirst('\t').ToLong(&lineNr);
+
+			if (lineNr >= 0)
+				host->UpdateSource(lineNr);
+		}
+		// Value returned is $1 = true
+		else if (line.Matches("Value returned is $?* = ?*"))
+		{
+			// ToDo?
+		}
+		else if (line == "(gdb) ")
+		{
+			// We're done.
+		}
+		else
+		{
+			// Error?
+		}
+	}
+}
+
+void GDB::ParseSteppingOutError(wxStringTokenizer &lineTokenizer)
+{
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		// Handle error when trying to step out of the bottom frame.
+		if (line == "\"finish\" not meaningful in the outermost frame.")
+		{
+			// ToDo?
 		}
 	}
 }

@@ -62,6 +62,46 @@ const wxString &Callstack::PreviousFrame() const
 		return empty;
 }
 
+bool Callstack::PopIfPreviousFrame(const wxString &frame)
+{
+	int numFrames = (int)frames.size();
+	for (int i = numFrames - 1; i >= 0; --i)
+		if (frame == frames[i].description)
+		{
+			for (int j = 0; j < numFrames - i - 1; ++j)
+				Delete(0);
+			SetSelection(0);
+
+			frames.resize(i + 1);
+			return true;
+		}
+
+	return false;
+}
+
+void Callstack::ResetToFrame(unsigned frame)
+{
+	unsigned numFrames = frames.size();
+	if (frame < numFrames)
+	{
+		for (unsigned i = 0; i < numFrames - frame - 1; ++i)
+			Delete(0);
+		SetSelection(0);
+	}
+}
+
+void Callstack::Sync(const wxString &description, const wxString &fileName, unsigned lineNr)
+{
+	unsigned numFrames = frames.size();
+	for (unsigned i = 0; i < numFrames; ++i)
+		if (frames[i].description == description)
+		{
+			ResetToFrame(i);
+			UpdateFrame(lineNr);
+			return;
+		}
+}
+
 bool Callstack::Load(const wxString &fileName)
 {
 	wxTextFile file;
