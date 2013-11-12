@@ -16,6 +16,8 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 			   wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, debuggers(d)
 {
+	wxASSERT(debuggers.size());
+
 	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	SetDefaults();
 
@@ -148,45 +150,38 @@ void DebuggerDialog::SetDefaults()
 	custom		= false;
 
 	TransferDataFromDebugger();
+
+	command = debuggers[debugger]->GetCommand();
 }
 
 void DebuggerDialog::UpdateCommand()
 {
-	if (debugger < (int)debuggers.size())
-	{
-		TransferDataToDebugger();
+	TransferDataToDebugger();
 
-		command = debuggers[debugger]->GetCommand();
-	}
+	command = debuggers[debugger]->GetCommand();
 }
 
 void DebuggerDialog::TransferDataToDebugger()
 {
-	if (debugger < (int)debuggers.size())
-	{
-		Debugger *plugin = debuggers[debugger];
+	Debugger *plugin = debuggers[debugger];
 
-		plugin->SetExecutable(executable);
-		plugin->SetScript(script);
-		plugin->SetArguments(arguments);
-		plugin->SetUseCustomCommand(custom);
-		if (custom)
-			plugin->SetCustomCommand(command);
-		plugin->SetWorkingDir(workingDir);
-	}
+	plugin->SetExecutable(executable);
+	plugin->SetScript(script);
+	plugin->SetArguments(arguments);
+	plugin->SetUseCustomCommand(custom);
+	if (custom)
+		plugin->SetCustomCommand(command);
+	plugin->SetWorkingDir(workingDir);
 }
 
 void DebuggerDialog::TransferDataFromDebugger()
 {
-	if (debugger < (int)debuggers.size())
-	{
-		Debugger *plugin = debuggers[debugger];
+	Debugger *plugin = debuggers[debugger];
 
-		executable = plugin->GetExecutable();
-		script = plugin->GetScript();
-		arguments = plugin->GetArguments();
-		workingDir = plugin->GetWorkingDir();
-	}
+	executable = plugin->GetExecutable();
+	script = plugin->GetScript();
+	arguments = plugin->GetArguments();
+	workingDir = plugin->GetWorkingDir();
 }
 
 void DebuggerDialog::OnBrowse(wxCommandEvent &event)
@@ -238,11 +233,8 @@ void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 {
 	custom = event.IsChecked();
 
-	if (debugger < (int)debuggers.size())
-	{
-		Debugger *plugin = debuggers[debugger];
-		plugin->SetUseCustomCommand(custom);
-	}
+	Debugger *plugin = debuggers[debugger];
+	plugin->SetUseCustomCommand(custom);
 
 	executableControl->Enable(!custom);
 	executableBrowse->Enable(!custom);
