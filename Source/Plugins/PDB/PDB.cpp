@@ -91,7 +91,6 @@ void PDB::StepOut()
 void PDB::Break()
 {
 	host->SendInterrupt();
-	lastCommand			= kBreak;
 	expectedOutput		= kUnexpected;
 	getFullCallstack	= true;
 	updateWatches		= true;

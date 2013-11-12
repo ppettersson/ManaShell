@@ -46,10 +46,6 @@ public:
 	virtual wxString GetCommand() const;
 
 
-#ifdef __WXMSW__
-	virtual InterruptMethod GetInterruptMethod() const		{ return kGenerateConsoleCtrlEvent; }
-#endif
-
 private:
 	enum ExpectedOutput
 	{

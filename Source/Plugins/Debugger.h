@@ -80,7 +80,7 @@ public:
 		kGenerateConsoleCtrlEvent
 	};
 
-	virtual InterruptMethod GetInterruptMethod() const		{ return kDebugBreakProcess; }
+	virtual InterruptMethod GetInterruptMethod() const		{ return kGenerateConsoleCtrlEvent; }
 #endif
 
 protected:
