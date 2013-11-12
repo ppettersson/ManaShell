@@ -8,8 +8,12 @@
 GDB::GDB(MainFrame *h)
 	: Debugger(h)
 	, host(h)
-	, expectedOutput(kUnknown)
-	, lastCommand(kNone)
+	, majorVersion(0)
+	, minorVersion(0)
+	, hasSymbols(false)
+	, programStarted(false)
+	, expectedOutput(kOutputUnknown)
+	, lastCommand(kCommandNone)
 {
 	support.breakpoints	= true;
 	support.callstack	= true;
@@ -20,11 +24,11 @@ GDB::GDB(MainFrame *h)
 
 #ifdef __WXMSW__
 	executable			= "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\bin\\gdb.exe";
+	script				= "E:\\tmp\\smallpt\\SmallPT_explicit\\bin\\Debug\\SmallPT_explicit.exe";	// "program.exe";
 #else
 	executable			= "gdb";
+	script				= "program";
 #endif
-	//script				= "program.exe";
-	script				= "E:\\tmp\\smallpt\\SmallPT_explicit\\bin\\Debug\\SmallPT_explicit.exe";
 }
 
 GDB::~GDB()
@@ -38,58 +42,80 @@ bool GDB::Attach()
 
 bool GDB::Start()
 {
-	expectedOutput = kStartup;
+	expectedOutput = kOutputStartup;
 	return true;
 }
 
 void GDB::Stop()
 {
-	// ToDo
+	//// Check if we have to interrupt the program first.
+	//if (host->IsWaitingForResponse())
+	//	host->SendInterrupt();
+	//else
+	//	// Short hand for "quit".
+	//	host->SendCommand("quit\n");
+
+	//lastCommand		= kCommandQuit;
+	//expectedOutput	= kOutputQuitting;
 }
 
 void GDB::StepIn()
 {
-	host->SendCommand("s\n");
-	lastCommand		= kStep;
-	expectedOutput	= kStepping;
+	commandQueue.push(CommandItem("step\n", kCommandStep, kOutputStepping));
+	RunCommandQueue();
 }
 
 void GDB::StepOver()
 {
-	host->SendCommand("n\n");
-	lastCommand		= kNext;
-	expectedOutput	= kStepping;
+	commandQueue.push(CommandItem("next\n", kCommandNext, kOutputStepping));
+	RunCommandQueue();
 }
 
 void GDB::StepOut()
 {
-	host->SendCommand("fin\n");
-	lastCommand		= kFinish;
-	expectedOutput	= kSteppingOut;
+	commandQueue.push(CommandItem("finish\n", kCommandFinish, kOutputSteppingOut));
+	RunCommandQueue();
 }
 
 void GDB::Break()
 {
-	// ToDo
+	//host->SendInterrupt();
+	//expectedOutput	= kOutputUnexpected;
 }
 
 void GDB::Continue()
 {
-	host->SendCommand("c\n");
-	lastCommand		= kContinue;
-	expectedOutput	= kUnexpected;
+	//host->GetSourceEditor()->DisableDebugMarker();
+	//host->SendCommand("continue\n");
+	//lastCommand		= kCommandContinue;
+	//expectedOutput	= kOutputUnexpected;
 }
 
 void GDB::AddBreakpoint(const wxString &fileName, unsigned line)
 {
+	//wxASSERT(!fileName.IsEmpty());
+
+	//host->SendCommand(wxString::Format("break %s:%d\n", fileName, line));
+	//lastCommand		= kCommandBreak;
+	//expectedOutput	= kOutputBreakpoint;
 }
 
 void GDB::RemoveBreakpoint(const wxString &fileName, unsigned line)
 {
+	//wxASSERT(!fileName.IsEmpty());
+
+	//host->SendCommand(wxString::Format("clear %s:%d\n", fileName, line));
+	//lastCommand		= kCommandClear;
+	//expectedOutput	= kOutputBreakpoint;
 }
 
 void GDB::ClearAllBreakpoints()
 {
+	// Clears all breaks. It normally asks for confirmation but that
+	// should automatically be disabled when we're not in terminal mode.
+	//host->SendCommand("delete\n");
+	//lastCommand		= kCommandDelete;
+	//expectedOutput	= kOutputBreakpoint;
 }
 
 void GDB::GetWatchValue(unsigned index, const wxString &variable)
@@ -114,26 +140,18 @@ bool GDB::OnOutput(const wxString &message)
 
 	switch (expectedOutput)
 	{
-	case kStartup:
-		ParseStartupOutput(lineTokenizer);
-		return true;
-
-	case kStepping:
-		ParseSteppingOutput(lineTokenizer);
-		break;
-
-	case kSteppingOut:
-		ParseSteppingOutOutput(lineTokenizer);
-		break;
-
-	case kTemporaryBreakpoint:
-		ParseTemporaryBreakpointOutput(lineTokenizer);
-		break;
+	case kOutputIdle:					return false;
+	case kOutputStart:					return ParseStartOutput(lineTokenizer);
+	case kOutputStartup:				return ParseStartupOutput(lineTokenizer);
+	case kOutputStepping:				return ParseSteppingOutput(lineTokenizer);
+	case kOutputSteppingOut:			return ParseSteppingOutOutput(lineTokenizer);
+	case kOutputTemporaryBreakpoint:	return ParseTemporaryBreakpointOutput(lineTokenizer);
+	case kOutputUnexpected:				return ParseUnexpectedOutput(lineTokenizer);
+	case kOutputQuitting:				return ParseQuittingOutput(lineTokenizer);
+	case kOutputNothing:				return ParseNothingOutput(lineTokenizer);
 	}
 
-	// It's ok to enable user input, we're not expecting any more output at the
-	// moment.
-	return false;
+	return true;
 }
 
 bool GDB::OnError(const wxString &message)
@@ -142,12 +160,11 @@ bool GDB::OnError(const wxString &message)
 
 	switch (expectedOutput)
 	{
-	case kSteppingOut:
-		ParseSteppingOutError(lineTokenizer);
-		break;
+	case kOutputIdle:					return false;
+	case kOutputSteppingOut:			return ParseSteppingOutError(lineTokenizer);
 	}
 
-	return false;
+	return true;
 }
 
 // Build up the full command from the current executable, script and
@@ -160,7 +177,7 @@ wxString GDB::GetCommand() const
 	wxString result = executable;
 	if (!script.IsEmpty() || !arguments.IsEmpty())
 	{
-		result += " --args ";
+		result += " -silent --args ";
 		if (!script.IsEmpty())
 			result += script;
 		if (!arguments.IsEmpty())
@@ -172,20 +189,52 @@ wxString GDB::GetCommand() const
 	return result;
 }
 
-void GDB::ParseStartupOutput(wxStringTokenizer &lineTokenizer)
+bool GDB::ParseStartOutput(wxStringTokenizer &lineTokenizer)
 {
-	// See if we got any errors that we recognize.
-	// Then search for the command prompt.
-
-	long	majorVersion = 0,
-			minorVersion = 0;
-
 	while (lineTokenizer.HasMoreTokens())
 	{
 		wxString line = lineTokenizer.GetNextToken();
 
+		// "Temporary breakpoint 1 at 0x40290e: file c:\code\program.cpp, line 123"
+		if (line.Matches("Temporary breakpoint ?* at ?*: file ?*, line ?*"))
+		{
+			expectedOutput = kOutputTemporaryBreakpoint;
+		}
+		// "Starting program: c:\code\program.exe"
+		else if (line.Matches("Starting program: ?*"))
+		{
+			// gdb should have set a temporary breakpoint by now.
+			wxASSERT(expectedOutput == kOutputTemporaryBreakpoint);
+
+			programStarted = true;
+
+			if (lineTokenizer.HasMoreTokens())
+				return ParseTemporaryBreakpointOutput(lineTokenizer);
+
+			return true;
+		}
+		else
+			ParseDefaultOutput(line);
+	}
+
+	return true;
+}
+
+bool GDB::ParseStartupOutput(wxStringTokenizer &lineTokenizer)
+{
+	// See if we got any errors that we recognize.
+	// Then search for the command prompt.
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		// Check if we got symbols.
+		if (line.Matches("Reading symbols from ?*"))
+		{
+			hasSymbols = true;
+		}
 		// Get the version number.
-		if (line.Matches("GNU gdb (GDB) ?*"))
+		else if (line.Matches("GNU gdb (GDB) ?*"))
 		{
 			wxString version = line.AfterLast(' ');
 
@@ -195,46 +244,76 @@ void GDB::ParseStartupOutput(wxStringTokenizer &lineTokenizer)
 			// ToDo: figure out what we're compatible with and if we get
 			// anything extra nice that we can use.
 		}
+		// The prompt marks the end.
 		else if (line == "(gdb) ")
 		{
 			// Verify that we don't have any more lines.
 			if (!lineTokenizer.HasMoreTokens())
 			{
-				// ToDo: disable text wrapping and pagination:
-				// "set width 0"
-				// "set height 0"
+				// Issue a warning if we didn't manage to load any symbols.
+				if (!hasSymbols)
+					wxMessageBox("Couldn't read any symbols", "Warning", wxOK | wxCENTRE | wxICON_WARNING, host);
+
+				// Concatenate some settings where we don't expect any output
+				// or error handling.
+				// Disable text wrapping and pagination to simplify parsing.
+				commandQueue.push(CommandItem("set width 0\n"));
+				commandQueue.push(CommandItem("set height 0\n"));
 
 				// We're ready.
 				// Set a temporary breakpoint in main and continue.
-				//host->SendCommand("start\n");
-				host->SendCommand("set width 0\nset height 0\nstart\n");
-				expectedOutput	= kTemporaryBreakpoint;
-				lastCommand		= kStart;
-				return;
+				commandQueue.push(CommandItem("start\n", kCommandStart, kOutputStart));
+				return RunCommandQueue();
 			}
 			else
 			{
 				// Continue to parse the lines and hope we get another prompt.
 			}
 		}
+		else
+		{
+			// There's a bunch of startup information about copyright etc that
+			// has to be skipped.
+		}
 	}
+
+	return true;
 }
 
-void GDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
+bool GDB::ParseNothingOutput(wxStringTokenizer &lineTokenizer)
+{
+	// We expect a prompt here with no more tokens.
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line.Matches("(gdb) "))
+		{
+			if (!lineTokenizer.HasMoreTokens())
+			{
+				return RunCommandQueue();
+			}
+			else
+			{
+				// Continue to parse the lines and hope we get another prompt.
+			}
+		}
+		else
+			ParseDefaultOutput(line);
+	}
+
+	return true;
+}
+
+bool GDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
 	{
 		wxString line = lineTokenizer.GetNextToken();
 
 		// Stepping within a frame.
-		if (line.Matches("?*\t?*"))
-		{
-			long lineNr = -1;
-			line.BeforeFirst('\t').ToLong(&lineNr);
-
-			if (lineNr >= 0)
-				host->UpdateSource(lineNr);
-		}
+		if (ParseSteppingWithinFrame(line))
+			;
 		// Stepping to a new frame.
 		else if (line.Matches("?* at ?*:?*"))
 		{
@@ -258,10 +337,19 @@ void GDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 				currentFrame = frame;
 			}
 		}
+		else if (line.Matches("(gdb) "))
+		{
+			// Ready to accept input now.
+			return false;
+		}
+		else
+			ParseDefaultOutput(line);
 	}
+
+	return true;
 }
 
-void GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
+bool GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
 {
 	Callstack *callstack = host->GetCallstack();
 
@@ -291,15 +379,9 @@ void GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
 
 			callstack->Sync(frame, fileName, lineNr);
 		}
-		// 123\t  if (!intersect(r, id))
-		else if (line.Matches("?*\t?*"))
-		{
-			long lineNr = -1;
-			line.BeforeFirst('\t').ToLong(&lineNr);
-
-			if (lineNr >= 0)
-				host->UpdateSource(lineNr);
-		}
+		// Stepping within a frame.
+		else if (ParseSteppingWithinFrame(line))
+			;
 		// Value returned is $1 = true
 		else if (line.Matches("Value returned is $?* = ?*"))
 		{
@@ -307,16 +389,17 @@ void GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
 		}
 		else if (line == "(gdb) ")
 		{
-			// We're done.
+			// Ready to accept input now.
+			return false;
 		}
 		else
-		{
-			// Error?
-		}
+			ParseDefaultOutput(line);
 	}
+
+	return true;
 }
 
-void GDB::ParseSteppingOutError(wxStringTokenizer &lineTokenizer)
+bool GDB::ParseSteppingOutError(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
 	{
@@ -325,12 +408,17 @@ void GDB::ParseSteppingOutError(wxStringTokenizer &lineTokenizer)
 		// Handle error when trying to step out of the bottom frame.
 		if (line == "\"finish\" not meaningful in the outermost frame.")
 		{
-			// ToDo?
+			// It turns into a no-op and we fall back to regular stepping.
+			expectedOutput = kOutputStepping;
 		}
+		else
+			ParseDefaultError(line);
 	}
+
+	return true;
 }
 
-void GDB::ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer)
+bool GDB::ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
 	{
@@ -356,8 +444,48 @@ void GDB::ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer)
 				host->GetCallstack()->PushFrame(frame, fileName, lineNr);
 			}
 
-			expectedOutput = kStepping;
+			expectedOutput = kOutputStepping;
+			if (lineTokenizer.HasMoreTokens())
+				return ParseSteppingOutput(lineTokenizer);
 		}
+		else
+			ParseDefaultOutput(line);
+	}
+
+	return true;
+}
+
+bool GDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
+{
+	return true;
+}
+
+bool GDB::ParseQuittingOutput(wxStringTokenizer &lineTokenizer)
+{
+	return true;
+}
+
+void GDB::ParseDefaultError(const wxString &line)
+{
+	// Unknown error.
+	wxASSERT(false);
+}
+
+void GDB::ParseDefaultOutput(const wxString &line)
+{
+	if (line.Matches("[New Thread ?*]"))
+	{
+		// ToDo?
+	}
+	else if (line.Matches("(gdb) "))
+	{
+		// We got a prompt where we didn't expect it.
+		wxASSERT(false);
+	}
+	else
+	{
+		// ToDo: program output?
+		wxASSERT(false);
 	}
 }
 
@@ -375,4 +503,40 @@ void GDB::ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxS
 
 	// Parse out the line number.
 	line.AfterLast(':').ToLong(&lineNr);
+}
+
+bool GDB::ParseSteppingWithinFrame(const wxString &line)
+{
+	if (line.Matches("?*\t?*"))
+	{
+		long lineNr = -1;
+		line.BeforeFirst('\t').ToLong(&lineNr);
+
+		if (lineNr >= 0)
+			host->UpdateSource(lineNr);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool GDB::RunCommandQueue()
+{
+	// Check if there are any commands waiting.
+	if (!commandQueue.empty())
+	{
+		// First In First Out.
+		const CommandItem &c = commandQueue.front();
+
+		// Send off the command and rig the state machine.
+		host->SendCommand(c.message);
+		lastCommand		= c.command;
+		expectedOutput	= c.expectedOutput;
+
+		commandQueue.pop();
+		return true;
+	}
+
+	return false;
 }

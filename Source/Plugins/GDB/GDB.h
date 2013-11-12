@@ -2,6 +2,7 @@
 #define GDB_H
 
 #include "../Debugger.h"
+#include <queue>
 
 class wxStringTokenizer;
 
@@ -53,48 +54,93 @@ public:
 private:
 	enum ExpectedOutput
 	{
-		kUnknown,				// Uninitialized state, do nothing.
+		kOutputUnknown,				// Uninitialized state, do nothing.
 
-		kStartup,				// Waiting for gdb to load symbols etc.
-		kStepping,				// Update the callstack interactively.
-		kSteppingOut,			// Returning from a frame.
-		kUnexpected,
-		kTemporaryBreakpoint	// Controlled interrupt.
+		kOutputBreakpoint,			//
+		kOutputIdle,				// Waiting for input.
+		kOutputNothing,				// No output except the prompt is expected.
+		kOutputStart,				// Run to the first temporary breakpoint.
+		kOutputStartup,				// Waiting for gdb to load symbols etc.
+		kOutputStepping,			// Update the callstack interactively.
+		kOutputSteppingOut,			// Returning from a frame.
+		kOutputTemporaryBreakpoint,	// Controlled interrupt.
+		kOutputUnexpected,			//
+		kOutputQuitting				//
 	};
 
 	enum Command
 	{
-		kNone,
+		kCommandNone,
 
-		kStart,					// Set a temporary breakpoint on the first line and run.
-		kStep,
-		kNext,
-		kFinish,
-		kContinue
+		kCommandBreak,
+		kCommandClear,
+		kCommandDelete,
+		kCommandContinue,
+		kCommandFinish,
+		kCommandNext,
+		kCommandQuit,
+		kCommandStart,				// Set a temporary breakpoint on the first line and run.
+		kCommandStep
+	};
+
+	// Sometimes we have to string together a bunch of commands to be executed
+	// in a sequence without any user input.
+	struct CommandItem
+	{
+		wxString				message;
+		Command					command;
+		ExpectedOutput			expectedOutput;
+
+		CommandItem()												{ }
+		CommandItem(const wxString &m, Command c = kCommandNone, ExpectedOutput e = kOutputNothing)
+			: message(m)
+			, command(c)
+			, expectedOutput(e)
+		{
+		}
 	};
 
 	// Access to the GUI and process handler.
-	MainFrame		*host;
+	MainFrame					*host;
+
+	// Information about the gdb process.
+	long						majorVersion,
+								minorVersion;
+	bool						hasSymbols,
+								programStarted;
+
+	// All queued up commands that should be run whenever gdb is ready
+	// for more input.
+	std::queue<CommandItem>		commandQueue;
 
 	// We parse thr output depending on the last command we sent to the
 	// debugger.
-	ExpectedOutput	expectedOutput;
+	ExpectedOutput				expectedOutput;
 
 	// This is used to track the current frame. It's used to detect when
 	// we should request a full stack.
-	wxString		currentFrame;
+	wxString					currentFrame;
 
 	// Remember the last command so we can better handle manual input.
-	Command			lastCommand;
+	Command						lastCommand;
 
 
-	void ParseStartupOutput(wxStringTokenizer &lineTokenizer);
-	void ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
-	void ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer);
-	void ParseSteppingOutError(wxStringTokenizer &lineTokenizer);
-	void ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseNothingOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseStartOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseStartupOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseSteppingOutError(wxStringTokenizer &lineTokenizer);
+	bool ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseQuittingOutput(wxStringTokenizer &lineTokenizer);
 
+	void ParseDefaultError(const wxString &line);
+	void ParseDefaultOutput(const wxString &line);
 	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
+	bool ParseSteppingWithinFrame(const wxString &line);
+
+	bool RunCommandQueue();
 };
 
 #endif // GDB_H
