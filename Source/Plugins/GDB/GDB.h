@@ -57,6 +57,7 @@ private:
 		kOutputUnknown,				// Uninitialized state, do nothing.
 
 		kOutputBreakpoint,			//
+		kOutputContinue,			//
 		kOutputIdle,				// Waiting for input.
 		kOutputNothing,				// No output except the prompt is expected.
 		kOutputStart,				// Run to the first temporary breakpoint.
@@ -64,6 +65,7 @@ private:
 		kOutputStepping,			// Update the callstack interactively.
 		kOutputSteppingOut,			// Returning from a frame.
 		kOutputTemporaryBreakpoint,	// Controlled interrupt.
+		kOutputUserBreak,			// Waiting for the program to be interrupted.
 		kOutputUnexpected,			//
 		kOutputQuitting				//
 	};
@@ -125,6 +127,7 @@ private:
 	Command						lastCommand;
 
 
+	bool ParseContinueOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseNothingOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseStartOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseStartupOutput(wxStringTokenizer &lineTokenizer);
@@ -132,12 +135,14 @@ private:
 	bool ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseSteppingOutError(wxStringTokenizer &lineTokenizer);
 	bool ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseUserBreakOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseUserBreakError(wxStringTokenizer &lineTokenizer);
 	bool ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseQuittingOutput(wxStringTokenizer &lineTokenizer);
 
-	void ParseDefaultError(const wxString &line);
-	void ParseDefaultOutput(const wxString &line);
-	void ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
+	bool ParseDefaultError(const wxString &line);
+	bool ParseDefaultOutput(const wxString &line);
+	bool ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame);
 	bool ParseSteppingWithinFrame(const wxString &line);
 
 	bool RunCommandQueue();

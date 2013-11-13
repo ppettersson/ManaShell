@@ -7,8 +7,17 @@
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).
-			- Attach to android process.
 			- Very basic gdb debugging.
+				- Stepping (over, in, out)
+					- Issue with tail calling and updating the callstack.
+				- Continue
+				- UserBreak / Stop
+					- Issue with premature program exit.
+					- Empty command queue / stack for expected output?
+				- Breakpoints
+				- Watches
+				- Intercept user input
+			- Attach to android process.
 
 0.6	[todo]	UI polish.
 			- More plugin-ish:
