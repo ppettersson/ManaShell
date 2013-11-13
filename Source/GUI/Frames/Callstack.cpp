@@ -87,6 +87,8 @@ void Callstack::ResetToFrame(unsigned frame)
 		for (unsigned i = 0; i < numFrames - frame - 1; ++i)
 			Delete(0);
 		SetSelection(0);
+
+		frames.resize(frame + 1);
 	}
 }
 
