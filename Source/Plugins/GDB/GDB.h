@@ -127,16 +127,18 @@ private:
 	Command						lastCommand;
 
 
+	bool ParseBreakpointError(wxStringTokenizer &lineTokenizer);
+	bool ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseContinueOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseNothingOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseStartOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseStartupOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseSteppingOutput(wxStringTokenizer &lineTokenizer);
-	bool ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseSteppingOutError(wxStringTokenizer &lineTokenizer);
+	bool ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer);
-	bool ParseUserBreakOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseUserBreakError(wxStringTokenizer &lineTokenizer);
+	bool ParseUserBreakOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseQuittingOutput(wxStringTokenizer &lineTokenizer);
 

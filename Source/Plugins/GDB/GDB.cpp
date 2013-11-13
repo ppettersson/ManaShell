@@ -98,20 +98,18 @@ void GDB::Continue()
 
 void GDB::AddBreakpoint(const wxString &fileName, unsigned line)
 {
-	//wxASSERT(!fileName.IsEmpty());
+	wxASSERT(!fileName.IsEmpty());
 
-	//host->SendCommand(wxString::Format("break %s:%d\n", fileName, line));
-	//lastCommand		= kCommandBreak;
-	//expectedOutput	= kOutputBreakpoint;
+	commandQueue.push(CommandItem(wxString::Format("break %s:%d\n", fileName, line), kCommandBreak, kOutputBreakpoint));
+	RunCommandQueue();
 }
 
 void GDB::RemoveBreakpoint(const wxString &fileName, unsigned line)
 {
-	//wxASSERT(!fileName.IsEmpty());
+	wxASSERT(!fileName.IsEmpty());
 
-	//host->SendCommand(wxString::Format("clear %s:%d\n", fileName, line));
-	//lastCommand		= kCommandClear;
-	//expectedOutput	= kOutputBreakpoint;
+	commandQueue.push(CommandItem(wxString::Format("clear %s:%d\n", fileName, line), kCommandClear, kOutputBreakpoint));
+	RunCommandQueue();
 }
 
 void GDB::ClearAllBreakpoints()
@@ -145,6 +143,7 @@ bool GDB::OnOutput(const wxString &message)
 
 	switch (expectedOutput)
 	{
+	case kOutputBreakpoint:				return ParseBreakpointOutput(lineTokenizer);
 	case kOutputContinue:				return ParseContinueOutput(lineTokenizer);
 	case kOutputIdle:					return false;
 	case kOutputStart:					return ParseStartOutput(lineTokenizer);
@@ -197,6 +196,33 @@ wxString GDB::GetCommand() const
 	return result;
 }
 
+bool GDB::ParseBreakpointError(wxStringTokenizer &lineTokenizer)
+{
+	return true;
+}
+
+bool GDB::ParseBreakpointOutput(wxStringTokenizer &lineTokenizer)
+{
+	bool success = false;
+
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line.Matches("Breakpoint ?* at ?*: file ?*, line ?*."))
+		{
+			success = true;
+		}
+		else if (line == "(gdb) ")
+		{
+			// Return user input.
+			return false;
+		}
+	}
+
+	return true;
+}
+
 bool GDB::ParseContinueOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
@@ -204,7 +230,10 @@ bool GDB::ParseContinueOutput(wxStringTokenizer &lineTokenizer)
 		wxString line = lineTokenizer.GetNextToken();
 
 		if (line == "Continuing.")
+		{
 			expectedOutput = kOutputUnexpected;
+			return ParseUnexpectedOutput(lineTokenizer);
+		}
 		else
 			ParseDefaultOutput(line);
 	}
@@ -362,6 +391,25 @@ bool GDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 	return true;
 }
 
+bool GDB::ParseSteppingOutError(wxStringTokenizer &lineTokenizer)
+{
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		// Handle error when trying to step out of the bottom frame.
+		if (line == "\"finish\" not meaningful in the outermost frame.")
+		{
+			// It turns into a no-op and we fall back to regular stepping.
+			expectedOutput = kOutputStepping;
+		}
+		else
+			ParseDefaultError(line);
+	}
+
+	return true;
+}
+
 bool GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
 {
 	Callstack *callstack = host->GetCallstack();
@@ -413,25 +461,6 @@ bool GDB::ParseSteppingOutOutput(wxStringTokenizer &lineTokenizer)
 	return true;
 }
 
-bool GDB::ParseSteppingOutError(wxStringTokenizer &lineTokenizer)
-{
-	while (lineTokenizer.HasMoreTokens())
-	{
-		wxString line = lineTokenizer.GetNextToken();
-
-		// Handle error when trying to step out of the bottom frame.
-		if (line == "\"finish\" not meaningful in the outermost frame.")
-		{
-			// It turns into a no-op and we fall back to regular stepping.
-			expectedOutput = kOutputStepping;
-		}
-		else
-			ParseDefaultError(line);
-	}
-
-	return true;
-}
-
 bool GDB::ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
@@ -469,6 +498,19 @@ bool GDB::ParseTemporaryBreakpointOutput(wxStringTokenizer &lineTokenizer)
 	return true;
 }
 
+bool GDB::ParseUserBreakError(wxStringTokenizer &lineTokenizer)
+{
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (ParseDefaultError(line))
+			return true;
+	}
+
+	return true;
+}
+
 bool GDB::ParseUserBreakOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
@@ -492,19 +534,6 @@ bool GDB::ParseUserBreakOutput(wxStringTokenizer &lineTokenizer)
 	return true;
 }
 
-bool GDB::ParseUserBreakError(wxStringTokenizer &lineTokenizer)
-{
-	while (lineTokenizer.HasMoreTokens())
-	{
-		wxString line = lineTokenizer.GetNextToken();
-
-		if (ParseDefaultError(line))
-			return true;
-	}
-
-	return true;
-}
-
 bool GDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
@@ -517,6 +546,12 @@ bool GDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
 			programStarted = false;
 			Stop();
 			return true;
+		}
+		else if (line.Matches("Breakpoint ?*, ?* at ?*:?*"))
+		{
+			// Program interrupted due to breakpoint.
+			expectedOutput = kOutputStepping;
+			return ParseSteppingOutput(lineTokenizer);
 		}
 		else
 			ParseDefaultOutput(line);
