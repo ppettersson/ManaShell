@@ -61,11 +61,17 @@ wxString PipedProcess::ReadStream(wxInputStream *stream)
 	const unsigned kBufferBytes	= (kBufferSize - 1) * sizeof(wxChar);
 
 	// Read as much as we can, up to our max buffer size.
-	stream->Read(buffer, kBufferBytes);
+	if (stream->CanRead())
+	{
+		stream->Read(buffer, kBufferBytes);
 
-	// Null terminate the buffer so that we can convert it to a string.
-	// ToDo: Not a 100% sure if this works with all encodings?
-	buffer[stream->LastRead()] = 0;
+		// Null terminate the buffer so that we can convert it to a string.
+		// ToDo: Not a 100% sure if this works with all encodings?
+		size_t lastRead = stream->LastRead();
+		buffer[lastRead - 1] = 0;
+	}
+	else
+		buffer[0] = 0;
 
 	// ToDo: wxTextInputStream is using wxConvAuto for encoding conversion.
 	// That fails, investigate if this is our bug, a wx bug or a Windows
