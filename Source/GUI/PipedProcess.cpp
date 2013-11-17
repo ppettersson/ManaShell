@@ -53,7 +53,7 @@ wxString PipedProcess::ReadStream(wxInputStream *stream)
 {
 	// We can't assume that the output has line breaks and instead have to use
 	// a plain buffer and handle line breaks etc on the receiving end.
-	const unsigned kBufferSize	= 4096;
+	const unsigned kBufferSize = 4096;
 	static wxChar buffer[kBufferSize];
 
 	// wxChar may be 2 or 4 bytes and we don't want to read any incomplete

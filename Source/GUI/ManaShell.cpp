@@ -26,17 +26,3 @@ bool ManaShellApp::OnInit()
 	mainFrame = new MainFrame();
 	return true;
 }
-
-int ManaShellApp::OnExit()
-{
-	return wxApp::OnExit();
-}
-
-void ManaShellApp::OnInitCmdLine(wxCmdLineParser &parser)
-{
-}
-
-bool ManaShellApp::OnCmdLineParsed(wxCmdLineParser &parser)
-{
-	return true;
-}

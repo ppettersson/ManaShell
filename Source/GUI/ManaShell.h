@@ -17,10 +17,6 @@ private:
 	MainFrame	*mainFrame;
 
 	virtual bool OnInit();
-	virtual int OnExit();
-
-	virtual void OnInitCmdLine(wxCmdLineParser &parser);
-	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 };
 
 wxDECLARE_APP(ManaShellApp);

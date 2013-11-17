@@ -92,6 +92,9 @@
     <Text Include="..\..\Docs\ToDo.txt">
       <Filter>Docs</Filter>
     </Text>
+    <Text Include="..\..\ReadMe.txt">
+      <Filter>Docs</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\GUI\MainFrame.h">

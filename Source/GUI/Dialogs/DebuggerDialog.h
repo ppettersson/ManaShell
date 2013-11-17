@@ -6,6 +6,7 @@
 
 class Debugger;
 
+// Set up how the debugger should be called when starting a new session.
 class DebuggerDialog : public wxDialog
 {
 public:
@@ -14,7 +15,9 @@ public:
 
 	Debugger *GetDebugger();
 
+
 private:
+	// Controller Id's used when creating event handlers.
 	enum Constants
 	{
 		kDebuggerId		= 10000,
@@ -29,17 +32,20 @@ private:
 		kWorkingDirBrowseId
 	};
 
-	wxChoice				*debuggerControl;
-	wxTextCtrl				*executableControl;
-	wxButton				*executableBrowse;
-	wxTextCtrl				*scriptControl;
-	wxButton				*scriptBrowse;
-	wxTextCtrl				*argumentsControl;
-	wxCheckBox				*customControl;
-	wxTextCtrl				*commandControl;
-	wxTextCtrl				*workingDirControl;
-	wxButton				*workingDirBrowse;
+	// Access to the controls to make it easier to enable or disable them
+	// directly.
+	wxChoice				*debuggerControl;		// Which plugin to use.
+	wxTextCtrl				*executableControl;		// Where to find the debugger program.
+	wxButton				*executableBrowse;		// Use a file browser to find the debugger program.
+	wxTextCtrl				*scriptControl;			// Where to find the script/program to debug.
+	wxButton				*scriptBrowse;			// Use a file browser to find the script/program to debug.
+	wxTextCtrl				*argumentsControl;		// What arguments to pass to the script/program.
+	wxCheckBox				*customControl;			// If the command should be overriden.
+	wxTextCtrl				*commandControl;		// Overridden or generated command line.
+	wxTextCtrl				*workingDirControl;		// Working dir when launching the debugger.
+	wxButton				*workingDirBrowse;		// Use a directory browser to find the working directory.
 
+	// Current "committed" state.
 	int						debugger;
 	wxString				executable,
 							script,
@@ -48,6 +54,7 @@ private:
 							workingDir;
 	bool					custom;
 
+	// All the different plugins.
 	std::vector<Debugger *>	debuggers;
 
 
@@ -56,6 +63,7 @@ private:
 	void TransferDataToDebugger();
 	void TransferDataFromDebugger();
 
+	// Event handlers.
 	void OnBrowse(wxCommandEvent &event);
 	void OnBrowseDir(wxCommandEvent &event);
 	void OnCustomChanged(wxCommandEvent &event);

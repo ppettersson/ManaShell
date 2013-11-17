@@ -7,6 +7,8 @@
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).
+			- Stack based state + Command queue?
+			- Make each command it's own class?
 			- Very basic gdb debugging.
 				- Stepping (over, in, out)
 					- Issue with tail calling and updating the callstack.
@@ -16,6 +18,7 @@
 					- Empty command queue / stack for expected output?
 				- Breakpoints
 				- Watches
+					- Different output formats.
 				- Intercept user input
 			- Attach to android process.
 
@@ -62,16 +65,20 @@
 				- Goto line.
 				- Find.
 				- Should not have a window frame, look at wx/samples/aui
+				- Multiple tabs.
 				- Markers are positioned wrong horizontally.
 				- Code folding.
+				- Only center the cursor when stepping.
 			- Start Debugger Dialog:
-				- all options should be persistent
+				- all options should be persistent.
 					- editable dropdown with recent items.
+				- merge with attach.
 
 0.7	[todo]	JDB plugin: http://docs.oracle.com/javase/1.3/docs/tooldocs/solaris/jdb.html
 			- Very basic java debugging.
 
 0.8	[todo]	Port.
+			- Upgrade to wxWidgets 3.0
 			- Linux.
 			- OSX.
 			- Windows.
@@ -103,10 +110,13 @@
 
 - Multiple debuggers running at the same time:
 	- Android - both gdb and jdb.
+	- Several processes - chromium.
 
 - Tools:
 	- logcat viewer with filters.
 	- debug image viewer (extract code from wxImageView, then remove that repository).
+		- directly from memory (gdb memory).
+		- additional API for external programs?
 	- Post mortem dry-run.
 		- import callstack from text
 			- given at least one source directory, grep to find matching file:line pairs.

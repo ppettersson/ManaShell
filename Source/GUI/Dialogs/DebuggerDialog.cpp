@@ -18,11 +18,14 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 {
 	wxASSERT(debuggers.size());
 
+	// Allow validation to break through static box sizers.
 	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
 	SetDefaults();
 
+	// Flexible layout with sizers.
 	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
 	{
+		// Drop down for all the plugins.
 		wxArrayString debuggerNames;
 		for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
 			debuggerNames.Add((*i)->GetName());
@@ -31,6 +34,7 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 		debuggerControl->Bind(wxEVT_CHOICE, &DebuggerDialog::OnDebugger, this);
 		topSizer->Add(debuggerControl, 0, wxGROW | wxALL, 5);
 
+		// Where to find the debugger program and what arguments to pass.
 		wxStaticBoxSizer *parametersSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Parameters:"), wxVERTICAL);
 		topSizer->Add(parametersSizer, 0, wxGROW | wxALL, 5);
 		{
@@ -79,6 +83,7 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 			}
 		}
 
+		// The resulting command line and an option to override it.
 		wxStaticBoxSizer *commandSizer = new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, "Command:"), wxVERTICAL);
 		topSizer->Add(commandSizer, 0, wxGROW | wxALL, 5);
 		{
@@ -114,8 +119,10 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 			}
 		}
 
+		// Spacer.
 		topSizer->Add(5, 5, 1, wxGROW | wxALL, 5);
 
+		// Regular dialog dismissal.
 		wxStdDialogButtonSizer *dialogButtons = new wxStdDialogButtonSizer();
 		dialogButtons->AddButton(new wxButton(this, wxID_OK, "OK"));
 		dialogButtons->AddButton(new wxButton(this, wxID_CANCEL, "Cancel"));
@@ -141,6 +148,7 @@ Debugger *DebuggerDialog::GetDebugger()
 			delete debuggers[i];
 	debuggers.clear();
 
+	// Return the one that was selected.
 	return result;
 }
 
@@ -178,10 +186,10 @@ void DebuggerDialog::TransferDataFromDebugger()
 {
 	Debugger *plugin = debuggers[debugger];
 
-	executable = plugin->GetExecutable();
-	script = plugin->GetScript();
-	arguments = plugin->GetArguments();
-	workingDir = plugin->GetWorkingDir();
+	executable	= plugin->GetExecutable();
+	script		= plugin->GetScript();
+	arguments	= plugin->GetArguments();
+	workingDir	= plugin->GetWorkingDir();
 }
 
 void DebuggerDialog::OnBrowse(wxCommandEvent &event)
@@ -236,6 +244,7 @@ void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 	Debugger *plugin = debuggers[debugger];
 	plugin->SetUseCustomCommand(custom);
 
+	// Custom is mutually exclusive with setting parameters.
 	executableControl->Enable(!custom);
 	executableBrowse->Enable(!custom);
 	scriptControl->Enable(!custom);
@@ -255,10 +264,14 @@ void DebuggerDialog::OnDebugger(wxCommandEvent &event)
 {
 	if (event.GetInt() != debugger)
 	{
+		// Save the current select in case the old debugger is selected again.
 		TransferDataToDebugger();
-		debugger	= event.GetInt();
+
+		// Retrieve new values from the new debugger.
+		debugger = event.GetInt();
 		TransferDataFromDebugger();
 
+		// Update UI.
 		wxCommandEvent dummy;
 		dummy.SetInt(0);
 		OnCustomChanged(dummy);

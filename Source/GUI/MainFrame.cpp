@@ -353,14 +353,6 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	if (activeProcessId)
 		return;
 
-	// Get the command to run.
-	// ToDo...
-	//wxString command = ::wxGetTextFromUser("What command should I run?", "Debug start",
-	//	//"\"C:/Program Files (x86)/CodeBlocks/MinGW/bin/gdb.exe\" -nw C:/Code/CodeBlocksTest/helloWorld2/bin/Debug/helloWorld2.exe --directory=\"C:/Code/CodeBlocksTest/helloWorld2/\"");
-	//	"c:/python33/python.exe -i -m pdb C:/Code/python_test/raytracer.py");
-	//if (command.empty())
-	//	return;
-
 	// Show a UI to let the user pick one of the debugger plugins
 	// and the options to run.
 	debugger = Debugger::Create(this);

@@ -23,7 +23,7 @@ GDB::GDB(MainFrame *h)
 	support.locals		= false;	// ToDo
 
 #ifdef __WXMSW__
-	executable			= "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\bin\\gdb.exe";
+	executable			= "C:\\Program Files (x86)\\CodeBlocks\\MinGW\\bin\\gdb.exe";				// "C:\\Program Files (x86)\\MinGW\\bin\\gdb.exe";
 	script				= "E:\\tmp\\smallpt\\SmallPT_explicit\\bin\\Debug\\SmallPT_explicit.exe";	// "program.exe";
 #else
 	executable			= "gdb";
@@ -613,7 +613,7 @@ bool GDB::ParseDefaultOutput(const wxString &line)
 	else
 	{
 		// ToDo: program output?
-		wxASSERT(false);
+		//wxASSERT(false);
 	}
 
 	// ToDo:
