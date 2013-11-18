@@ -15,7 +15,6 @@ public:
 
 	// -- Run-time interface --------------------------------------------------
 
-	virtual bool Attach();
 	virtual bool Start();
 	virtual void Stop();
 
@@ -131,6 +130,7 @@ private:
 	bool ParseBreakpointOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseContinueOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseNothingOutput(wxStringTokenizer &lineTokenizer);
+	bool ParseStartError(wxStringTokenizer &lineTokenizer);
 	bool ParseStartOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseStartupOutput(wxStringTokenizer &lineTokenizer);
 	bool ParseSteppingOutput(wxStringTokenizer &lineTokenizer);

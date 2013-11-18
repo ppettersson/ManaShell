@@ -28,7 +28,6 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kView_Locals,					MainFrame::OnViewLocals)
 	EVT_MENU(kView_Watch,					MainFrame::OnViewWatch)
 	EVT_MENU(kView_Fullscreen,				MainFrame::OnViewFullscreen)
-	EVT_MENU(kDebug_Attach,					MainFrame::OnDebugAttach)
 	EVT_MENU(kDebug_Start,					MainFrame::OnDebugStart)
 	EVT_MENU(kDebug_Stop,					MainFrame::OnDebugStop)
 	EVT_MENU(kDebug_StepIn,					MainFrame::OnDebugStepIn)
@@ -342,10 +341,6 @@ void MainFrame::OnViewFullscreen(wxCommandEvent &event)
 				   wxFULLSCREEN_NOCAPTION);
 }
 
-void MainFrame::OnDebugAttach(wxCommandEvent &event)
-{
-}
-
 void MainFrame::OnDebugStart(wxCommandEvent &event)
 {
 	// The UI shouldn't allow more than one process to be active but guard
@@ -541,7 +536,6 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	case kView_Watch:			event.Check(dockingManager.GetPane(watch).IsShown());		break;
 	case kView_Fullscreen:		event.Check(IsFullScreen());								break;
 
-	//case kDebug_Attach:
 	case kDebug_Start:
 		event.Enable(activeProcessId == 0);
 		break;
@@ -652,7 +646,6 @@ void MainFrame::SetupMenu()
 	menuBar->Append(menu, "&View");
 
 	menu = new wxMenu;
-	menu->Append(kDebug_Attach, "&Attach...")->Enable(false);
 	menu->Append(kDebug_Start, "&Start...");
 	menu->Append(kDebug_Stop, "Sto&p\tShift+F5");
 	menu->AppendSeparator();

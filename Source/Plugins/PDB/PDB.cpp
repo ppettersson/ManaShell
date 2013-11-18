@@ -35,11 +35,6 @@ PDB::~PDB()
 {
 }
 
-bool PDB::Attach()
-{
-	return false;
-}
-
 bool PDB::Start()
 {
 	expectedOutput		= kStepping;

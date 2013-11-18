@@ -17,7 +17,6 @@ public:
 
 	// -- Run-time interface --------------------------------------------------
 
-	virtual bool Attach()									{ return false; }
 	virtual bool Start()									{ return false; }
 	virtual void Stop()										{ }
 

@@ -70,7 +70,6 @@ private:
 		kView_Watch,
 		kView_Fullscreen,
 
-		kDebug_Attach,
 		kDebug_Start,
 		kDebug_Stop,
 		kDebug_StepIn,
@@ -159,7 +158,6 @@ private:
 	void OnViewWatch(wxCommandEvent &event);
 	void OnViewFullscreen(wxCommandEvent &event);
 
-	void OnDebugAttach(wxCommandEvent &event);
 	void OnDebugStart(wxCommandEvent &event);
 	void OnDebugStop(wxCommandEvent &event);
 	void OnDebugStepIn(wxCommandEvent &event);

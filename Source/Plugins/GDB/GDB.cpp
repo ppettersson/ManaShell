@@ -35,11 +35,6 @@ GDB::~GDB()
 {
 }
 
-bool GDB::Attach()
-{
-	return false;
-}
-
 bool GDB::Start()
 {
 	expectedOutput = kOutputStartup;
@@ -166,9 +161,18 @@ bool GDB::OnError(const wxString &message)
 
 	switch (expectedOutput)
 	{
+	//case kOutputBreakpoint:				return ParseDefaultError(lineTokenizer);
+	//case kOutputContinue:				return ParseDefaultError(lineTokenizer);
 	case kOutputIdle:					return false;
+	case kOutputStart:					return ParseStartError(lineTokenizer);
+	//case kOutputStartup:				return ParseDefaultError(lineTokenizer);
+	//case kOutputStepping:				return ParseDefaultError(lineTokenizer);
 	case kOutputSteppingOut:			return ParseSteppingOutError(lineTokenizer);
+	//case kOutputTemporaryBreakpoint:	return ParseDefaultError(lineTokenizer);
 	case kOutputUserBreak:				return ParseUserBreakError(lineTokenizer);
+	//case kOutputUnexpected:				return ParseDefaultError(lineTokenizer);
+	//case kOutputQuitting:				return ParseDefaultError(lineTokenizer);
+	//case kOutputNothing:				return ParseDefaultError(lineTokenizer);
 	}
 
 	return true;
@@ -241,6 +245,26 @@ bool GDB::ParseContinueOutput(wxStringTokenizer &lineTokenizer)
 	return true;
 }
 
+bool GDB::ParseStartError(wxStringTokenizer &lineTokenizer)
+{
+	while (lineTokenizer.HasMoreTokens())
+	{
+		wxString line = lineTokenizer.GetNextToken();
+
+		if (line == "The \"remote\" target does not support \"run\". "
+					"Try \"help target\" or \"continue\"")
+		{
+			// This means that we're dealing with remote debugging.
+			// Go to interactive mode and let the user decide.
+			programStarted = true;
+		}
+		else
+			ParseDefaultError(line);
+	}
+
+	return true;
+}
+
 bool GDB::ParseStartOutput(wxStringTokenizer &lineTokenizer)
 {
 	while (lineTokenizer.HasMoreTokens())
@@ -265,6 +289,19 @@ bool GDB::ParseStartOutput(wxStringTokenizer &lineTokenizer)
 
 			return true;
 		}
+		else if (line == "(gdb) ")
+		{
+			// If we're remote debugging then we got an error message but
+			// handled it and should enter interactive mode.
+			if (programStarted)
+				return false;
+
+			// Warn about this, but give the user the possibility to debug
+			// manually.
+			wxMessageBox("Failed to start the program and/or attach the debugger.",
+						 "Warning", wxOK | wxCENTRE | wxICON_ERROR, host);
+			return false;
+		}
 		else
 			ParseDefaultOutput(line);
 	}
@@ -281,7 +318,8 @@ bool GDB::ParseStartupOutput(wxStringTokenizer &lineTokenizer)
 		wxString line = lineTokenizer.GetNextToken();
 
 		// Check if we got symbols.
-		if (line.Matches("Reading symbols from ?*"))
+		if (line.Matches("Reading symbols from ?*") ||
+			(line == "Attaching and reading symbols, this may take a while.."))
 		{
 			hasSymbols = true;
 		}
