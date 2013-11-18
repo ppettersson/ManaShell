@@ -376,6 +376,9 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 
 		environment.cwd = debugger->GetWorkingDir();
 		env = &environment;
+
+		// Let the source editor know this as well to help with opening files.
+		sourceEditor->SetWorkingDirectory(environment.cwd);
 	}
 
 	// Run the command and attach to the input and output.

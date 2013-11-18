@@ -50,7 +50,8 @@ bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugM
 		// Scintilla won't allow any modifications at all to the buffer if
 		// we're in read only mode.
 		SetReadOnly(false);
-		LoadFile(fileName);
+		if (!OpenFile(fileName))
+			return false;
 		SetReadOnly(true);
 
 		// Update the syntax highlighting based on the file extension.
@@ -80,7 +81,9 @@ void SourceEditor::StopDebugging()
 	ClearAll();
 	SetReadOnly(true);
 
-	currentFile = "";
+	workingDir	= "";
+	currentFile	= "";
+	sourceMapping.clear();
 }
 
 void SourceEditor::DisableDebugMarker()
@@ -393,6 +396,55 @@ void SourceEditor::SetupJava()
 					"synchronized this throw throws transient try void "
 					"volatile while");
 	SetKeyWords(1,	"false null true");
+}
+
+bool SourceEditor::OpenFile(const wxString &fileName)
+{
+	// First try to open it as is.
+	if (wxFileExists(fileName) && LoadFile(fileName))
+		return true;
+
+	// If it was a relative path, then try to figure out the absolute
+	// path from the working directory.
+	wxFileName fn;
+	fn.Assign(fileName);
+	if (fn.IsRelative())
+	{
+		if (fn.MakeAbsolute(workingDir))
+		{
+			wxString fullPath = fn.GetFullPath();
+			if (wxFileExists(fullPath) && LoadFile(fullPath))
+				return true;
+		}
+	}
+
+	// Check if we already have this file mapped.
+	std::map<wxString, wxString>::iterator i = sourceMapping.find(fileName);
+	if (i != sourceMapping.end())
+	{
+		const wxString &fullPath = i->second;
+		if (wxFileExists(fullPath) && LoadFile(fullPath))
+			return true;
+	}
+
+	// If that fails as well, then ask the user to locate the file.
+	wxString result = wxFileSelector(wxString::Format("Please locate this file: %s", fileName),
+									 fn.GetPath(), fn.GetName(), fn.GetExt(),
+									 "All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	// If the dialog was cancelled then this is empty.
+	if (!result.IsEmpty())
+	{
+		if (wxFileExists(result) && LoadFile(result))
+		{
+			// Store this mapping in case it's requested again.
+			sourceMapping[fileName] = result;
+			return true;
+		}
+	}
+
+	wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error", wxOK | wxCENTRE | wxICON_ERROR, GetParent());
+	return false;
 }
 
 void SourceEditor::OnMarginClick(wxStyledTextEvent &event)

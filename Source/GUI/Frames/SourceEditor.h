@@ -3,12 +3,15 @@
 
 #include "wx/wx.h"
 #include "wx/stc/stc.h"
+#include <map>
 
 class SourceEditor : public wxStyledTextCtrl
 {
 public:
 	SourceEditor(wxWindow *parent);
 	virtual ~SourceEditor();
+
+	void SetWorkingDirectory(const wxString &dir)		{ workingDir = dir; }
 
 	bool Load(const wxString &fileName, unsigned line = 0, bool moveDebugMarker = true);
 
@@ -19,7 +22,7 @@ public:
 	void RemoveBreakpoint(unsigned line);
 	void RemoveAllBreakpoints();
 
-	const wxString &GetCurrentFile() const	{ return currentFile; }
+	const wxString &GetCurrentFile() const				{ return currentFile; }
 
 
 private:
@@ -40,7 +43,9 @@ private:
 		kDebuggerNextLine
 	};
 
-	wxString currentFile;
+	wxString						workingDir,
+									currentFile;
+	std::map<wxString, wxString>	sourceMapping;
 
 	void SetupMargins();
 	void SetupHighlighting();
@@ -48,6 +53,8 @@ private:
 	void SetupCpp();
 	void SetupPython();
 	void SetupJava();
+
+	bool OpenFile(const wxString &fileName);
 
 	void OnMarginClick(wxStyledTextEvent &event);
 };
