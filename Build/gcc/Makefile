@@ -67,7 +67,7 @@ MANA_SHELL_OBJS := $(call objs_from_src_in,$(SRC_ROOT))
 EXES += $(MANA_SHELL_EXE)
 OBJS += $(MANA_SHELL_OBJS)
 
-WXWIDGETS ?= ~/Code/github/wxWidgets
+WXWIDGETS ?= ~/Code/wxWidgets
 
 # Hack! Keep this after the other apps to not poison the flags
 ifeq ($(BUILD), debug)

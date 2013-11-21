@@ -251,8 +251,8 @@ bool GDB::ParseStartError(wxStringTokenizer &lineTokenizer)
 	{
 		wxString line = lineTokenizer.GetNextToken();
 
-		if (line == "The \"remote\" target does not support \"run\". "
-					"Try \"help target\" or \"continue\"")
+		if (line == "The \"remote\" target does not support \"run\".  "
+					"Try \"help target\" or \"continue\".")
 		{
 			// This means that we're dealing with remote debugging.
 			// Go to interactive mode and let the user decide.
@@ -300,6 +300,7 @@ bool GDB::ParseStartOutput(wxStringTokenizer &lineTokenizer)
 			// manually.
 			wxMessageBox("Failed to start the program and/or attach the debugger.",
 						 "Warning", wxOK | wxCENTRE | wxICON_ERROR, host);
+			expectedOutput = kOutputIdle;
 			return false;
 		}
 		else
