@@ -92,7 +92,7 @@ void Callstack::ResetToFrame(unsigned frame)
 	}
 }
 
-void Callstack::Sync(const wxString &description, const wxString &fileName, unsigned lineNr)
+bool Callstack::Sync(const wxString &description, const wxString &fileName, unsigned lineNr)
 {
 	unsigned numFrames = frames.size();
 	for (unsigned i = 0; i < numFrames; ++i)
@@ -100,8 +100,10 @@ void Callstack::Sync(const wxString &description, const wxString &fileName, unsi
 		{
 			ResetToFrame(i);
 			UpdateFrame(lineNr);
-			return;
+			return true;
 		}
+
+	return false;
 }
 
 bool Callstack::Load(const wxString &fileName)

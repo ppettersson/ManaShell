@@ -588,6 +588,26 @@ bool GDB::ParseUnexpectedOutput(wxStringTokenizer &lineTokenizer)
 		}
 		else if (line.Matches("Breakpoint ?*, ?* at ?*:?*"))
 		{
+			// Sync up which frame we're actually in.
+
+			// Search for the split markers in the string.
+			size_t frameStart = line.Find(", ");
+
+			wxString	frame,
+						fileName;
+			long		lineNr = 0;
+			ParseFrame(line.Mid(frameStart + 2), fileName, lineNr, frame);
+
+			Callstack *callstack = host->GetCallstack();
+			if (callstack->GetNumFrames() > 0)
+				callstack->Sync(frame, fileName, lineNr);
+			else
+			{
+				// ToDo: Request the full callstack.
+				callstack->PushFrame(frame, fileName, lineNr);
+			}
+			host->UpdateSource(lineNr, fileName);
+
 			// Program interrupted due to breakpoint.
 			expectedOutput = kOutputStepping;
 			return ParseSteppingOutput(lineTokenizer);

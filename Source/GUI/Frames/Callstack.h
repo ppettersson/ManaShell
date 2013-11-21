@@ -23,8 +23,9 @@ public:
 	const wxString &PreviousFrame() const;
 	bool PopIfPreviousFrame(const wxString &description);
 
+	size_t GetNumFrames() const										{ return frames.size(); }
 	void ResetToFrame(unsigned frame);
-	void Sync(const wxString &description, const wxString &fileName, unsigned line);
+	bool Sync(const wxString &description, const wxString &fileName, unsigned line);
 
 
 private:
