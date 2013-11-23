@@ -526,7 +526,7 @@ wxString PDB::ParseTraceback(wxStringTokenizer &lineTokenizer)
 void PDB::ParseFrame(const wxString &line, wxString &fileName, long &lineNr, wxString &frame)
 {
 	// Read out the fileName after the prompt and before the first
-	// paranthesis.
+	// parenthesis.
 	wxString tail;
 	fileName = line.Mid(2).BeforeFirst('(', &tail);
 
