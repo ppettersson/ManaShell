@@ -1,0 +1,521 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		405B1AE010EF25D200676938 /* libwx_osx_cocoa_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 405B1A8C10EF202100676938 /* libwx_osx_cocoa_static.a */; };
+		40AC73361325727300982A5C /* libwx_osx_cocoa.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */; };
+		40AC73371325728400982A5C /* libwx_osx_cocoa.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */; };
+		D06D830D1860EDD100C192C7 /* DebuggerDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */; };
+		D06D830E1860EDD100C192C7 /* Breakpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E71860EDD100C192C7 /* Breakpoints.cpp */; };
+		D06D830F1860EDD100C192C7 /* Callstack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E91860EDD100C192C7 /* Callstack.cpp */; };
+		D06D83101860EDD100C192C7 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82EB1860EDD100C192C7 /* Input.cpp */; };
+		D06D83111860EDD100C192C7 /* Locals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82ED1860EDD100C192C7 /* Locals.cpp */; };
+		D06D83121860EDD100C192C7 /* Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82EF1860EDD100C192C7 /* Output.cpp */; };
+		D06D83131860EDD100C192C7 /* Registers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F11860EDD100C192C7 /* Registers.cpp */; };
+		D06D83141860EDD100C192C7 /* SourceEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F31860EDD100C192C7 /* SourceEditor.cpp */; };
+		D06D83151860EDD100C192C7 /* Threads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F51860EDD100C192C7 /* Threads.cpp */; };
+		D06D83161860EDD100C192C7 /* Watch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F71860EDD100C192C7 /* Watch.cpp */; };
+		D06D83171860EDD100C192C7 /* MainFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F91860EDD100C192C7 /* MainFrame.cpp */; };
+		D06D83181860EDD100C192C7 /* ManaShell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82FB1860EDD100C192C7 /* ManaShell.cpp */; };
+		D06D83191860EDD100C192C7 /* PipedProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82FD1860EDD100C192C7 /* PipedProcess.cpp */; };
+		D06D831A1860EDD100C192C7 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D83011860EDD100C192C7 /* Debugger.cpp */; };
+		D06D831B1860EDD100C192C7 /* GDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D83041860EDD100C192C7 /* GDB.cpp */; };
+		D06D831C1860EDD100C192C7 /* JDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D83071860EDD100C192C7 /* JDB.cpp */; };
+		D06D831D1860EDD100C192C7 /* PDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D830A1860EDD100C192C7 /* PDB.cpp */; };
+		D06D831E1860EDD100C192C7 /* PDB_InterceptInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D830C1860EDD100C192C7 /* PDB_InterceptInput.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		405B1A8910EF202100676938 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 405B1A8410EF202100676938 /* wxcocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC0C705546C1D00DB518D;
+			remoteInfo = dynamic;
+		};
+		405B1A8B10EF202100676938 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 405B1A8410EF202100676938 /* wxcocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 404BEE6110EC83280080E2B8;
+			remoteInfo = static;
+		};
+		405B1A9010EF207D00676938 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 405B1A8410EF202100676938 /* wxcocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 363401F972C53D8EBD3D4BD9;
+			remoteInfo = dynamic;
+		};
+		405B1ADD10EF25B100676938 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 405B1A8410EF202100676938 /* wxcocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BAB02EC06578349A9171CCAC;
+			remoteInfo = static;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		405B1A9410EF209B00676938 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				40AC73371325728400982A5C /* libwx_osx_cocoa.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		405B1A8410EF202100676938 /* wxcocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = wxcocoa.xcodeproj; path = ../../../wxWidgets/build/osx/wxcocoa.xcodeproj; sourceTree = SOURCE_ROOT; };
+		405B1ACB10EF253300676938 /* ManaShell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManaShell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		40735927137088070077DE1B /* Info_cocoa.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info_cocoa.plist; sourceTree = "<group>"; };
+		407A752213B0E1EB006BC2D5 /* wxcocoa.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = wxcocoa.xcconfig; path = ../../../wxWidgets/build/osx/wxcocoa.xcconfig; sourceTree = SOURCE_ROOT; };
+		407A752313B0E1EB006BC2D5 /* wxdebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = wxdebug.xcconfig; path = ../../../wxWidgets/build/osx/wxdebug.xcconfig; sourceTree = SOURCE_ROOT; };
+		407A752413B0E1EB006BC2D5 /* wxrelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = wxrelease.xcconfig; path = ../../../wxWidgets/build/osx/wxrelease.xcconfig; sourceTree = SOURCE_ROOT; };
+		8D1107320486CEB800E47090 /* ManaShell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManaShell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerDialog.cpp; sourceTree = "<group>"; };
+		D06D82E51860EDD100C192C7 /* DebuggerDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerDialog.h; sourceTree = "<group>"; };
+		D06D82E71860EDD100C192C7 /* Breakpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breakpoints.cpp; sourceTree = "<group>"; };
+		D06D82E81860EDD100C192C7 /* Breakpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoints.h; sourceTree = "<group>"; };
+		D06D82E91860EDD100C192C7 /* Callstack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Callstack.cpp; sourceTree = "<group>"; };
+		D06D82EA1860EDD100C192C7 /* Callstack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callstack.h; sourceTree = "<group>"; };
+		D06D82EB1860EDD100C192C7 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
+		D06D82EC1860EDD100C192C7 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
+		D06D82ED1860EDD100C192C7 /* Locals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Locals.cpp; sourceTree = "<group>"; };
+		D06D82EE1860EDD100C192C7 /* Locals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locals.h; sourceTree = "<group>"; };
+		D06D82EF1860EDD100C192C7 /* Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Output.cpp; sourceTree = "<group>"; };
+		D06D82F01860EDD100C192C7 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
+		D06D82F11860EDD100C192C7 /* Registers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Registers.cpp; sourceTree = "<group>"; };
+		D06D82F21860EDD100C192C7 /* Registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Registers.h; sourceTree = "<group>"; };
+		D06D82F31860EDD100C192C7 /* SourceEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceEditor.cpp; sourceTree = "<group>"; };
+		D06D82F41860EDD100C192C7 /* SourceEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceEditor.h; sourceTree = "<group>"; };
+		D06D82F51860EDD100C192C7 /* Threads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Threads.cpp; sourceTree = "<group>"; };
+		D06D82F61860EDD100C192C7 /* Threads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Threads.h; sourceTree = "<group>"; };
+		D06D82F71860EDD100C192C7 /* Watch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watch.cpp; sourceTree = "<group>"; };
+		D06D82F81860EDD100C192C7 /* Watch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watch.h; sourceTree = "<group>"; };
+		D06D82F91860EDD100C192C7 /* MainFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainFrame.cpp; sourceTree = "<group>"; };
+		D06D82FA1860EDD100C192C7 /* MainFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainFrame.h; sourceTree = "<group>"; };
+		D06D82FB1860EDD100C192C7 /* ManaShell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManaShell.cpp; sourceTree = "<group>"; };
+		D06D82FC1860EDD100C192C7 /* ManaShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManaShell.h; sourceTree = "<group>"; };
+		D06D82FD1860EDD100C192C7 /* PipedProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PipedProcess.cpp; sourceTree = "<group>"; };
+		D06D82FE1860EDD100C192C7 /* PipedProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PipedProcess.h; sourceTree = "<group>"; };
+		D06D82FF1860EDD100C192C7 /* SupportedViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SupportedViews.h; sourceTree = "<group>"; };
+		D06D83011860EDD100C192C7 /* Debugger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debugger.cpp; sourceTree = "<group>"; };
+		D06D83021860EDD100C192C7 /* Debugger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debugger.h; sourceTree = "<group>"; };
+		D06D83041860EDD100C192C7 /* GDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GDB.cpp; sourceTree = "<group>"; };
+		D06D83051860EDD100C192C7 /* GDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GDB.h; sourceTree = "<group>"; };
+		D06D83071860EDD100C192C7 /* JDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JDB.cpp; sourceTree = "<group>"; };
+		D06D83081860EDD100C192C7 /* JDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JDB.h; sourceTree = "<group>"; };
+		D06D830A1860EDD100C192C7 /* PDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PDB.cpp; sourceTree = "<group>"; };
+		D06D830B1860EDD100C192C7 /* PDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDB.h; sourceTree = "<group>"; };
+		D06D830C1860EDD100C192C7 /* PDB_InterceptInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PDB_InterceptInput.cpp; sourceTree = "<group>"; };
+		D06D83201860EDFF00C192C7 /* Building.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Building.txt; sourceTree = "<group>"; };
+		D06D83211860EDFF00C192C7 /* ToDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ToDo.txt; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		405B1AC410EF253300676938 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				405B1AE010EF25D200676938 /* libwx_osx_cocoa_static.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40AC73361325727300982A5C /* libwx_osx_cocoa.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* ManaShell.app */,
+				405B1ACB10EF253300676938 /* ManaShell.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* ManaShell */ = {
+			isa = PBXGroup;
+			children = (
+				D06D831F1860EDFF00C192C7 /* Docs */,
+				D06D82E11860EDD100C192C7 /* Source */,
+				407A752213B0E1EB006BC2D5 /* wxcocoa.xcconfig */,
+				407A752313B0E1EB006BC2D5 /* wxdebug.xcconfig */,
+				407A752413B0E1EB006BC2D5 /* wxrelease.xcconfig */,
+				40735927137088070077DE1B /* Info_cocoa.plist */,
+				405B1A8410EF202100676938 /* wxcocoa.xcodeproj */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = ManaShell;
+			sourceTree = "<group>";
+		};
+		405B1A8510EF202100676938 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */,
+				405B1A8C10EF202100676938 /* libwx_osx_cocoa_static.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D06D82E11860EDD100C192C7 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				D06D82E21860EDD100C192C7 /* GUI */,
+				D06D83001860EDD100C192C7 /* Plugins */,
+			);
+			name = Source;
+			path = ../../Source;
+			sourceTree = "<group>";
+		};
+		D06D82E21860EDD100C192C7 /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+				D06D82E31860EDD100C192C7 /* Dialogs */,
+				D06D82E61860EDD100C192C7 /* Frames */,
+				D06D82F91860EDD100C192C7 /* MainFrame.cpp */,
+				D06D82FA1860EDD100C192C7 /* MainFrame.h */,
+				D06D82FB1860EDD100C192C7 /* ManaShell.cpp */,
+				D06D82FC1860EDD100C192C7 /* ManaShell.h */,
+				D06D82FD1860EDD100C192C7 /* PipedProcess.cpp */,
+				D06D82FE1860EDD100C192C7 /* PipedProcess.h */,
+				D06D82FF1860EDD100C192C7 /* SupportedViews.h */,
+			);
+			path = GUI;
+			sourceTree = "<group>";
+		};
+		D06D82E31860EDD100C192C7 /* Dialogs */ = {
+			isa = PBXGroup;
+			children = (
+				D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */,
+				D06D82E51860EDD100C192C7 /* DebuggerDialog.h */,
+			);
+			path = Dialogs;
+			sourceTree = "<group>";
+		};
+		D06D82E61860EDD100C192C7 /* Frames */ = {
+			isa = PBXGroup;
+			children = (
+				D06D82E71860EDD100C192C7 /* Breakpoints.cpp */,
+				D06D82E81860EDD100C192C7 /* Breakpoints.h */,
+				D06D82E91860EDD100C192C7 /* Callstack.cpp */,
+				D06D82EA1860EDD100C192C7 /* Callstack.h */,
+				D06D82EB1860EDD100C192C7 /* Input.cpp */,
+				D06D82EC1860EDD100C192C7 /* Input.h */,
+				D06D82ED1860EDD100C192C7 /* Locals.cpp */,
+				D06D82EE1860EDD100C192C7 /* Locals.h */,
+				D06D82EF1860EDD100C192C7 /* Output.cpp */,
+				D06D82F01860EDD100C192C7 /* Output.h */,
+				D06D82F11860EDD100C192C7 /* Registers.cpp */,
+				D06D82F21860EDD100C192C7 /* Registers.h */,
+				D06D82F31860EDD100C192C7 /* SourceEditor.cpp */,
+				D06D82F41860EDD100C192C7 /* SourceEditor.h */,
+				D06D82F51860EDD100C192C7 /* Threads.cpp */,
+				D06D82F61860EDD100C192C7 /* Threads.h */,
+				D06D82F71860EDD100C192C7 /* Watch.cpp */,
+				D06D82F81860EDD100C192C7 /* Watch.h */,
+			);
+			path = Frames;
+			sourceTree = "<group>";
+		};
+		D06D83001860EDD100C192C7 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				D06D83011860EDD100C192C7 /* Debugger.cpp */,
+				D06D83021860EDD100C192C7 /* Debugger.h */,
+				D06D83031860EDD100C192C7 /* GDB */,
+				D06D83061860EDD100C192C7 /* JDB */,
+				D06D83091860EDD100C192C7 /* PDB */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		D06D83031860EDD100C192C7 /* GDB */ = {
+			isa = PBXGroup;
+			children = (
+				D06D83041860EDD100C192C7 /* GDB.cpp */,
+				D06D83051860EDD100C192C7 /* GDB.h */,
+			);
+			path = GDB;
+			sourceTree = "<group>";
+		};
+		D06D83061860EDD100C192C7 /* JDB */ = {
+			isa = PBXGroup;
+			children = (
+				D06D83071860EDD100C192C7 /* JDB.cpp */,
+				D06D83081860EDD100C192C7 /* JDB.h */,
+			);
+			path = JDB;
+			sourceTree = "<group>";
+		};
+		D06D83091860EDD100C192C7 /* PDB */ = {
+			isa = PBXGroup;
+			children = (
+				D06D830A1860EDD100C192C7 /* PDB.cpp */,
+				D06D830B1860EDD100C192C7 /* PDB.h */,
+				D06D830C1860EDD100C192C7 /* PDB_InterceptInput.cpp */,
+			);
+			path = PDB;
+			sourceTree = "<group>";
+		};
+		D06D831F1860EDFF00C192C7 /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				D06D83201860EDFF00C192C7 /* Building.txt */,
+				D06D83211860EDFF00C192C7 /* ToDo.txt */,
+			);
+			name = Docs;
+			path = ../../Docs;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		405B1ABF10EF253300676938 /* static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 405B1AC810EF253300676938 /* Build configuration list for PBXNativeTarget "static" */;
+			buildPhases = (
+				405B1AC210EF253300676938 /* Sources */,
+				405B1AC410EF253300676938 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				405B1ADE10EF25B100676938 /* PBXTargetDependency */,
+			);
+			name = static;
+			productInstallPath = "$(HOME)/Applications";
+			productName = ManaShell;
+			productReference = 405B1ACB10EF253300676938 /* ManaShell.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8D1107260486CEB800E47090 /* dynamic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "dynamic" */;
+			buildPhases = (
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+				405B1A9410EF209B00676938 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				405B1A9110EF207D00676938 /* PBXTargetDependency */,
+			);
+			name = dynamic;
+			productInstallPath = "$(HOME)/Applications";
+			productName = ManaShell;
+			productReference = 8D1107320486CEB800E47090 /* ManaShell.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+			};
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ManaShell" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* ManaShell */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 405B1A8510EF202100676938 /* Products */;
+					ProjectRef = 405B1A8410EF202100676938 /* wxcocoa.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				8D1107260486CEB800E47090 /* dynamic */,
+				405B1ABF10EF253300676938 /* static */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libwx_osx_cocoa.dylib;
+			remoteRef = 405B1A8910EF202100676938 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		405B1A8C10EF202100676938 /* libwx_osx_cocoa_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libwx_osx_cocoa_static.a;
+			remoteRef = 405B1A8B10EF202100676938 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		405B1AC210EF253300676938 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D06D830F1860EDD100C192C7 /* Callstack.cpp in Sources */,
+				D06D83111860EDD100C192C7 /* Locals.cpp in Sources */,
+				D06D830D1860EDD100C192C7 /* DebuggerDialog.cpp in Sources */,
+				D06D83181860EDD100C192C7 /* ManaShell.cpp in Sources */,
+				D06D831C1860EDD100C192C7 /* JDB.cpp in Sources */,
+				D06D83191860EDD100C192C7 /* PipedProcess.cpp in Sources */,
+				D06D831D1860EDD100C192C7 /* PDB.cpp in Sources */,
+				D06D831B1860EDD100C192C7 /* GDB.cpp in Sources */,
+				D06D83151860EDD100C192C7 /* Threads.cpp in Sources */,
+				D06D83161860EDD100C192C7 /* Watch.cpp in Sources */,
+				D06D830E1860EDD100C192C7 /* Breakpoints.cpp in Sources */,
+				D06D83171860EDD100C192C7 /* MainFrame.cpp in Sources */,
+				D06D831A1860EDD100C192C7 /* Debugger.cpp in Sources */,
+				D06D831E1860EDD100C192C7 /* PDB_InterceptInput.cpp in Sources */,
+				D06D83101860EDD100C192C7 /* Input.cpp in Sources */,
+				D06D83131860EDD100C192C7 /* Registers.cpp in Sources */,
+				D06D83141860EDD100C192C7 /* SourceEditor.cpp in Sources */,
+				D06D83121860EDD100C192C7 /* Output.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		405B1A9110EF207D00676938 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dynamic;
+			targetProxy = 405B1A9010EF207D00676938 /* PBXContainerItemProxy */;
+		};
+		405B1ADE10EF25B100676938 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = static;
+			targetProxy = 405B1ADD10EF25B100676938 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		405B1AC910EF253300676938 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 407A752213B0E1EB006BC2D5 /* wxcocoa.xcconfig */;
+			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-lz",
+				);
+				PRODUCT_NAME = ManaShell;
+			};
+			name = Debug;
+		};
+		405B1ACA10EF253300676938 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 407A752213B0E1EB006BC2D5 /* wxcocoa.xcconfig */;
+			buildSettings = {
+				OTHER_LDFLAGS = (
+					"$(OTHER_LDFLAGS)",
+					"-lz",
+				);
+				PRODUCT_NAME = ManaShell;
+			};
+			name = Release;
+		};
+		C01FCF4B08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 407A752213B0E1EB006BC2D5 /* wxcocoa.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = ManaShell;
+				USER_HEADER_SEARCH_PATHS = "$(WXROOT)/include $(WXROOT)/build/osx/setup/$(WXTOOLKIT)/include";
+			};
+			name = Debug;
+		};
+		C01FCF4C08A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 407A752213B0E1EB006BC2D5 /* wxcocoa.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				PRODUCT_NAME = ManaShell;
+				USER_HEADER_SEARCH_PATHS = "$(WXROOT)/include $(WXROOT)/build/osx/setup/$(WXTOOLKIT)/include";
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 407A752313B0E1EB006BC2D5 /* wxdebug.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Info_cocoa.plist;
+				WXROOT = "$(PROJECT_DIR)/../../../wxWidgets";
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 407A752413B0E1EB006BC2D5 /* wxrelease.xcconfig */;
+			buildSettings = {
+				INFOPLIST_FILE = Info_cocoa.plist;
+				WXROOT = "$(PROJECT_DIR)/../../../wxWidgets";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		405B1AC810EF253300676938 /* Build configuration list for PBXNativeTarget "static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				405B1AC910EF253300676938 /* Debug */,
+				405B1ACA10EF253300676938 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "dynamic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4B08A954540054247B /* Debug */,
+				C01FCF4C08A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "ManaShell" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

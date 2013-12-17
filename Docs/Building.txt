@@ -31,3 +31,18 @@ but is otherwise unmodified.
 	Restart Visual Studio for it to pick up the new environment variable.
 
 	Open ManaShell/Build/VS2013/ManaShell.sln and build.
+
+
+* OSX (XCode5)
+
+	The wxWidgets folder needs to be in the same folder as the ManaShell checkout
+	like this:
+		~/code/wxWidgets
+		~/code/ManaShell
+
+	Alternatively create a symlink or search and replace the paths in
+	ManaShell/Build/XCode5/ManaShell.xcodeproj/project.pbxproj
+
+	- Open ManaShell/Build/XCode5/ManaShell.xcodeproj
+	- Select the "dynamic (ManaShell project)" scheme in the dropdown.
+	- Then select "Product -> Run" from the main menu.
