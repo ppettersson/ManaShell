@@ -17,10 +17,20 @@
 					- Issue with premature program exit.
 					- Empty command queue / stack for expected output?
 				- Breakpoints
+					- Should only be added/removed after confirmation from the debugger,
+						not be UI driven like they are right now.
 				- Watches
 					- Different output formats.
 				- Intercept user input
 			- Attach to android process.
+
+			Bugs:
+				- It's not switching to (other) source files.
+					- debug
+				- It's adding extra/bad breakpoints: "Breakpoint 2"
+				- "Step out" of testbed::IsDebuggerReady() cause an assert in listbox.
+				- Source Editor has underlines when it shouldn't.
+					- Probably something to do with SetSyntaxCpp
 
 0.6	[todo]	UI polish.
 			- More plugin-ish:

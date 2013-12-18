@@ -41,8 +41,8 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 			wxBoxSizer *executableSizer = new wxBoxSizer(wxHORIZONTAL);
 			parametersSizer->Add(executableSizer, 0, wxGROW | wxALL, 5);
 			{
-				wxStaticText *itemStaticText6 = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Executable:");
-				executableSizer->Add(itemStaticText6, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+				wxStaticText *staticText = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Executable:");
+				executableSizer->Add(staticText, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
 				executableControl = new wxTextCtrl(parametersSizer->GetStaticBox(), kExecutableId);
 				executableControl->SetValidator(wxTextValidator(wxFILTER_NONE, &executable));
@@ -57,8 +57,8 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 			wxBoxSizer *scriptSizer = new wxBoxSizer(wxHORIZONTAL);
 			parametersSizer->Add(scriptSizer, 0, wxGROW | wxALL, 5);
 			{
-				wxStaticText *itemStaticText10 = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Script:");
-				scriptSizer->Add(itemStaticText10, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+				wxStaticText *staticText = new wxStaticText(parametersSizer->GetStaticBox(), wxID_STATIC, "Script:");
+				scriptSizer->Add(staticText, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
 				scriptControl = new wxTextCtrl(parametersSizer->GetStaticBox(), kScriptId);
 				scriptControl->SetValidator(wxTextValidator(wxFILTER_NONE, &script));
