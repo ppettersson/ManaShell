@@ -258,6 +258,17 @@ void MainFrame::GetWatchValue(unsigned index, const wxString &variable)
 		debugger->GetWatchValue(index, variable);
 }
 
+void MainFrame::RequestBreakpoint(const wxString &fileName, int line)
+{
+	Breakpoints::ToggleResult result = breakpoints->ToggleBreak(fileName, line);
+	wxASSERT(result == Breakpoints::kAdded);
+	if (debugger)
+		debugger->AddBreakpoint(fileName, line);
+
+	if (sourceEditor->GetCurrentFile() == fileName)
+		sourceEditor->AddBreakpoint(line);
+}
+
 void MainFrame::OnFileExit(wxCommandEvent &event)
 {
 	Close(true);

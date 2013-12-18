@@ -1,8 +1,11 @@
+#include "../Dialogs/AddEditBreakpointDialog.h"
 #include "../MainFrame.h"
 #include "Breakpoints.h"
 
 BEGIN_EVENT_TABLE(Breakpoints, wxListBox)
 	EVT_LISTBOX_DCLICK(wxID_ANY, Breakpoints::OnDClick)
+	EVT_CONTEXT_MENU(Breakpoints::OnContextMenu)
+	EVT_MENU(kAddBreakpoint, Breakpoints::OnAddBreakpoint)
 END_EVENT_TABLE()
 
 
@@ -68,4 +71,19 @@ void Breakpoints::OnDClick(wxCommandEvent &event)
 		const Break &b = breaks[selection];
 		host->UpdateSource(b.line, b.fileName, false);
 	}
+}
+
+void Breakpoints::OnContextMenu(wxContextMenuEvent &event)
+{
+	wxMenu *menu = new wxMenu;
+	menu->Append(kAddBreakpoint, "&Add breakpoint");
+
+	PopupMenu(menu, event.GetPosition());
+}
+
+void Breakpoints::OnAddBreakpoint(wxCommandEvent &event)
+{
+	AddEditBreakpointDialog dialog(host);
+	if (wxID_OK == dialog.ShowModal())
+		host->RequestBreakpoint(dialog.GetFileName(), dialog.GetLineNumber());
 }

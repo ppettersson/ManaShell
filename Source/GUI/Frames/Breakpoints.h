@@ -23,6 +23,11 @@ public:
 
 
 private:
+	enum Constants
+	{
+		kAddBreakpoint	= 10001
+	};
+
 	struct Break
 	{
 		wxString		fileName;
@@ -46,6 +51,8 @@ private:
 
 	void UpdateUI();
 	void OnDClick(wxCommandEvent &event);
+	void OnContextMenu(wxContextMenuEvent &event);
+	void OnAddBreakpoint(wxCommandEvent &event);
 
 
 	wxDECLARE_EVENT_TABLE();
