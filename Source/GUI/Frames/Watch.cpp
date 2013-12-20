@@ -6,7 +6,7 @@ BEGIN_EVENT_TABLE(Watch, wxGrid)
 END_EVENT_TABLE()
 
 Watch::Watch(MainFrame *parent)
-	: wxGrid(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, 200))
+	: wxGrid(parent, wxID_ANY)
 	, host(parent)
 	, numVariables(0)
 {

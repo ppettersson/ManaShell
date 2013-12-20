@@ -710,6 +710,7 @@ void MainFrame::SetupInitialView()
 	watchPane.Name("watch");
 	watchPane.Caption("Watch");
 	watchPane.Bottom();
+	watchPane.BestSize(wxSize(-1, 200));
 	watch = new Watch(this);
 	dockingManager.AddPane(watch, watchPane);
 
@@ -717,6 +718,7 @@ void MainFrame::SetupInitialView()
 	consolePane.Name("console");
 	consolePane.Caption("Console");
 	consolePane.Left();
+	consolePane.BestSize(wxSize(450, -1));
 	console = new Console(this);
 	dockingManager.AddPane(console, consolePane);
 
@@ -724,6 +726,7 @@ void MainFrame::SetupInitialView()
 	callstackPane.Name("callstack");
 	callstackPane.Caption("Callstack");
 	callstackPane.Right();
+	callstackPane.BestSize(wxSize(200, -1));
 	callstack = new Callstack(this);
 	dockingManager.AddPane(callstack, callstackPane);
 
