@@ -76,11 +76,15 @@ void Breakpoints::OnDClick(wxCommandEvent &event)
 
 void Breakpoints::OnContextMenu(wxContextMenuEvent &event)
 {
-	wxMenu *menu = new wxMenu;
-	menu->Append(kAddBreakpoint, "&Add breakpoint");
-	menu->Append(kClearAllBreakpoints, "&Clear all breakpoints");
+	// Only allow changes when we're in input debugging mode.
+	if (!host->IsWaitingForResponse())
+	{
+		wxMenu *menu = new wxMenu;
+		menu->Append(kAddBreakpoint, "&Add breakpoint");
+		menu->Append(kClearAllBreakpoints, "&Clear all breakpoints");
 
-	PopupMenu(menu, event.GetPosition());
+		PopupMenu(menu, event.GetPosition());
+	}
 }
 
 void Breakpoints::OnAddBreakpoint(wxCommandEvent &event)
