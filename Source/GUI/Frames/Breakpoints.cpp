@@ -83,7 +83,14 @@ void Breakpoints::OnContextMenu(wxContextMenuEvent &event)
 		menu->Append(kAddBreakpoint, "&Add breakpoint");
 		menu->Append(kClearAllBreakpoints, "&Clear all breakpoints");
 
-		PopupMenu(menu, event.GetPosition());
+		wxPoint position = event.GetPosition();
+
+		// If the event was triggered from keyboard or other means then
+		// ask for the mouse position directly instead.
+		if (position == wxDefaultPosition)
+			position = wxGetMousePosition();
+
+		PopupMenu(menu, ScreenToClient(position));
 	}
 }
 
