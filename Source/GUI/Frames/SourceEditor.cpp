@@ -431,6 +431,10 @@ bool SourceEditor::OpenFile(const wxString &fileName)
 			return true;
 	}
 
+	// Check if we can infer the path from previous source mappings.
+	if (InferPath(fileName))
+		return true;
+
 	// If that fails as well, then ask the user to locate the file.
 	wxString result = wxFileSelector(wxString::Format("Please locate this file: %s", fileName),
 									 fn.GetPath(), fn.GetName(), fn.GetExt(),
@@ -443,11 +447,69 @@ bool SourceEditor::OpenFile(const wxString &fileName)
 		{
 			// Store this mapping in case it's requested again.
 			sourceMapping[fileName] = result;
+
+			// Store the relative change to help with infering other files.
+			AddInferPath(fileName, result);
 			return true;
 		}
 	}
 
 	wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error", wxOK | wxCENTRE | wxICON_ERROR, GetParent());
+	return false;
+}
+
+void SourceEditor::AddInferPath(const wxString &original, const wxString &mapped)
+{
+	// Try to match up as much as possible of the path.
+	int originalEnd = original.length();
+	int mappedEnd = mapped.length();
+
+	while (originalEnd > 0 && mappedEnd > 0 &&
+			(original[originalEnd] == mapped[mappedEnd]))
+	{
+		--originalEnd;
+		--mappedEnd;
+	}
+
+	// Abort if we didn't manage to match anything.
+	if (originalEnd == original.length())
+		return;
+
+	wxString originalUniquePart(original, originalEnd + 1);
+	wxString mappedUniquePart(mapped, mappedEnd + 1);
+
+	// Add all unique mappings.
+	for (std::vector<Mapping>::iterator i = inferMapping.begin();
+			i != inferMapping.end(); ++i)
+	{
+		const Mapping &m = *i;
+		if ((m.original == originalUniquePart) &&
+			(m.mapped == mappedUniquePart))
+			return;
+	}
+
+	Mapping m;
+	m.original = originalUniquePart;
+	m.mapped = mappedUniquePart;
+	inferMapping.push_back(m);
+}
+
+bool SourceEditor::InferPath(const wxString &fileName)
+{
+	for (std::vector<Mapping>::iterator i = inferMapping.begin();
+			i != inferMapping.end(); ++i)
+	{
+		const Mapping &m = *i;
+		if (fileName.StartsWith(m.original))
+		{
+			wxString inferredFileName = m.mapped;
+			inferredFileName += fileName.Mid(m.original.length());
+
+			if (wxFileExists(inferredFileName) && LoadFile(inferredFileName))
+				return true;
+		}
+	}
+
 	return false;
 }
 

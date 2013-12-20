@@ -4,6 +4,7 @@
 #include "wx/wx.h"
 #include "wx/stc/stc.h"
 #include <map>
+#include <vector>
 
 class MainFrame;
 
@@ -45,9 +46,16 @@ private:
 		kDebuggerNextLine
 	};
 
+	struct Mapping
+	{
+		wxString	original,
+					mapped;
+	};
+
 	wxString						workingDir,
 									currentFile;
-	std::map<wxString, wxString>	sourceMapping;
+	std::map<wxString, wxString>	sourceMapping;	// <original path, user supplied path>
+	std::vector<Mapping>			inferMapping;	// The difference only.
 	MainFrame						*host;
 
 	void SetupMargins();
@@ -58,6 +66,8 @@ private:
 	void SetupJava();
 
 	bool OpenFile(const wxString &fileName);
+	void AddInferPath(const wxString &original, const wxString &mapped);
+	bool InferPath(const wxString &fileName);
 
 	void OnMarginClick(wxStyledTextEvent &event);
 };
