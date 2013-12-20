@@ -1,6 +1,6 @@
+#include "../MainFrame.h"
 #include "SourceEditor.h"
 #include "wx/filename.h"
-#include "MainFrame.h"
 
 SourceEditor::SourceEditor(MainFrame *parent)
 	: wxStyledTextCtrl(parent)
