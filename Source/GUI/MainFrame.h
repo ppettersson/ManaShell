@@ -61,6 +61,7 @@ private:
 		kView_EditorSource,
 		kView_EditorAssembly,
 		kView_EditorMixed,
+		kView_ToolBar,
 		kView_Breakpoints,
 		kView_Callstack,
 		kView_Threads,
@@ -150,6 +151,7 @@ private:
 	void OnViewEditorSource(wxCommandEvent &event);
 	void OnViewEditorAssembly(wxCommandEvent &event);
 	void OnViewEditorMixed(wxCommandEvent &event);
+	void OnViewToolBar(wxCommandEvent &event);
 	void OnViewBreakpoints(wxCommandEvent &event);
 	void OnViewCallstack(wxCommandEvent &event);
 	void OnViewThreads(wxCommandEvent &event);

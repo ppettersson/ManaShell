@@ -19,6 +19,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kView_EditorSource,			MainFrame::OnViewEditorSource)
 	EVT_MENU(kView_EditorAssembly,			MainFrame::OnViewEditorAssembly)
 	EVT_MENU(kView_EditorMixed,				MainFrame::OnViewEditorMixed)
+	EVT_MENU(kView_ToolBar,					MainFrame::OnViewToolBar)
 	EVT_MENU(kView_Breakpoints,				MainFrame::OnViewBreakpoints)
 	EVT_MENU(kView_Callstack,				MainFrame::OnViewCallstack)
 	EVT_MENU(kView_Threads,					MainFrame::OnViewThreads)
@@ -305,6 +306,13 @@ void MainFrame::OnViewEditorMixed(wxCommandEvent &event)
 	sourceEditorMode = kMixed;
 }
 
+void MainFrame::OnViewToolBar(wxCommandEvent &event)
+{
+	wxAuiPaneInfo &pane = dockingManager.GetPane(toolBar);
+	pane.Show(!pane.IsShown());
+	dockingManager.Update();
+}
+
 void MainFrame::OnViewBreakpoints(wxCommandEvent &event)
 {
 	wxAuiPaneInfo &pane = dockingManager.GetPane(breakpoints);
@@ -549,6 +557,9 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	case kView_EditorSource:	event.Check(sourceEditorMode == kSource);					break;
 	case kView_EditorAssembly:	event.Check(sourceEditorMode == kAssembly); event.Enable(false); break;
 	case kView_EditorMixed:		event.Check(sourceEditorMode == kMixed); event.Enable(false); break;
+
+	case kView_ToolBar:			event.Check(dockingManager.GetPane(toolBar).IsShown());		break;
+
 	case kView_Breakpoints:		event.Check(dockingManager.GetPane(breakpoints).IsShown());	break;
 	case kView_Callstack:		event.Check(dockingManager.GetPane(callstack).IsShown());	break;
 	case kView_Threads:			event.Check(dockingManager.GetPane(threads).IsShown());		break;
@@ -651,6 +662,10 @@ void MainFrame::SetupMenu()
 	subMenu->AppendCheckItem(kView_EditorAssembly, "&Assembly");
 	subMenu->AppendCheckItem(kView_EditorMixed, "&Mixed");
 	menu->AppendSubMenu(subMenu, "&Editor");
+	menu->AppendSeparator();
+
+	menu->AppendCheckItem(kView_ToolBar, "&ToolBar");
+	menu->AppendSeparator();
 
 	subMenu = new wxMenu;
 	subMenu->AppendCheckItem(kView_Breakpoints, "&Breakpoints");
@@ -661,9 +676,9 @@ void MainFrame::SetupMenu()
 	subMenu->AppendCheckItem(kView_Locals, "&Locals");
 	subMenu->AppendCheckItem(kView_Watch, "&Watch");
 	menu->AppendSubMenu(subMenu, "&Frames");
-
 	menu->AppendSeparator();
-	menu->AppendCheckItem(kView_Fullscreen, "&Fullscreen");
+
+	menu->AppendCheckItem(kView_Fullscreen, "&Fullscreen\tCtrl+F");
 	menuBar->Append(menu, "&View");
 
 	menu = new wxMenu;
