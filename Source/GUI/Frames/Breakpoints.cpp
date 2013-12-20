@@ -6,6 +6,7 @@ BEGIN_EVENT_TABLE(Breakpoints, wxListBox)
 	EVT_LISTBOX_DCLICK(wxID_ANY, Breakpoints::OnDClick)
 	EVT_CONTEXT_MENU(Breakpoints::OnContextMenu)
 	EVT_MENU(kAddBreakpoint, Breakpoints::OnAddBreakpoint)
+	EVT_MENU(kClearAllBreakpoints, Breakpoints::OnClearAllBreakpoints)
 END_EVENT_TABLE()
 
 
@@ -77,6 +78,7 @@ void Breakpoints::OnContextMenu(wxContextMenuEvent &event)
 {
 	wxMenu *menu = new wxMenu;
 	menu->Append(kAddBreakpoint, "&Add breakpoint");
+	menu->Append(kClearAllBreakpoints, "&Clear all breakpoints");
 
 	PopupMenu(menu, event.GetPosition());
 }
@@ -86,4 +88,9 @@ void Breakpoints::OnAddBreakpoint(wxCommandEvent &event)
 	AddEditBreakpointDialog dialog(host);
 	if (wxID_OK == dialog.ShowModal())
 		host->RequestBreakpoint(dialog.GetFileName(), dialog.GetLineNumber());
+}
+
+void Breakpoints::OnClearAllBreakpoints(wxCommandEvent &event)
+{
+	host->RequestClearAllBreakpoints();
 }

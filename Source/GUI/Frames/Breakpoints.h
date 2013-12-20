@@ -25,7 +25,8 @@ public:
 private:
 	enum Constants
 	{
-		kAddBreakpoint	= 10001
+		kAddBreakpoint			= 10001,
+		kClearAllBreakpoints
 	};
 
 	struct Break
@@ -53,6 +54,7 @@ private:
 	void OnDClick(wxCommandEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);
 	void OnAddBreakpoint(wxCommandEvent &event);
+	void OnClearAllBreakpoints(wxCommandEvent &event);
 
 
 	wxDECLARE_EVENT_TABLE();

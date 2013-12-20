@@ -266,6 +266,13 @@ void MainFrame::RequestBreakpoint(const wxString &fileName, int line)
 		sourceEditor->AddBreakpoint(line);
 }
 
+void MainFrame::RequestClearAllBreakpoints()
+{
+	breakpoints->ClearAllBreakpoints();
+	if (debugger)
+		debugger->ClearAllBreakpoints();
+}
+
 void MainFrame::OnFileExit(wxCommandEvent &event)
 {
 	Close(true);

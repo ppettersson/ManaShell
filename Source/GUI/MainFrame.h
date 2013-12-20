@@ -45,6 +45,7 @@ public:
 
 	void GetWatchValue(unsigned index, const wxString &variable);
 	void RequestBreakpoint(const wxString &fileName, int line);
+	void RequestClearAllBreakpoints();
 
 
 private:

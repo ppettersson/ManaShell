@@ -111,9 +111,9 @@ void GDB::ClearAllBreakpoints()
 {
 	// Clears all breaks. It normally asks for confirmation but that
 	// should automatically be disabled when we're not in terminal mode.
-	//host->SendCommand("delete\n");
-	//lastCommand		= kCommandDelete;
-	//expectedOutput	= kOutputBreakpoint;
+	host->SendCommand("delete\n");
+	lastCommand		= kCommandDelete;
+	expectedOutput	= kOutputBreakpoint;
 }
 
 void GDB::GetWatchValue(unsigned index, const wxString &variable)
