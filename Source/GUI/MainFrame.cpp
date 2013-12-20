@@ -9,6 +9,7 @@
 #include "Frames/Watch.h"
 #include "MainFrame.h"
 #include "PipedProcess.h"
+#include "wx/filename.h"
 #include "wx/utils.h"
 #include <algorithm>
 
@@ -260,7 +261,17 @@ void MainFrame::RequestBreakpoint(const wxString &fileName, int line)
 	Breakpoints::ToggleResult result = breakpoints->ToggleBreak(fileName, line);
 	wxASSERT(result == Breakpoints::kAdded);
 	if (debugger)
-		debugger->AddBreakpoint(fileName, line);
+	{
+		// Remove the path from the fileName.
+		wxFileName fn;
+		fn.Assign(fileName);
+
+		debugger->AddBreakpoint(fn.GetFullName(), line);
+
+		// ToDo?
+		// fn.MakeRelativeTo(debugger->GetWorkingDir());
+		// AddBreakpoint(fn.GetFullPath());
+	}
 
 	if (sourceEditor->GetCurrentFile() == fileName)
 		sourceEditor->AddBreakpoint(line);

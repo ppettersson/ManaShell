@@ -22,14 +22,11 @@
 				- Watches
 					- Different output formats.
 				- Intercept user input
-			- Attach to android process.
 
 			Bugs:
-				- It's adding extra/bad breakpoints: "Breakpoint 2"
-				- "Step out" of testbed::IsDebuggerReady() cause an assert in listbox.
+				- gdb won't accept absolute paths.
 				- Source Editor has underlines when it shouldn't.
 					- Probably something to do with SetSyntaxCpp
-				- Add breakpoint popup shows up at the wrong position.
 
 0.6	[todo]	UI polish.
 			- More plugin-ish:
