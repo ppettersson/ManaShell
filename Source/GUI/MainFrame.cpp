@@ -1,9 +1,8 @@
 #include "../Plugins/Debugger.h"
 #include "Frames/Breakpoints.h"
 #include "Frames/Callstack.h"
-#include "Frames/Input.h"
+#include "Frames/Console.h"
 #include "Frames/Locals.h"
-#include "Frames/Output.h"
 #include "Frames/Registers.h"
 #include "Frames/SourceEditor.h"
 #include "Frames/Threads.h"
@@ -22,8 +21,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(kView_Breakpoints,				MainFrame::OnViewBreakpoints)
 	EVT_MENU(kView_Callstack,				MainFrame::OnViewCallstack)
 	EVT_MENU(kView_Threads,					MainFrame::OnViewThreads)
-	EVT_MENU(kView_Output,					MainFrame::OnViewOutput)
-	EVT_MENU(kView_Input,					MainFrame::OnViewInput)
+	EVT_MENU(kView_Console,					MainFrame::OnViewConsole)
 	EVT_MENU(kView_Registers,				MainFrame::OnViewRegisters)
 	EVT_MENU(kView_Locals,					MainFrame::OnViewLocals)
 	EVT_MENU(kView_Watch,					MainFrame::OnViewWatch)
@@ -57,8 +55,7 @@ MainFrame::MainFrame()
 	, idleWakeUpTimer(this, kTimer_Idle)
 	, breakpoints(NULL)
 	, callstack(NULL)
-	, input(NULL)
-	, output(NULL)
+	, console(NULL)
 	, registers(NULL)
 	, sourceEditor(NULL)
 	, threads(NULL)
@@ -101,8 +98,8 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 	if (pid == activeProcessId)
 	{
 		activeProcessId = 0;
-		output->AppendText("\nProcess was terminated.\n");
-		input->Enable(false);
+		console->AppendText("\nProcess was terminated.\n");
+		console->EnableInput(false);
 
 		if (debugger)
 		{
@@ -120,7 +117,7 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 
 void MainFrame::OnOutputFromProcess(const wxString &message)
 {
-	output->AppendText(message);
+	console->AppendText(message);
 
 	bool more = false;
 	if (debugger)
@@ -129,17 +126,17 @@ void MainFrame::OnOutputFromProcess(const wxString &message)
 	if (!more)
 	{
 		waitingForResponse = false;
-		input->Enable(true);
+		console->EnableInput(true);
 		if (refocusInput)
-			input->SetFocus();
+			console->SetFocusInput();
 	}
 }
 
 void MainFrame::OnErrorFromProcess(const wxString &message)
 {
 	// ToDo: Change background color to red instead.
-	output->AppendText("\nError: ");
-	output->AppendText(message);
+	console->AppendText("\nError: ");
+	console->AppendText(message);
 
 	bool more = false;
 	if (debugger)
@@ -148,7 +145,7 @@ void MainFrame::OnErrorFromProcess(const wxString &message)
 	if (!more)
 	{
 		waitingForResponse = false;
-		input->Enable(true);
+		console->EnableInput(true);
 	}
 }
 
@@ -156,8 +153,8 @@ void MainFrame::SendCommand(const wxString &command, bool fromUser)
 {
 	if (runningProcesses.GetCount())
 	{
-		input->Enable(false);
-		output->AppendText(command);
+		console->EnableInput(false);
+		console->AppendText(command);
 		if (fromUser && debugger)
 			debugger->OnInterceptInput(command);
 		runningProcesses[0]->SendCommand(command);
@@ -310,16 +307,9 @@ void MainFrame::OnViewThreads(wxCommandEvent &event)
 	dockingManager.Update();
 }
 
-void MainFrame::OnViewOutput(wxCommandEvent &event)
+void MainFrame::OnViewConsole(wxCommandEvent &event)
 {
-	wxAuiPaneInfo &pane = dockingManager.GetPane(output);
-	pane.Show(!pane.IsShown());
-	dockingManager.Update();
-}
-
-void MainFrame::OnViewInput(wxCommandEvent &event)
-{
-	wxAuiPaneInfo &pane = dockingManager.GetPane(input);
+	wxAuiPaneInfo &pane = dockingManager.GetPane(console);
 	pane.Show(!pane.IsShown());
 	dockingManager.Update();
 }
@@ -376,7 +366,7 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	wxBusyCursor wait;
 
 	// Remove all output from the last run before we start.
-	output->Clear();
+	console->ClearOutput();
 
 	// Check if we should set the current working directory.
 	wxExecuteEnv *env = NULL;
@@ -404,7 +394,7 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 
 	AddPipedProcess(process);
 
-	input->Enable(true);
+	console->EnableInput(true);
 
 #ifdef __WXMSW__
 	hasConsoleAttached		= false;
@@ -543,8 +533,7 @@ void MainFrame::OnUpdateUI(wxUpdateUIEvent &event)
 	case kView_Breakpoints:		event.Check(dockingManager.GetPane(breakpoints).IsShown());	break;
 	case kView_Callstack:		event.Check(dockingManager.GetPane(callstack).IsShown());	break;
 	case kView_Threads:			event.Check(dockingManager.GetPane(threads).IsShown());		break;
-	case kView_Output:			event.Check(dockingManager.GetPane(output).IsShown());		break;
-	case kView_Input:			event.Check(dockingManager.GetPane(input).IsShown());		break;
+	case kView_Console:			event.Check(dockingManager.GetPane(console).IsShown());		break;
 	case kView_Registers:		event.Check(dockingManager.GetPane(registers).IsShown());	break;
 	case kView_Locals:			event.Check(dockingManager.GetPane(locals).IsShown());		break;
 	case kView_Watch:			event.Check(dockingManager.GetPane(watch).IsShown());		break;
@@ -648,8 +637,7 @@ void MainFrame::SetupMenu()
 	subMenu->AppendCheckItem(kView_Breakpoints, "&Breakpoints");
 	subMenu->AppendCheckItem(kView_Callstack, "&Callstack");
 	subMenu->AppendCheckItem(kView_Threads, "&Threads");
-	subMenu->AppendCheckItem(kView_Output, "&Output");
-	subMenu->AppendCheckItem(kView_Input, "&Input");
+	subMenu->AppendCheckItem(kView_Console, "&Console");
 	subMenu->AppendCheckItem(kView_Registers, "&Registers");
 	subMenu->AppendCheckItem(kView_Locals, "&Locals");
 	subMenu->AppendCheckItem(kView_Watch, "&Watch");
@@ -718,19 +706,12 @@ void MainFrame::SetupInitialView()
 	watch = new Watch(this);
 	dockingManager.AddPane(watch, watchPane);
 
-	wxAuiPaneInfo outputPane;
-	outputPane.Name("output");
-	outputPane.Caption("Output Log");
-	outputPane.Left();
-	output = new Output(this);
-	dockingManager.AddPane(output, outputPane);
-
-	wxAuiPaneInfo inputPane;
-	inputPane.Name("input");
-	inputPane.Caption("Input Editor");
-	inputPane.Left();
-	input = new Input(this);
-	dockingManager.AddPane(input, inputPane);
+	wxAuiPaneInfo consolePane;
+	consolePane.Name("console");
+	consolePane.Caption("Console");
+	consolePane.Left();
+	console = new Console(this);
+	dockingManager.AddPane(console, consolePane);
 
 	wxAuiPaneInfo callstackPane;
 	callstackPane.Name("callstack");

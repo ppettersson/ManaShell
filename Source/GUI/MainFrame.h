@@ -8,9 +8,8 @@
 class Breakpoints;
 class Callstack;
 class Debugger;
-class Input;
 class Locals;
-class Output;
+class Console;
 class PipedProcess;
 class Registers;
 class SourceEditor;
@@ -64,8 +63,7 @@ private:
 		kView_Breakpoints,
 		kView_Callstack,
 		kView_Threads,
-		kView_Output,
-		kView_Input,
+		kView_Console,
 		kView_Registers,
 		kView_Locals,
 		kView_Watch,
@@ -123,9 +121,8 @@ private:
 	// Frames.
 	Breakpoints						*breakpoints;
 	Callstack						*callstack;
-	Input							*input;
 	Locals							*locals;
-	Output							*output;
+	Console							*console;
 	Registers						*registers;
 	SourceEditor					*sourceEditor;
 	Threads							*threads;
@@ -152,8 +149,7 @@ private:
 	void OnViewBreakpoints(wxCommandEvent &event);
 	void OnViewCallstack(wxCommandEvent &event);
 	void OnViewThreads(wxCommandEvent &event);
-	void OnViewOutput(wxCommandEvent &event);
-	void OnViewInput(wxCommandEvent &event);
+	void OnViewConsole(wxCommandEvent &event);
 	void OnViewRegisters(wxCommandEvent &event);
 	void OnViewLocals(wxCommandEvent &event);
 	void OnViewWatch(wxCommandEvent &event);
