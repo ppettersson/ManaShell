@@ -478,7 +478,7 @@ void SourceEditor::AddInferPath(const wxString &original, const wxString &mapped
 	wxString originalUniquePart(original, originalEnd + 1);
 	wxString mappedUniquePart(mapped, mappedEnd + 1);
 
-	// Add all unique mappings.
+	// Add the mapping if it's unique.
 	for (std::vector<Mapping>::iterator i = inferMapping.begin();
 			i != inferMapping.end(); ++i)
 	{
@@ -489,22 +489,25 @@ void SourceEditor::AddInferPath(const wxString &original, const wxString &mapped
 	}
 
 	Mapping m;
-	m.original = originalUniquePart;
-	m.mapped = mappedUniquePart;
+	m.original	= originalUniquePart;
+	m.mapped	= mappedUniquePart;
 	inferMapping.push_back(m);
 }
 
 bool SourceEditor::InferPath(const wxString &fileName)
 {
+	// Check if the filename starts with something we've matched before.
 	for (std::vector<Mapping>::iterator i = inferMapping.begin();
 			i != inferMapping.end(); ++i)
 	{
 		const Mapping &m = *i;
 		if (fileName.StartsWith(m.original))
 		{
+			// Replace the start of the path with the mapped version.
 			wxString inferredFileName = m.mapped;
 			inferredFileName += fileName.Mid(m.original.length());
 
+			// If the file exists then we use it.
 			if (wxFileExists(inferredFileName) && LoadFile(inferredFileName))
 				return true;
 		}

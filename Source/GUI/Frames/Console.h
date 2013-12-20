@@ -1,11 +1,12 @@
-#ifndef OUTPUT_PANEL_H
-#define OUTPUT_PANEL_H
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
 #include "wx/wx.h"
 
 class MainFrame;
 
-// Panel contains a text controll to show the debugger output and a text controll for debugger command input.
+// Panel contains a text control to show the debugger output and a text control
+// for debugger command input.
 class Console : public wxPanel
 {
 public:
@@ -22,13 +23,13 @@ public:
 	void ClearOutput();
 
 private:
-	MainFrame *host;
-	wxTextCtrl *output;
-	wxTextCtrl *input;
+	MainFrame	*host;
+	wxTextCtrl	*output;
+	wxTextCtrl	*input;
 
 	void OnEnter(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };
 
-#endif // OUTPUT_PANEL_H
+#endif // CONSOLE_H

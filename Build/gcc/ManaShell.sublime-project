@@ -16,11 +16,7 @@
 	"settings":
 	{
 		"tab_size": 4,
-
-		// ToDo: Relative path doesn't work...
-		//"sublimegdb_workingdir": "${folder:${project_path}/../../../../../Output}",
-		"sublimegdb_workingdir": "/home/peter/Code/github/ManaShell/Build/gcc",
-		"sublimegdb_commandline": "gdb --interpreter=mi ./ManaShell_x86_64_debug"
+		"translate_tabs_to_spaces": false,
 	},
 	"build_systems":
 	[

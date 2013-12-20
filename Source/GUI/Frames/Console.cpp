@@ -7,15 +7,17 @@ END_EVENT_TABLE()
 
 
 Console::Console(MainFrame *parent)
-: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER)
-, host(parent)
+	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER)
+	, host(parent)
 {
-	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	output = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTE_MULTILINE | wxTE_READONLY);
+	output = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition,
+							wxDefaultSize, wxNO_BORDER | wxTE_MULTILINE | wxTE_READONLY);
 	sizer->Add(output, wxSizerFlags(1).Expand());
 
-	input = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	input = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition,
+							wxDefaultSize, wxTE_PROCESS_ENTER);
 	sizer->Add(input, wxSizerFlags(0).Expand());
 
 	SetSizer(sizer);

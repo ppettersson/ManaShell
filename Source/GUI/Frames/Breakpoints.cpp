@@ -76,7 +76,7 @@ void Breakpoints::OnDClick(wxCommandEvent &event)
 
 void Breakpoints::OnContextMenu(wxContextMenuEvent &event)
 {
-	// Only allow changes when we're in input debugging mode.
+	// Only allow changes when we're in interactive mode.
 	if (!host->IsWaitingForResponse())
 	{
 		wxMenu *menu = new wxMenu;
