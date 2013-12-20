@@ -495,7 +495,7 @@ void MainFrame::OnToolsDryCallstack(wxCommandEvent &event)
 {
 	// Browse for the file.
 	wxString fileName = wxFileSelector("Load a callstack from file", wxEmptyString, wxEmptyString, wxEmptyString,
-		"All files (*.*)|*.*",
+		"All files (*.*)|*",
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	// If the dialog was cancelled then this is empty.

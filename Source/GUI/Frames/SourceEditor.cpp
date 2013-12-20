@@ -430,7 +430,7 @@ bool SourceEditor::OpenFile(const wxString &fileName)
 	// If that fails as well, then ask the user to locate the file.
 	wxString result = wxFileSelector(wxString::Format("Please locate this file: %s", fileName),
 									 fn.GetPath(), fn.GetName(), fn.GetExt(),
-									 "All files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+									 "All files (*.*)|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	// If the dialog was cancelled then this is empty.
 	if (!result.IsEmpty())
