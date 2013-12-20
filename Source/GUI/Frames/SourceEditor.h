@@ -5,10 +5,12 @@
 #include "wx/stc/stc.h"
 #include <map>
 
+class MainFrame;
+
 class SourceEditor : public wxStyledTextCtrl
 {
 public:
-	SourceEditor(wxWindow *parent);
+	SourceEditor(MainFrame *parent);
 	virtual ~SourceEditor();
 
 	void SetWorkingDirectory(const wxString &dir)		{ workingDir = dir; }
@@ -46,6 +48,7 @@ private:
 	wxString						workingDir,
 									currentFile;
 	std::map<wxString, wxString>	sourceMapping;
+	MainFrame						*host;
 
 	void SetupMargins();
 	void SetupHighlighting();

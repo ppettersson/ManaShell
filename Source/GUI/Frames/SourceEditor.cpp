@@ -1,9 +1,10 @@
 #include "SourceEditor.h"
 #include "wx/filename.h"
+#include "MainFrame.h"
 
-
-SourceEditor::SourceEditor(wxWindow *parent)
+SourceEditor::SourceEditor(MainFrame *parent)
 	: wxStyledTextCtrl(parent)
+	, host(parent)
 {
 	// In debug mode, always let the source files be read-only.
 	SetReadOnly(true);
@@ -165,7 +166,10 @@ void SourceEditor::SetupMargins()
 	//MarkerSetForeground(wxSTC_MARKNUM_FOLDERTAIL, grey);
 	//MarkerSetBackground(wxSTC_MARKNUM_FOLDERTAIL, grey);
 
-	//Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(SourceEditor::OnMarginClick), NULL, this);
+	// Set up so we get events when clicking the margin.
+	SetMarginSensitive(kMarker, true);
+	SetMarginSensitive(kLineNumber, true);
+	Bind(wxEVT_STC_MARGINCLICK, &SourceEditor::OnMarginClick, this);
 
 	// Unused.
 	SetMarginWidth(kUnused0, 0);
@@ -456,5 +460,10 @@ void SourceEditor::OnMarginClick(wxStyledTextEvent &event)
 
 		if ((levelClick & wxSTC_FOLDLEVELHEADERFLAG) > 0)
 			ToggleFold(lineClick);
+	}
+	else
+	{
+		int	lineClick	= LineFromPosition(event.GetPosition());
+		host->RequestBreakpoint(currentFile, lineClick + 1);
 	}
 }
