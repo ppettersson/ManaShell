@@ -25,12 +25,11 @@
 			- Attach to android process.
 
 			Bugs:
-				- It's not switching to (other) source files.
-					- debug
 				- It's adding extra/bad breakpoints: "Breakpoint 2"
 				- "Step out" of testbed::IsDebuggerReady() cause an assert in listbox.
 				- Source Editor has underlines when it shouldn't.
 					- Probably something to do with SetSyntaxCpp
+				- Add breakpoint popup shows up at the wrong position.
 
 0.6	[todo]	UI polish.
 			- More plugin-ish:
@@ -72,9 +71,9 @@
 				- Automatic size adjustments of grid cells.
 				- Reduce height of the header.
 			- Source editor:
+				- It should update the source editor caption with the loaded file.
 				- Goto line.
 				- Find.
-				- Should not have a window frame, look at wx/samples/aui
 				- Multiple tabs.
 				- Markers are positioned wrong horizontally.
 				- Code folding.

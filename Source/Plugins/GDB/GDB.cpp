@@ -401,6 +401,7 @@ bool GDB::ParseSteppingOutput(wxStringTokenizer &lineTokenizer)
 						frame;
 			long		lineNr = 0;
 			ParseFrame(line, fileName, lineNr, frame);
+			host->UpdateSource(lineNr, fileName);
 
 			if (frame != currentFrame)
 			{
