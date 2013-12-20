@@ -68,7 +68,7 @@ MainFrame::MainFrame()
 	, waitingForResponse(true)
 	, refocusInput(false)
 {
-	SetClientSize(1600, 900);
+	SetClientSize(1200, 800);
 
 	SetupMenu();
 	SetupInitialView();

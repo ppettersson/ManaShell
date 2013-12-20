@@ -10,6 +10,7 @@
 		405B1AE010EF25D200676938 /* libwx_osx_cocoa_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 405B1A8C10EF202100676938 /* libwx_osx_cocoa_static.a */; };
 		40AC73361325727300982A5C /* libwx_osx_cocoa.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */; };
 		40AC73371325728400982A5C /* libwx_osx_cocoa.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */; };
+		C4E7934E186452240063EDA5 /* AddEditBreakpointDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4E7934C186452240063EDA5 /* AddEditBreakpointDialog.cpp */; };
 		D06D830D1860EDD100C192C7 /* DebuggerDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */; };
 		D06D830E1860EDD100C192C7 /* Breakpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E71860EDD100C192C7 /* Breakpoints.cpp */; };
 		D06D830F1860EDD100C192C7 /* Callstack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E91860EDD100C192C7 /* Callstack.cpp */; };
@@ -82,6 +83,8 @@
 		407A752313B0E1EB006BC2D5 /* wxdebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = wxdebug.xcconfig; path = ../../../wxWidgets/build/osx/wxdebug.xcconfig; sourceTree = SOURCE_ROOT; };
 		407A752413B0E1EB006BC2D5 /* wxrelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = wxrelease.xcconfig; path = ../../../wxWidgets/build/osx/wxrelease.xcconfig; sourceTree = SOURCE_ROOT; };
 		8D1107320486CEB800E47090 /* ManaShell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManaShell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4E7934C186452240063EDA5 /* AddEditBreakpointDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddEditBreakpointDialog.cpp; sourceTree = "<group>"; };
+		C4E7934D186452240063EDA5 /* AddEditBreakpointDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddEditBreakpointDialog.h; sourceTree = "<group>"; };
 		D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerDialog.cpp; sourceTree = "<group>"; };
 		D06D82E51860EDD100C192C7 /* DebuggerDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerDialog.h; sourceTree = "<group>"; };
 		D06D82E71860EDD100C192C7 /* Breakpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breakpoints.cpp; sourceTree = "<group>"; };
@@ -204,6 +207,8 @@
 		D06D82E31860EDD100C192C7 /* Dialogs */ = {
 			isa = PBXGroup;
 			children = (
+				C4E7934C186452240063EDA5 /* AddEditBreakpointDialog.cpp */,
+				C4E7934D186452240063EDA5 /* AddEditBreakpointDialog.h */,
 				D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */,
 				D06D82E51860EDD100C192C7 /* DebuggerDialog.h */,
 			);
@@ -390,6 +395,7 @@
 				D06D830F1860EDD100C192C7 /* Callstack.cpp in Sources */,
 				D06D83111860EDD100C192C7 /* Locals.cpp in Sources */,
 				D06D830D1860EDD100C192C7 /* DebuggerDialog.cpp in Sources */,
+				C4E7934E186452240063EDA5 /* AddEditBreakpointDialog.cpp in Sources */,
 				D06D83181860EDD100C192C7 /* ManaShell.cpp in Sources */,
 				D06D831C1860EDD100C192C7 /* JDB.cpp in Sources */,
 				D06D83191860EDD100C192C7 /* PipedProcess.cpp in Sources */,
