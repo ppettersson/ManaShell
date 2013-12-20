@@ -11,12 +11,11 @@
 		40AC73361325727300982A5C /* libwx_osx_cocoa.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */; };
 		40AC73371325728400982A5C /* libwx_osx_cocoa.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 405B1A8A10EF202100676938 /* libwx_osx_cocoa.dylib */; };
 		C4E7934E186452240063EDA5 /* AddEditBreakpointDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4E7934C186452240063EDA5 /* AddEditBreakpointDialog.cpp */; };
+		C4E793511864D51F0063EDA5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4E7934F1864D51F0063EDA5 /* Console.cpp */; };
 		D06D830D1860EDD100C192C7 /* DebuggerDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */; };
 		D06D830E1860EDD100C192C7 /* Breakpoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E71860EDD100C192C7 /* Breakpoints.cpp */; };
 		D06D830F1860EDD100C192C7 /* Callstack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82E91860EDD100C192C7 /* Callstack.cpp */; };
-		D06D83101860EDD100C192C7 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82EB1860EDD100C192C7 /* Input.cpp */; };
 		D06D83111860EDD100C192C7 /* Locals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82ED1860EDD100C192C7 /* Locals.cpp */; };
-		D06D83121860EDD100C192C7 /* Output.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82EF1860EDD100C192C7 /* Output.cpp */; };
 		D06D83131860EDD100C192C7 /* Registers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F11860EDD100C192C7 /* Registers.cpp */; };
 		D06D83141860EDD100C192C7 /* SourceEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F31860EDD100C192C7 /* SourceEditor.cpp */; };
 		D06D83151860EDD100C192C7 /* Threads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06D82F51860EDD100C192C7 /* Threads.cpp */; };
@@ -85,18 +84,16 @@
 		8D1107320486CEB800E47090 /* ManaShell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManaShell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4E7934C186452240063EDA5 /* AddEditBreakpointDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddEditBreakpointDialog.cpp; sourceTree = "<group>"; };
 		C4E7934D186452240063EDA5 /* AddEditBreakpointDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddEditBreakpointDialog.h; sourceTree = "<group>"; };
+		C4E7934F1864D51F0063EDA5 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Console.cpp; sourceTree = "<group>"; };
+		C4E793501864D51F0063EDA5 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
 		D06D82E41860EDD100C192C7 /* DebuggerDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerDialog.cpp; sourceTree = "<group>"; };
 		D06D82E51860EDD100C192C7 /* DebuggerDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerDialog.h; sourceTree = "<group>"; };
 		D06D82E71860EDD100C192C7 /* Breakpoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breakpoints.cpp; sourceTree = "<group>"; };
 		D06D82E81860EDD100C192C7 /* Breakpoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Breakpoints.h; sourceTree = "<group>"; };
 		D06D82E91860EDD100C192C7 /* Callstack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Callstack.cpp; sourceTree = "<group>"; };
 		D06D82EA1860EDD100C192C7 /* Callstack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Callstack.h; sourceTree = "<group>"; };
-		D06D82EB1860EDD100C192C7 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
-		D06D82EC1860EDD100C192C7 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
 		D06D82ED1860EDD100C192C7 /* Locals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Locals.cpp; sourceTree = "<group>"; };
 		D06D82EE1860EDD100C192C7 /* Locals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locals.h; sourceTree = "<group>"; };
-		D06D82EF1860EDD100C192C7 /* Output.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Output.cpp; sourceTree = "<group>"; };
-		D06D82F01860EDD100C192C7 /* Output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Output.h; sourceTree = "<group>"; };
 		D06D82F11860EDD100C192C7 /* Registers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Registers.cpp; sourceTree = "<group>"; };
 		D06D82F21860EDD100C192C7 /* Registers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Registers.h; sourceTree = "<group>"; };
 		D06D82F31860EDD100C192C7 /* SourceEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceEditor.cpp; sourceTree = "<group>"; };
@@ -218,16 +215,14 @@
 		D06D82E61860EDD100C192C7 /* Frames */ = {
 			isa = PBXGroup;
 			children = (
+				C4E7934F1864D51F0063EDA5 /* Console.cpp */,
+				C4E793501864D51F0063EDA5 /* Console.h */,
 				D06D82E71860EDD100C192C7 /* Breakpoints.cpp */,
 				D06D82E81860EDD100C192C7 /* Breakpoints.h */,
 				D06D82E91860EDD100C192C7 /* Callstack.cpp */,
 				D06D82EA1860EDD100C192C7 /* Callstack.h */,
-				D06D82EB1860EDD100C192C7 /* Input.cpp */,
-				D06D82EC1860EDD100C192C7 /* Input.h */,
 				D06D82ED1860EDD100C192C7 /* Locals.cpp */,
 				D06D82EE1860EDD100C192C7 /* Locals.h */,
-				D06D82EF1860EDD100C192C7 /* Output.cpp */,
-				D06D82F01860EDD100C192C7 /* Output.h */,
 				D06D82F11860EDD100C192C7 /* Registers.cpp */,
 				D06D82F21860EDD100C192C7 /* Registers.h */,
 				D06D82F31860EDD100C192C7 /* SourceEditor.cpp */,
@@ -401,16 +396,15 @@
 				D06D83191860EDD100C192C7 /* PipedProcess.cpp in Sources */,
 				D06D831D1860EDD100C192C7 /* PDB.cpp in Sources */,
 				D06D831B1860EDD100C192C7 /* GDB.cpp in Sources */,
+				C4E793511864D51F0063EDA5 /* Console.cpp in Sources */,
 				D06D83151860EDD100C192C7 /* Threads.cpp in Sources */,
 				D06D83161860EDD100C192C7 /* Watch.cpp in Sources */,
 				D06D830E1860EDD100C192C7 /* Breakpoints.cpp in Sources */,
 				D06D83171860EDD100C192C7 /* MainFrame.cpp in Sources */,
 				D06D831A1860EDD100C192C7 /* Debugger.cpp in Sources */,
 				D06D831E1860EDD100C192C7 /* PDB_InterceptInput.cpp in Sources */,
-				D06D83101860EDD100C192C7 /* Input.cpp in Sources */,
 				D06D83131860EDD100C192C7 /* Registers.cpp in Sources */,
 				D06D83141860EDD100C192C7 /* SourceEditor.cpp in Sources */,
-				D06D83121860EDD100C192C7 /* Output.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
