@@ -119,6 +119,9 @@ private:
 	// Dockable frame's manager.
 	wxAuiManager					dockingManager;
 
+	// Main toolbar.
+  	wxAuiToolBar					*toolBar;
+
 	// Frames.
 	Breakpoints						*breakpoints;
 	Callstack						*callstack;

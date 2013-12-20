@@ -37,7 +37,7 @@
 			- Highlight current line in the source editor.
 			- Keyboard shortcuts.
 				- configurable.
-			- Toolbar.
+			- Toolbar bitmaps.
 			- Save/Load perspectives.
 			- Output text control.
 				- Separate output for debugger and process?

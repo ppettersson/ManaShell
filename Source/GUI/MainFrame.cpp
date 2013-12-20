@@ -54,6 +54,7 @@ MainFrame::MainFrame()
 	: wxFrame(NULL, wxID_ANY, "ManaShell [alpha]")
 	, activeProcessId(0)
 	, idleWakeUpTimer(this, kTimer_Idle)
+	, toolBar(NULL)
 	, breakpoints(NULL)
 	, callstack(NULL)
 	, console(NULL)
@@ -702,6 +703,26 @@ void MainFrame::SetupInitialView()
 	wxSize clientSize = GetClientSize();
 
 	dockingManager.SetManagedWindow(this);
+
+	toolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_HORIZONTAL);
+	toolBar->SetToolBitmapSize(wxSize(16,16));
+	toolBar->AddLabel(kDebug_Start, "Start");
+	toolBar->AddLabel(kDebug_Stop, "Stop");
+	toolBar->AddSeparator();
+	toolBar->AddLabel(kDebug_StepIn, "Step in");
+	toolBar->AddLabel(kDebug_StepOver, "Step over");
+	toolBar->AddLabel(kDebug_StepOut, "Step out");
+	toolBar->AddSeparator();
+	toolBar->AddLabel(kDebug_Break, "Break");
+	toolBar->AddLabel(kDebug_Continue, "Continue");
+	toolBar->Realize();
+
+	wxAuiPaneInfo toolBarPane;
+	toolBarPane.Name("toolBar");
+	toolBarPane.Caption("Tool Bar");
+	toolBarPane.ToolbarPane();
+	toolBarPane.Top();
+	dockingManager.AddPane(toolBar, toolBarPane);
 
 	wxAuiPaneInfo sourceEditorPane;
 	sourceEditorPane.Name("sourceEditor");
