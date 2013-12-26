@@ -46,7 +46,7 @@ private:
 	wxButton				*workingDirBrowse;		// Use a directory browser to find the working directory.
 
 	// Current "committed" state.
-	int						debugger;
+	Debugger				*debugger;
 	wxString				executable,
 							script,
 							arguments,

@@ -20,7 +20,6 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 
 	// Allow validation to break through static box sizers.
 	SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
-	SetDefaults();
 
 	// Flexible layout with sizers.
 	wxBoxSizer *topSizer = new wxBoxSizer(wxVERTICAL);
@@ -30,7 +29,6 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 		for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
 			debuggerNames.Add((*i)->GetName());
 		debuggerControl = new wxChoice(this, kDebuggerId, wxDefaultPosition, wxDefaultSize, debuggerNames);
-		debuggerControl->SetValidator(wxGenericValidator(&debugger));
 		debuggerControl->Bind(wxEVT_CHOICE, &DebuggerDialog::OnDebugger, this);
 		topSizer->Add(debuggerControl, 0, wxGROW | wxALL, 5);
 
@@ -130,6 +128,8 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 		topSizer->Add(dialogButtons, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
 	}
 
+	SetDefaults();
+	
 	topSizer->SetMinSize(wxSize(600, -1));
 	SetSizerAndFit(topSizer);
 	Center();
@@ -142,54 +142,49 @@ DebuggerDialog::~DebuggerDialog()
 Debugger *DebuggerDialog::GetDebugger()
 {
 	// Delete the ones that aren't going to be used.
-	Debugger *result = debuggers[debugger];
-	for (int i = 0; i < (int)debuggers.size(); ++i)
-		if (i != debugger)
-			delete debuggers[i];
+	for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
+		if (*i != debugger)
+			delete *i;
 	debuggers.clear();
 
 	// Return the one that was selected.
-	return result;
+	return debugger;
 }
 
 void DebuggerDialog::SetDefaults()
 {
-	debugger	= 0;
+	debugger	= debuggers[0];
 	custom		= false;
 
 	TransferDataFromDebugger();
 
-	command = debuggers[debugger]->GetCommand();
+	command = debugger->GetCommand();
 }
 
 void DebuggerDialog::UpdateCommand()
 {
 	TransferDataToDebugger();
 
-	command = debuggers[debugger]->GetCommand();
+	command = debugger->GetCommand();
 }
 
 void DebuggerDialog::TransferDataToDebugger()
 {
-	Debugger *plugin = debuggers[debugger];
-
-	plugin->SetExecutable(executable);
-	plugin->SetScript(script);
-	plugin->SetArguments(arguments);
-	plugin->SetUseCustomCommand(custom);
+	debugger->SetExecutable(executable);
+	debugger->SetScript(script);
+	debugger->SetArguments(arguments);
+	debugger->SetUseCustomCommand(custom);
 	if (custom)
-		plugin->SetCustomCommand(command);
-	plugin->SetWorkingDir(workingDir);
+		debugger->SetCustomCommand(command);
+	debugger->SetWorkingDir(workingDir);
 }
 
 void DebuggerDialog::TransferDataFromDebugger()
 {
-	Debugger *plugin = debuggers[debugger];
-
-	executable	= plugin->GetExecutable();
-	script		= plugin->GetScript();
-	arguments	= plugin->GetArguments();
-	workingDir	= plugin->GetWorkingDir();
+	executable	= debugger->GetExecutable();
+	script		= debugger->GetScript();
+	arguments	= debugger->GetArguments();
+	workingDir	= debugger->GetWorkingDir();
 }
 
 void DebuggerDialog::OnBrowse(wxCommandEvent &event)
@@ -241,8 +236,7 @@ void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 {
 	custom = event.IsChecked();
 
-	Debugger *plugin = debuggers[debugger];
-	plugin->SetUseCustomCommand(custom);
+	debugger->SetUseCustomCommand(custom);
 
 	// Custom is mutually exclusive with setting parameters.
 	executableControl->Enable(!custom);
@@ -262,13 +256,13 @@ void DebuggerDialog::OnCustomChanged(wxCommandEvent &event)
 
 void DebuggerDialog::OnDebugger(wxCommandEvent &event)
 {
-	if (event.GetInt() != debugger)
+	if (debuggers[event.GetInt()] != debugger)
 	{
 		// Save the current select in case the old debugger is selected again.
 		TransferDataToDebugger();
 
 		// Retrieve new values from the new debugger.
-		debugger = event.GetInt();
+		debugger = debuggers[event.GetInt()];
 		TransferDataFromDebugger();
 
 		// Update UI.
