@@ -48,6 +48,10 @@ public:
 
 	// The UI name for this plugin.
 	virtual wxString GetName() const						{ return "Custom"; }
+	
+	// Get the file match for things this plugin can debug and use to debug.
+	virtual wxString GetScriptFilter() const				{ return "All files (*.*)|*"; }
+	virtual wxString GetExecFilter() const					{ return "All files (*.*)|*"; }
 
 	// Build up the full command from the current executable, script and
 	// parameters with any extra glue that is necessary.

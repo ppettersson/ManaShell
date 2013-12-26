@@ -40,6 +40,9 @@ public:
 	// The UI name for this plugin.
 	virtual wxString GetName() const						{ return "Python (PDB)"; }
 
+	// Get the file match for things this plugin can debug.
+	virtual wxString GetScriptFilter() const				{ return "Python files (*.py)|*.py"; }
+	
 	// Build up the full command from the current executable, script and
 	// parameters with any extra glue that is necessary.
 	virtual wxString GetCommand() const;
