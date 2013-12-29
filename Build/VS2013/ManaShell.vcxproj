@@ -155,12 +155,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\GUI\Dialogs\AddEditBreakpointDialog.cpp" />
     <ClCompile Include="..\..\Source\GUI\Dialogs\DebuggerDialog.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Breakpoints.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Callstack.cpp" />
-    <ClCompile Include="..\..\Source\GUI\Frames\Input.cpp" />
+    <ClCompile Include="..\..\Source\GUI\Frames\Console.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Locals.cpp" />
-    <ClCompile Include="..\..\Source\GUI\Frames\Output.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Registers.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\SourceEditor.cpp" />
     <ClCompile Include="..\..\Source\GUI\Frames\Threads.cpp" />
@@ -180,12 +180,12 @@
     <Text Include="..\..\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\GUI\Dialogs\AddEditBreakpointDialog.h" />
     <ClInclude Include="..\..\Source\GUI\Dialogs\DebuggerDialog.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Breakpoints.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Callstack.h" />
-    <ClInclude Include="..\..\Source\GUI\Frames\Input.h" />
+    <ClInclude Include="..\..\Source\GUI\Frames\Console.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Locals.h" />
-    <ClInclude Include="..\..\Source\GUI\Frames\Output.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Registers.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\SourceEditor.h" />
     <ClInclude Include="..\..\Source\GUI\Frames\Threads.h" />

@@ -133,10 +133,11 @@
 	- make: http://www.cmcrossroads.com/article/interactive-gnu-make-debugger
 	- bash: http://bashdb.sourceforge.net
 - Optional project view:
-	- Make it easier when setting breakpoints.
+	- Make it easier to find files when setting breakpoints.
+		- Add folder.
+		- Add nested hierarchy: Include/Exclude of folders and filetypes.
 		- Optionally remember them across debug settings.
 	- Find and open file (fuzzy search).
-	- Nested Include/Exclude of folders and filetypes.
 - Optional build system:
 	- Call Makefile.
 	- Parse gcc output and present it nicely.

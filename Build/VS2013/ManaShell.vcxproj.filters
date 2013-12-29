@@ -48,13 +48,7 @@
     <ClCompile Include="..\..\Source\GUI\Frames\Callstack.cpp">
       <Filter>Source\GUI\Frames</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\GUI\Frames\Input.cpp">
-      <Filter>Source\GUI\Frames</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\GUI\Frames\Locals.cpp">
-      <Filter>Source\GUI\Frames</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\GUI\Frames\Output.cpp">
       <Filter>Source\GUI\Frames</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\GUI\Frames\Registers.cpp">
@@ -84,6 +78,12 @@
     <ClCompile Include="..\..\Source\Plugins\PDB\PDB_InterceptInput.cpp">
       <Filter>Source\Plugins\PDB</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Dialogs\AddEditBreakpointDialog.cpp">
+      <Filter>Source\GUI\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Console.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Docs\Building.txt">
@@ -112,13 +112,7 @@
     <ClInclude Include="..\..\Source\GUI\Frames\Callstack.h">
       <Filter>Source\GUI\Frames</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GUI\Frames\Input.h">
-      <Filter>Source\GUI\Frames</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\GUI\Frames\Locals.h">
-      <Filter>Source\GUI\Frames</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\GUI\Frames\Output.h">
       <Filter>Source\GUI\Frames</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GUI\Frames\Registers.h">
@@ -150,6 +144,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\GUI\SupportedViews.h">
       <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Dialogs\AddEditBreakpointDialog.h">
+      <Filter>Source\GUI\Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Console.h">
+      <Filter>Source\GUI\Frames</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
