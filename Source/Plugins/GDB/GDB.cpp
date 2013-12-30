@@ -1,5 +1,5 @@
 #include "../../GUI/Frames/Callstack.h"
-#include "../../GUI/Frames/SourceEditor.h"
+#include "../../GUI/Frames/Content.h"
 #include "../../GUI/Frames/Watch.h"
 #include "../../GUI/MainFrame.h"
 #include "GDB.h"
@@ -86,7 +86,7 @@ void GDB::Break()
 
 void GDB::Continue()
 {
-	host->GetSourceEditor()->DisableDebugMarker();
+	host->GetContent()->DisableDebugMarker();
 	commandQueue.push(CommandItem("continue\n", kCommandContinue, kOutputContinue));
 	RunCommandQueue();
 }

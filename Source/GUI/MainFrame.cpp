@@ -1,4 +1,5 @@
 #include "../Plugins/Debugger.h"
+#include "Frames/Content.h"
 #include "Frames/Breakpoints.h"
 #include "Frames/Callstack.h"
 #include "Frames/Console.h"
@@ -11,6 +12,7 @@
 #include "PipedProcess.h"
 #include "wx/filename.h"
 #include "wx/utils.h"
+#include "wx/artprov.h"
 #include <algorithm>
 
 
@@ -56,11 +58,11 @@ MainFrame::MainFrame()
 	, activeProcessId(0)
 	, idleWakeUpTimer(this, kTimer_Idle)
 	, toolBar(NULL)
+	, content(NULL)
 	, breakpoints(NULL)
 	, callstack(NULL)
 	, console(NULL)
 	, registers(NULL)
-	, sourceEditor(NULL)
 	, threads(NULL)
 	, watch(NULL)
 	, sourceEditorMode(kSource)
@@ -113,8 +115,8 @@ void MainFrame::OnProcessTerminated(PipedProcess *process, int pid, int status)
 		breakpoints->ClearAllBreakpoints();
 		callstack->ClearAllFrames();
 		watch->ClearAll();
-		sourceEditor->StopDebugging();
-		sourceEditor->RemoveAllBreakpoints();
+		content->StopDebugging();
+		content->RemoveAllBreakpoints();
 	}
 }
 
@@ -243,7 +245,7 @@ void MainFrame::SendInterrupt()
 
 void MainFrame::UpdateSource(unsigned line, const wxString &fileName, bool moveDebugMarker)
 {
-	sourceEditor->Load(fileName, line, moveDebugMarker);
+	content->UpdateSource(line, fileName, moveDebugMarker);
 }
 
 void MainFrame::DebuggerTermination()
@@ -258,30 +260,36 @@ void MainFrame::GetWatchValue(unsigned index, const wxString &variable)
 		debugger->GetWatchValue(index, variable);
 }
 
-void MainFrame::RequestBreakpoint(const wxString &fileName, int line)
+void MainFrame::ToggleBreakpoint(const wxString &fileName, int line)
 {
+	SourceEditor* sourceEditor = content->GetSourceEditor(fileName);
+
 	Breakpoints::ToggleResult result = breakpoints->ToggleBreak(fileName, line);
-	wxASSERT(result == Breakpoints::kAdded);
-	if (debugger)
+	switch (result)
 	{
-		// Remove the path from the fileName.
-		wxFileName fn;
-		fn.Assign(fileName);
+	case Breakpoints::kAdded:
+		if (debugger)
+			debugger->AddBreakpoint(fileName, line);
+		if (sourceEditor)
+			sourceEditor->AddBreakpoint(line);		// Assume it's the current file.
+		break;
 
-		debugger->AddBreakpoint(fn.GetFullName(), line);
+	case Breakpoints::kRemoved:
+		if (debugger)
+			debugger->RemoveBreakpoint(fileName, line);
+		if (sourceEditor)
+			sourceEditor->RemoveBreakpoint(line);	// Assume it's the current file.
+		break;
 
-		// ToDo?
-		// fn.MakeRelativeTo(debugger->GetWorkingDir());
-		// AddBreakpoint(fn.GetFullPath());
+	default:
+		break;
 	}
-
-	if (sourceEditor->GetCurrentFile() == fileName)
-		sourceEditor->AddBreakpoint(line);
 }
 
 void MainFrame::RequestClearAllBreakpoints()
 {
 	breakpoints->ClearAllBreakpoints();
+	content->RemoveAllBreakpoints();
 	if (debugger)
 		debugger->ClearAllBreakpoints();
 }
@@ -406,7 +414,7 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 		env = &environment;
 
 		// Let the source editor know this as well to help with opening files.
-		sourceEditor->SetWorkingDirectory(environment.cwd);
+		content->SetWorkingDirectory(environment.cwd);
 	}
 
 	// Run the command and attach to the input and output.
@@ -472,40 +480,24 @@ void MainFrame::OnDebugToggleBreakpoint(wxCommandEvent &event)
 {
 	if (debugger)
 	{
-		wxString fileName = sourceEditor->GetCurrentFile();
-		unsigned line = (unsigned)std::max(sourceEditor->GetCurrentLine(), 0);
-
-		// GetCurrentLine is 0-based, while both scintilla and most debuggers are
-		// 1-based, so fix up that here.
-		++line;
-
-		Breakpoints::ToggleResult result = breakpoints->ToggleBreak(fileName, line);
-		switch (result)
+		SourceEditor* sourceEditor = content->GetSelectedSourceEditor();
+		if (sourceEditor)
 		{
-		case Breakpoints::kAdded:
-			debugger->AddBreakpoint(fileName, line);
-			sourceEditor->AddBreakpoint(line);		// Assume it's the current file.
-			break;
+			wxString fileName = sourceEditor->GetCurrentFile();
+			unsigned line = (unsigned)std::max(sourceEditor->GetCurrentLine(), 0);
 
-		case Breakpoints::kRemoved:
-			debugger->RemoveBreakpoint(fileName, line);
-			sourceEditor->RemoveBreakpoint(line);	// Assume it's the current file.
-			break;
+			// GetCurrentLine is 0-based, while both scintilla and most debuggers are
+			// 1-based, so fix up that here.
+			++line;
 
-		default:
-			break;
+			ToggleBreakpoint(fileName, line);
 		}
 	}
 }
 
 void MainFrame::OnDebugClearAllBreakpoints(wxCommandEvent &event)
 {
-	if (debugger)
-	{
-		breakpoints->ClearAllBreakpoints();
-		debugger->ClearAllBreakpoints();
-		sourceEditor->RemoveAllBreakpoints();		// Assume it's the current file.
-	}
+	RequestClearAllBreakpoints();
 }
 
 void MainFrame::OnToolsDryCallstack(wxCommandEvent &event)
@@ -719,17 +711,20 @@ void MainFrame::SetupInitialView()
 
 	dockingManager.SetManagedWindow(this);
 
-	toolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_HORIZONTAL);
+	toolBar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+		wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW | wxAUI_TB_HORIZONTAL |
+		wxAUI_TB_TEXT | wxAUI_TB_HORZ_TEXT);
 	toolBar->SetToolBitmapSize(wxSize(16,16));
-	toolBar->AddLabel(kDebug_Start, "Start");
-	toolBar->AddLabel(kDebug_Stop, "Stop");
+
+	toolBar->AddTool(kDebug_Start, "Start", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
+	toolBar->AddTool(kDebug_Stop, "Stop", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
 	toolBar->AddSeparator();
-	toolBar->AddLabel(kDebug_StepIn, "Step in");
-	toolBar->AddLabel(kDebug_StepOver, "Step over");
-	toolBar->AddLabel(kDebug_StepOut, "Step out");
+	toolBar->AddTool(kDebug_StepIn, "Step in", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
+	toolBar->AddTool(kDebug_StepOver, "Step over", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
+	toolBar->AddTool(kDebug_StepOut, "Step out", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
 	toolBar->AddSeparator();
-	toolBar->AddLabel(kDebug_Break, "Break");
-	toolBar->AddLabel(kDebug_Continue, "Continue");
+	toolBar->AddTool(kDebug_Break, "Break", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
+	toolBar->AddTool(kDebug_Continue, "Continue", wxArtProvider::GetBitmap(wxART_MISSING_IMAGE));
 	toolBar->Realize();
 
 	wxAuiPaneInfo toolBarPane;
@@ -739,12 +734,14 @@ void MainFrame::SetupInitialView()
 	toolBarPane.Top();
 	dockingManager.AddPane(toolBar, toolBarPane);
 
-	wxAuiPaneInfo sourceEditorPane;
-	sourceEditorPane.Name("sourceEditor");
-	sourceEditorPane.Caption("Source Code Viewer");
-	sourceEditorPane.Center();
-	sourceEditor = new SourceEditor(this);
-	dockingManager.AddPane(sourceEditor, sourceEditorPane);
+	wxAuiPaneInfo contentPane;
+	contentPane.Name("content");
+	contentPane.Caption("Content");
+	contentPane.Center();
+	contentPane.CaptionVisible(false);
+	contentPane.CloseButton(false);
+	content = new Content(this);
+	dockingManager.AddPane(content, contentPane);
 
 	wxAuiPaneInfo localsPane;
 	localsPane.Name("locals");

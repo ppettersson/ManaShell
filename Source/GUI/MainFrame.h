@@ -5,6 +5,7 @@
 #include "wx/aui/aui.h"
 #include "SupportedViews.h"
 
+class Content;
 class Breakpoints;
 class Callstack;
 class Debugger;
@@ -39,12 +40,13 @@ public:
 	void DebuggerTermination();
 
 	Callstack *GetCallstack()			{ return callstack; }
-	SourceEditor *GetSourceEditor()		{ return sourceEditor; }
+	Content *GetContent()				{ return content; }
 	Watch *GetWatch()					{ return watch; }
+	Breakpoints *GetBreakpoints()		{ return breakpoints; }
 	bool IsWaitingForResponse() const	{ return waitingForResponse; }
 
 	void GetWatchValue(unsigned index, const wxString &variable);
-	void RequestBreakpoint(const wxString &fileName, int line);
+	void ToggleBreakpoint(const wxString &fileName, int line);
 	void RequestClearAllBreakpoints();
 
 
@@ -121,15 +123,15 @@ private:
 	wxAuiManager					dockingManager;
 
 	// Main toolbar.
-  	wxAuiToolBar					*toolBar;
+	wxAuiToolBar					*toolBar;
 
 	// Frames.
+	Content							*content;
 	Breakpoints						*breakpoints;
 	Callstack						*callstack;
 	Locals							*locals;
 	Console							*console;
 	Registers						*registers;
-	SourceEditor					*sourceEditor;
 	Threads							*threads;
 	Watch							*watch;
 

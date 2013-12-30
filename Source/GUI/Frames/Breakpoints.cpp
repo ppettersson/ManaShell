@@ -57,6 +57,26 @@ void Breakpoints::ClearAllBreakpoints()
 	UpdateUI();
 }
 
+void Breakpoints::GetLines(const wxString &fileName, std::vector<int> &out)
+{
+	for (std::vector<Break>::const_iterator it = breaks.begin(), endIt = breaks.end(); it != endIt; ++it)
+	{
+		if (it->fileName == fileName)
+			out.push_back(it->line);
+	}
+}
+
+bool Breakpoints::HasBreakpoint(const wxString &fileName, int line)
+{
+	for (std::vector<Break>::const_iterator it = breaks.begin(), endIt = breaks.end(); it != endIt; ++it)
+	{
+		if (it->fileName == fileName && it->line == line)
+			return true;
+	}
+
+	return false;
+}
+
 void Breakpoints::UpdateUI()
 {
 	Clear();
@@ -98,7 +118,10 @@ void Breakpoints::OnAddBreakpoint(wxCommandEvent &event)
 {
 	AddEditBreakpointDialog dialog(host);
 	if (wxID_OK == dialog.ShowModal())
-		host->RequestBreakpoint(dialog.GetFileName(), dialog.GetLineNumber());
+	{
+		if (!HasBreakpoint(dialog.GetFileName(), dialog.GetLineNumber()))
+			host->ToggleBreakpoint(dialog.GetFileName(), dialog.GetLineNumber());
+	}
 }
 
 void Breakpoints::OnClearAllBreakpoints(wxCommandEvent &event)

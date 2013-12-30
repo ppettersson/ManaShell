@@ -3,8 +3,6 @@
 
 #include "wx/wx.h"
 #include "wx/stc/stc.h"
-#include <map>
-#include <vector>
 
 class MainFrame;
 
@@ -14,11 +12,9 @@ public:
 	SourceEditor(MainFrame *parent);
 	virtual ~SourceEditor();
 
-	void SetWorkingDirectory(const wxString &dir)		{ workingDir = dir; }
+	bool Load(const wxString &fileName);
 
-	bool Load(const wxString &fileName, unsigned line = 0, bool moveDebugMarker = true);
-
-	void StopDebugging();
+	void GotoLine(unsigned line, bool moveDebugMarker = true);
 	void DisableDebugMarker();
 
 	void AddBreakpoint(unsigned line);
@@ -26,7 +22,6 @@ public:
 	void RemoveAllBreakpoints();
 
 	const wxString &GetCurrentFile() const				{ return currentFile; }
-
 
 private:
 	// Scintilla supports up to 5 margins.
@@ -46,17 +41,8 @@ private:
 		kDebuggerNextLine
 	};
 
-	struct Mapping
-	{
-		wxString	original,
-					mapped;
-	};
-
-	wxString						workingDir,
-									currentFile;
-	std::map<wxString, wxString>	sourceMapping;	// <original path, user supplied path>
-	std::vector<Mapping>			inferMapping;	// The difference only.
-	MainFrame						*host;
+	wxString	currentFile;
+	MainFrame	*host;
 
 	void SetupMargins();
 	void SetupHighlighting();
@@ -66,8 +52,6 @@ private:
 	void SetupJava();
 
 	bool OpenFile(const wxString &fileName);
-	void AddInferPath(const wxString &original, const wxString &mapped);
-	bool InferPath(const wxString &fileName);
 
 	void OnMarginClick(wxStyledTextEvent &event);
 };

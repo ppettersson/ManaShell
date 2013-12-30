@@ -21,6 +21,9 @@ public:
 	ToggleResult ToggleBreak(const wxString &fileName, unsigned line);
 	void ClearAllBreakpoints();
 
+	void GetLines(const wxString &fileName, std::vector<int> &out);
+
+	bool HasBreakpoint(const wxString &fileName, int line);
 
 private:
 	enum Constants

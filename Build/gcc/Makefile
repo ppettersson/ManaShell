@@ -52,6 +52,9 @@ CFLAGS += -msse2
 # Let C++ inherit all C flags.
 CXXFLAGS = $(CFLAGS)
 
+# Enable C++11
+CXXFLAGS += -std=c++0x
+
 # --- Internal functions ---
 app_exe = $(OUTPUT_DIR)/$(1)_$(ARCH)_$(BUILD)
 objs_from_src = $(patsubst $(SRC_ROOT)/%, $(BUILD_DIR)/%.o, $(basename $(1)))

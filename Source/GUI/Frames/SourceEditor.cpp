@@ -39,7 +39,7 @@ SourceEditor::~SourceEditor()
 {
 }
 
-bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugMarker)
+bool SourceEditor::Load(const wxString &fileName)
 {
 	// Only reload the file if necessary.
 	if (!fileName.IsEmpty() && (fileName != currentFile))
@@ -51,7 +51,7 @@ bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugM
 		// Scintilla won't allow any modifications at all to the buffer if
 		// we're in read only mode.
 		SetReadOnly(false);
-		if (!OpenFile(fileName))
+		if (!wxFileExists(fileName) || !LoadFile(fileName))
 			return false;
 		SetReadOnly(true);
 
@@ -60,10 +60,15 @@ bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugM
 		SetupHighlighting();
 	}
 
+	return true;
+}
+
+void SourceEditor::GotoLine(unsigned line, bool moveDebugMarker)
+{
 	// Scintilla is 1 based, not 0 based.
 	if (line > 0)
 	{
-		GotoLine(line - 1);
+		wxStyledTextCtrl::GotoLine(line - 1);
 
 		if (moveDebugMarker)
 		{
@@ -71,20 +76,6 @@ bool SourceEditor::Load(const wxString &fileName, unsigned line, bool moveDebugM
 			MarkerAdd(line - 1, kDebuggerNextLine);
 		}
 	}
-	return true;
-}
-
-void SourceEditor::StopDebugging()
-{
-	MarkerDeleteAll(kDebuggerNextLine);
-
-	SetReadOnly(false);
-	ClearAll();
-	SetReadOnly(true);
-
-	workingDir	= "";
-	currentFile	= "";
-	sourceMapping.clear();
 }
 
 void SourceEditor::DisableDebugMarker()
@@ -402,120 +393,6 @@ void SourceEditor::SetupJava()
 	SetKeyWords(1,	"false null true");
 }
 
-bool SourceEditor::OpenFile(const wxString &fileName)
-{
-	// First try to open it as is.
-	if (wxFileExists(fileName) && LoadFile(fileName))
-		return true;
-
-	// If it was a relative path, then try to figure out the absolute
-	// path from the working directory.
-	wxFileName fn;
-	fn.Assign(fileName);
-	if (fn.IsRelative())
-	{
-		if (fn.MakeAbsolute(workingDir))
-		{
-			wxString fullPath = fn.GetFullPath();
-			if (wxFileExists(fullPath) && LoadFile(fullPath))
-				return true;
-		}
-	}
-
-	// Check if we already have this file mapped.
-	std::map<wxString, wxString>::iterator i = sourceMapping.find(fileName);
-	if (i != sourceMapping.end())
-	{
-		const wxString &fullPath = i->second;
-		if (wxFileExists(fullPath) && LoadFile(fullPath))
-			return true;
-	}
-
-	// Check if we can infer the path from previous source mappings.
-	if (InferPath(fileName))
-		return true;
-
-	// If that fails as well, then ask the user to locate the file.
-	wxString result = wxFileSelector(wxString::Format("Please locate this file: %s", fileName),
-									 fn.GetPath(), fn.GetName(), fn.GetExt(),
-									 "All files (*.*)|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-
-	// If the dialog was cancelled then this is empty.
-	if (!result.IsEmpty())
-	{
-		if (wxFileExists(result) && LoadFile(result))
-		{
-			// Store this mapping in case it's requested again.
-			sourceMapping[fileName] = result;
-
-			// Store the relative change to help with infering other files.
-			AddInferPath(fileName, result);
-			return true;
-		}
-	}
-
-	wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error", wxOK | wxCENTRE | wxICON_ERROR, GetParent());
-	return false;
-}
-
-void SourceEditor::AddInferPath(const wxString &original, const wxString &mapped)
-{
-	// Try to match up as much as possible of the path.
-	int originalEnd = original.length();
-	int mappedEnd = mapped.length();
-
-	while (originalEnd > 0 && mappedEnd > 0 &&
-			(original[originalEnd] == mapped[mappedEnd]))
-	{
-		--originalEnd;
-		--mappedEnd;
-	}
-
-	// Abort if we didn't manage to match anything.
-	if (originalEnd == original.length())
-		return;
-
-	wxString originalUniquePart(original, originalEnd + 1);
-	wxString mappedUniquePart(mapped, mappedEnd + 1);
-
-	// Add the mapping if it's unique.
-	for (std::vector<Mapping>::iterator i = inferMapping.begin();
-			i != inferMapping.end(); ++i)
-	{
-		const Mapping &m = *i;
-		if ((m.original == originalUniquePart) &&
-			(m.mapped == mappedUniquePart))
-			return;
-	}
-
-	Mapping m;
-	m.original	= originalUniquePart;
-	m.mapped	= mappedUniquePart;
-	inferMapping.push_back(m);
-}
-
-bool SourceEditor::InferPath(const wxString &fileName)
-{
-	// Check if the filename starts with something we've matched before.
-	for (std::vector<Mapping>::iterator i = inferMapping.begin();
-			i != inferMapping.end(); ++i)
-	{
-		const Mapping &m = *i;
-		if (fileName.StartsWith(m.original))
-		{
-			// Replace the start of the path with the mapped version.
-			wxString inferredFileName = m.mapped;
-			inferredFileName += fileName.Mid(m.original.length());
-
-			// If the file exists then we use it.
-			if (wxFileExists(inferredFileName) && LoadFile(inferredFileName))
-				return true;
-		}
-	}
-
-	return false;
-}
-
 void SourceEditor::OnMarginClick(wxStyledTextEvent &event)
 {
 	if (event.GetMargin() == kBlockFolding)
@@ -529,6 +406,6 @@ void SourceEditor::OnMarginClick(wxStyledTextEvent &event)
 	else
 	{
 		int	lineClick	= LineFromPosition(event.GetPosition());
-		host->RequestBreakpoint(currentFile, lineClick + 1);
+		host->ToggleBreakpoint(currentFile, lineClick + 1);
 	}
 }

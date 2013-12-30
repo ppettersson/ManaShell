@@ -1,5 +1,5 @@
 #include "../../GUI/Frames/Callstack.h"
-#include "../../GUI/Frames/SourceEditor.h"
+#include "../../GUI/Frames/Content.h"
 #include "../../GUI/Frames/Watch.h"
 #include "../../GUI/MainFrame.h"
 #include "PDB.h"
@@ -94,7 +94,7 @@ void PDB::Break()
 void PDB::Continue()
 {
 	// Short hand for "continue".
-	host->GetSourceEditor()->DisableDebugMarker();
+	host->GetContent()->DisableDebugMarker();
 	host->SendCommand("c\n");
 	lastCommand			= kContinue;
 	expectedOutput		= kUnexpected;
