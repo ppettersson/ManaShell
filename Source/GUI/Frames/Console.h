@@ -2,6 +2,7 @@
 #define CONSOLE_H
 
 #include "wx/wx.h"
+#include <vector>
 
 class MainFrame;
 
@@ -23,13 +24,14 @@ public:
 	void ClearOutput();
 
 private:
-	MainFrame	*host;
-	wxTextCtrl	*output;
-	wxTextCtrl	*input;
+	MainFrame				*host;
+	wxTextCtrl				*output;
+	wxTextCtrl				*input;
+	std::vector<wxString>	history;
+	size_t 					historyPos;
 
 	void OnEnter(wxCommandEvent &event);
-
-	wxDECLARE_EVENT_TABLE();
+	void OnKeyDown(wxKeyEvent &event);
 };
 
 #endif // CONSOLE_H
