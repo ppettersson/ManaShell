@@ -139,7 +139,7 @@ void Watch::AutoSizeLastCol(int winWidth)
 		totalSize += GetColSize(i);
 	int deltaSize = winWidth - totalSize;
 	int lastColSize = (GetColSize(2) + deltaSize > GetColMinimalAcceptableWidth() ? GetColSize(2) + deltaSize : GetColMinimalAcceptableWidth());
-	SetColSize(2, lastColSize);
+	SetColSize(GetNumberCols() - 1, lastColSize);
 }
 
 void Watch::OnSize(wxSizeEvent& event)
