@@ -61,6 +61,8 @@ private:
 	void iterateSourceEditors(std::function<void (const SourceEditor&)> f) const;
 	void iterateSourceEditors(std::function<void (SourceEditor&)> f);
 
+	void RemoveSourceEditor(const wxString &fileName);
+
 	void OnPageClose(wxAuiNotebookEvent& evt);
 	void OnPageChanged(wxAuiNotebookEvent& evt);
 	void OnMouseHovering(wxCommandEvent &event);

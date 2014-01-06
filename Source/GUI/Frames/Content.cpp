@@ -37,14 +37,25 @@ SourceEditor *Content::GetSourceEditor(const wxString &fileName)
 
 void Content::UpdateSource(unsigned line, const wxString &fileName, bool moveDebugMarker)
 {
-	bool addExistingBreakpoints = false;
-
 	SourceEditor *sourceEditor = SelectSourceEditor(fileName);
 	if (!sourceEditor)
 	{
 		sourceEditor = NewSourceEditor(fileName, true);
-		OpenFile(sourceEditor, fileName);
-		addExistingBreakpoints = true;
+		if (!OpenFile(sourceEditor, fileName))
+		{
+			// Failed to open file.
+			RemoveSourceEditor(fileName);
+			DeletePage(GetPageIndex(sourceEditor));
+			sourceEditor = NULL;
+		}
+		else
+		{
+			// Add existing breakpoints.
+			std::vector<int> lines;
+			host->GetBreakpoints()->GetLines(fileName, lines);
+			for (std::vector<int>::const_iterator it = lines.begin(), endIt = lines.end(); it != endIt; ++it)
+				sourceEditor->AddBreakpoint(*it);
+		}
 	}
 
 	if (moveDebugMarker && sourceEditor != debugMarkedEditor)
@@ -54,15 +65,8 @@ void Content::UpdateSource(unsigned line, const wxString &fileName, bool moveDeb
 		debugMarkedEditor = sourceEditor;
 	}
 
-	if (addExistingBreakpoints)
-	{
-		std::vector<int> lines;
-		host->GetBreakpoints()->GetLines(fileName, lines);
-		for (std::vector<int>::const_iterator it = lines.begin(), endIt = lines.end(); it != endIt; ++it)
-			sourceEditor->AddBreakpoint(*it);
-	}
-
-	sourceEditor->GotoLine(line, moveDebugMarker);
+	if (sourceEditor)
+		sourceEditor->GotoLine(line, moveDebugMarker);
 }
 
 void Content::DisableDebugMarker()
@@ -85,6 +89,8 @@ void Content::StopDebugging()
 	DeleteAllPages();
 	workingDir	= "";
 	sourceEditors.clear();
+	debugMarkedEditor = NULL;
+	selectedEditor = NULL;
 }
 
 SourceEditor *Content::SelectSourceEditor(const wxString &fileName)
@@ -239,24 +245,29 @@ void Content::iterateSourceEditors(std::function<void (const SourceEditor&)> f) 
 		f(*(it->second));
 }
 
-void Content::OnPageClose(wxAuiNotebookEvent& evt)
+void Content::RemoveSourceEditor(const wxString &fileName)
 {
-	SourceEditor *sourceEditor = static_cast<SourceEditor*>(GetPage(evt.GetSelection()));
-	if (sourceEditor)
+	auto it = sourceEditors.find(fileName);
+	if (it != sourceEditors.end())
 	{
-		auto it = sourceEditors.find(sourceEditor->GetCurrentFile());
-		if (it != sourceEditors.end())
-			sourceEditors.erase(it);
-
-		if (sourceEditor == debugMarkedEditor)
+		if (it->second == debugMarkedEditor)
 			debugMarkedEditor = NULL;
 
-		if (sourceEditor == selectedEditor)
+		if (it->second == selectedEditor)
 		{
 			selectedEditor = NULL;
 			mouseHover->StopHoverDetect();
 		}
+
+		sourceEditors.erase(it);
 	}
+}
+
+void Content::OnPageClose(wxAuiNotebookEvent& evt)
+{
+	SourceEditor *sourceEditor = static_cast<SourceEditor*>(GetPage(evt.GetSelection()));
+	if (sourceEditor)
+		RemoveSourceEditor(sourceEditor->GetCurrentFile());
 }
 
 void Content::OnPageChanged(wxAuiNotebookEvent& evt)
