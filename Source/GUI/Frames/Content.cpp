@@ -2,12 +2,14 @@
 #include "SourceEditor.h"
 #include "Breakpoints.h"
 #include "Content.h"
+#include "../MouseHover.h"
 #include "wx/artprov.h"
 #include "wx/filename.h"
 
 BEGIN_EVENT_TABLE(Content, wxAuiNotebook)
 	EVT_AUINOTEBOOK_PAGE_CHANGED(wxID_ANY, Content::OnPageChanged)
 	EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, Content::OnPageClose)
+	EVT_COMMAND(wxID_ANY, MOUSE_HOVERING, Content::OnMouseHovering)
 END_EVENT_TABLE()
 
 Content::Content(MainFrame *parent)
@@ -19,6 +21,8 @@ Content::Content(MainFrame *parent)
 	, debugMarkedEditor(NULL)
 {
 	SetArtProvider(new wxAuiSimpleTabArt);
+
+	mouseHover = new MouseHover(this, 1000);
 }
 
 Content::~Content()
@@ -248,7 +252,10 @@ void Content::OnPageClose(wxAuiNotebookEvent& evt)
 			debugMarkedEditor = NULL;
 
 		if (sourceEditor == selectedEditor)
+		{
 			selectedEditor = NULL;
+			mouseHover->StopHoverDetect();
+		}
 	}
 }
 
@@ -261,5 +268,16 @@ void Content::OnPageChanged(wxAuiNotebookEvent& evt)
 		return;
 
 	if (newSelection != -1)
+	{
 		selectedEditor = (newSelection != -1 ? static_cast<SourceEditor*>(GetPage(newSelection)) : NULL);
+		mouseHover->StartHoverDetect(selectedEditor);
+	}
+}
+
+void Content::OnMouseHovering(wxCommandEvent &event)
+{
+	// TODO: Get the value from debugger and show in a ToolTip kind of window.
+	//wxString word = selectedEditor->GetWordAtMouse();
+	//host->GetWatchValue(0, word);
+	//SetToolTip(word);
 }

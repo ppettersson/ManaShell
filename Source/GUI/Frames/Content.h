@@ -9,6 +9,7 @@
 
 class MainFrame;
 class SourceEditor;
+class MouseHover;
 
 // Managing multiple editor windows with associated tabs.
 class Content : public wxAuiNotebook
@@ -46,6 +47,8 @@ private:
 	SourceEditor						*selectedEditor,
 										*debugMarkedEditor;
 
+	MouseHover							*mouseHover;
+
 	SourceEditor *SelectSourceEditor(const wxString &fileName);
 	SourceEditor *NewSourceEditor(const wxString &fileName, bool select);
 
@@ -60,6 +63,7 @@ private:
 
 	void OnPageClose(wxAuiNotebookEvent& evt);
 	void OnPageChanged(wxAuiNotebookEvent& evt);
+	void OnMouseHovering(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

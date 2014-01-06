@@ -23,6 +23,8 @@ public:
 
 	const wxString &GetCurrentFile() const				{ return currentFile; }
 
+	wxString GetWordAtMouse();
+
 private:
 	// Scintilla supports up to 5 margins.
 	enum Margin

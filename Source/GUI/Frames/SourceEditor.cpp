@@ -98,6 +98,38 @@ void SourceEditor::RemoveAllBreakpoints()
 	MarkerDeleteAll(kBreakpoint);
 }
 
+wxString SourceEditor::GetWordAtMouse()
+{
+
+	wxPoint pos = ScreenToClient(::wxGetMousePosition());
+
+	int charPos = wxStyledTextCtrl::CharPositionFromPoint(pos.x, pos.y);
+
+	int selStartPos = GetSelectionStart();
+	int selEndPos = GetSelectionEnd();
+
+	int startPos = 0;
+	int endPos = 0;
+
+	// Is there a selection at the mouse pos?
+	if (selStartPos != selEndPos && charPos >= selStartPos && charPos < selEndPos)
+	{
+		startPos = selStartPos;
+		endPos = selEndPos;
+	}
+	else
+	{
+		startPos = wxStyledTextCtrl::WordStartPosition(charPos, false);
+		endPos = wxStyledTextCtrl::WordEndPosition(charPos, false);
+	}
+
+
+	wxString word = wxStyledTextCtrl::GetTextRange(startPos, endPos);
+	//wxLogDebug("-------%s-------", word);
+
+	return word;
+}
+
 void SourceEditor::SetupMargins()
 {
 	// There are three line margins:
