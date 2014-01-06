@@ -3,6 +3,8 @@
 
 BEGIN_EVENT_TABLE(Watch, wxGrid)
 	EVT_GRID_CELL_CHANGED(Watch::OnChanged)
+	EVT_SIZE(Watch::OnSize)
+	EVT_GRID_COL_SIZE(Watch::OnColSize)
 END_EVENT_TABLE()
 
 Watch::Watch(MainFrame *parent)
@@ -12,15 +14,18 @@ Watch::Watch(MainFrame *parent)
 {
 	CreateGrid(0, 3);
 	HideRowLabels();
+	SetColLabelSize(wxGRID_AUTOSIZE);
 
 	// Add the headers.
 	SetColLabelValue(0, "Name");
 	SetColLabelValue(1, "Value");
 	SetColLabelValue(2, "Type");
 	SetDefaultColSize(160);
+	DisableColResize(2);
 
 	// There will always be one empty cell.
 	AddVariable();
+
 }
 
 Watch::~Watch()
@@ -125,4 +130,24 @@ void Watch::OnChanged(wxGridEvent &event)
 		unsigned index = row;
 		host->GetWatchValue(index, value);
 	}
+}
+
+void Watch::AutoSizeLastCol(int winWidth)
+{
+	int totalSize = GetColSize(0) + GetColSize(1) + GetColSize(2);
+	int deltaSize = winWidth - totalSize;
+	int lastColSize = (GetColSize(2) + deltaSize > GetColMinimalAcceptableWidth() ? GetColSize(2) + deltaSize : GetColMinimalAcceptableWidth());
+	SetColSize(2, lastColSize);
+}
+
+void Watch::OnSize(wxSizeEvent& event)
+{
+	AutoSizeLastCol(event.GetSize().GetWidth());
+	event.Skip();
+}
+
+void Watch::OnColSize(wxGridSizeEvent& event)
+{
+	AutoSizeLastCol(GetSize().GetWidth());
+	event.Skip();
 }
