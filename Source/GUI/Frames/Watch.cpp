@@ -134,7 +134,9 @@ void Watch::OnChanged(wxGridEvent &event)
 
 void Watch::AutoSizeLastCol(int winWidth)
 {
-	int totalSize = GetColSize(0) + GetColSize(1) + GetColSize(2);
+	int totalSize = 0;
+	for (int i = GetNumberCols() - 1; i >= 0; --i)
+		totalSize += GetColSize(i);
 	int deltaSize = winWidth - totalSize;
 	int lastColSize = (GetColSize(2) + deltaSize > GetColMinimalAcceptableWidth() ? GetColSize(2) + deltaSize : GetColMinimalAcceptableWidth());
 	SetColSize(2, lastColSize);
