@@ -112,9 +112,9 @@ void Watch::OnChanged(wxGridEvent &event)
 			Variable &v = variables[row];
 
 			// Change a currently watched variable and reset it.
-			v.name = value;
+			v.name 	= value;
 			v.value = "";
-			v.type = "";
+			v.type  = "";
 		}
 		else
 		{
@@ -142,13 +142,13 @@ void Watch::AutoSizeLastCol(int winWidth)
 	SetColSize(GetNumberCols() - 1, lastColSize);
 }
 
-void Watch::OnSize(wxSizeEvent& event)
+void Watch::OnSize(wxSizeEvent &event)
 {
 	AutoSizeLastCol(event.GetSize().GetWidth());
 	event.Skip();
 }
 
-void Watch::OnColSize(wxGridSizeEvent& event)
+void Watch::OnColSize(wxGridSizeEvent &event)
 {
 	AutoSizeLastCol(GetSize().GetWidth());
 	event.Skip();

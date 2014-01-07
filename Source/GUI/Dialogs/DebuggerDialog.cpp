@@ -192,13 +192,13 @@ void DebuggerDialog::OnBrowse(wxCommandEvent &event)
 	wxString filter;
 	switch (event.GetId())
 	{
-		case kExecutableBrowseId:
-			filter = debugger->GetExecFilter();
-			break;
-			
-		case kScriptBrowseId:
-			filter = debugger->GetScriptFilter();
-			break;
+	case kExecutableBrowseId:
+		filter = debugger->GetExecFilter();
+		break;
+
+	case kScriptBrowseId:
+		filter = debugger->GetScriptFilter();
+		break;
 	}
 
 	// Browse for the file.

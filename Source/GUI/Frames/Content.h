@@ -1,15 +1,14 @@
 #ifndef CONTENT_H
 #define CONTENT_H
 
-#include "wx/wx.h"
 #include "wx/aui/aui.h"
+#include <functional>
 #include <map>
 #include <vector>
-#include <functional>
 
 class MainFrame;
-class SourceEditor;
 class MouseHover;
+class SourceEditor;
 
 // Managing multiple editor windows with associated tabs.
 class Content : public wxAuiNotebook
@@ -63,8 +62,8 @@ private:
 
 	void RemoveSourceEditor(const wxString &fileName);
 
-	void OnPageClose(wxAuiNotebookEvent& evt);
-	void OnPageChanged(wxAuiNotebookEvent& evt);
+	void OnPageClose(wxAuiNotebookEvent &event);
+	void OnPageChanged(wxAuiNotebookEvent &event);
 	void OnMouseHovering(wxCommandEvent &event);
 
 	wxDECLARE_EVENT_TABLE();

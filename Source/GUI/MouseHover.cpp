@@ -3,9 +3,9 @@
 DEFINE_EVENT_TYPE(MOUSE_HOVERING)
 
 MouseHover::MouseHover(wxWindow *_host, int _interval)
-: host(_host)
-, interval(_interval)
-, client(NULL)
+	: host(_host)
+	, interval(_interval)
+	, client(NULL)
 {
 }
 
@@ -36,7 +36,7 @@ void MouseHover::StopHoverDetect()
 	}
 }
 
-void MouseHover::OnEnterWindow(wxMouseEvent& event)
+void MouseHover::OnEnterWindow(wxMouseEvent &event)
 {
 	if (client)
 	{
@@ -54,7 +54,7 @@ void MouseHover::OnEnterWindow(wxMouseEvent& event)
 	event.Skip();
 }
 
-void MouseHover::OnLeaveWindow(wxMouseEvent& event)
+void MouseHover::OnLeaveWindow(wxMouseEvent &event)
 {
 	if (client)
 	{
@@ -73,15 +73,15 @@ void MouseHover::OnLeaveWindow(wxMouseEvent& event)
 	event.Skip();
 }
 
-void MouseHover::OnButton(wxMouseEvent& event)
+void MouseHover::OnButton(wxMouseEvent &event)
 {
 	wxTimer::Stop();
 	event.Skip();
 }
 
-void MouseHover::OnMotion(wxMouseEvent& event)
+void MouseHover::OnMotion(wxMouseEvent &event)
 {
-	// Stop and restart timer
+	// Stop and restart timer.
 	wxTimer::Stop();
 	wxMouseState mouseState = wxGetMouseState();
 	if (!mouseState.LeftIsDown() && !mouseState.MiddleIsDown() && !mouseState.RightIsDown())
@@ -91,7 +91,7 @@ void MouseHover::OnMotion(wxMouseEvent& event)
 
 void MouseHover::Notify()
 {
-	// Raise event
+	// Raise event.
 	wxCommandEvent event(MOUSE_HOVERING);
 	event.SetClientData(client);
 	wxPostEvent(host, event);

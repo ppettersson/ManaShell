@@ -1,8 +1,8 @@
 #include "../MainFrame.h"
-#include "SourceEditor.h"
+#include "../MouseHover.h"
 #include "Breakpoints.h"
 #include "Content.h"
-#include "../MouseHover.h"
+#include "SourceEditor.h"
 #include "wx/artprov.h"
 #include "wx/filename.h"
 
@@ -15,7 +15,8 @@ END_EVENT_TABLE()
 Content::Content(MainFrame *parent)
 	: wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
 		wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_TAB_EXTERNAL_MOVE | wxNO_BORDER |
-		wxAUI_NB_CLOSE_ON_ALL_TABS | wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS)
+		wxAUI_NB_CLOSE_ON_ALL_TABS | wxAUI_NB_WINDOWLIST_BUTTON |
+		wxAUI_NB_SCROLL_BUTTONS)
 	, host(parent)
 	, selectedEditor(NULL)
 	, debugMarkedEditor(NULL)
@@ -88,10 +89,10 @@ void Content::RemoveAllBreakpoints()
 void Content::StopDebugging()
 {
 	DeleteAllPages();
-	workingDir	= "";
 	sourceEditors.clear();
-	debugMarkedEditor = NULL;
-	selectedEditor = NULL;
+	workingDir			= "";
+	debugMarkedEditor 	= NULL;
+	selectedEditor 		= NULL;
 }
 
 SourceEditor *Content::SelectSourceEditor(const wxString &fileName)
@@ -112,7 +113,7 @@ SourceEditor *Content::NewSourceEditor(const wxString &fileName, bool select)
 	sourceEditors[fileName] = selectedEditor = new SourceEditor(host);
 
 	Freeze();
-	wxBitmap pageBmp = wxArtProvider::GetBitmap(wxART_NORMAL_FILE, wxART_OTHER, wxSize(16,16));
+	wxBitmap pageBmp = wxArtProvider::GetBitmap(wxART_NORMAL_FILE, wxART_OTHER, wxSize(16, 16));
 	AddPage(selectedEditor, wxFileNameFromPath(fileName), select, pageBmp);
 	SetPageToolTip(GetPageIndex(selectedEditor), fileName);
 	Thaw();
@@ -154,9 +155,10 @@ bool Content::OpenFile(SourceEditor *editor, const wxString &fileName)
 		return true;
 
 	// If that fails as well, then ask the user to locate the file.
-	wxString result = wxFileSelector(wxString::Format("Please locate this file: %s", fileName),
-									 fn.GetPath(), fn.GetName(), fn.GetExt(),
-									 "All files (*.*)|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	wxString result = wxFileSelector(
+		wxString::Format("Please locate this file: %s", fileName),
+		fn.GetPath(), fn.GetName(), fn.GetExt(),
+		"All files (*.*)|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	// If the dialog was cancelled then this is empty.
 	if (!result.IsEmpty())
@@ -172,7 +174,8 @@ bool Content::OpenFile(SourceEditor *editor, const wxString &fileName)
 		}
 	}
 
-	wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error", wxOK | wxCENTRE | wxICON_ERROR, GetParent());
+	wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error",
+				 wxOK | wxCENTRE | wxICON_ERROR, GetParent());
 	return false;
 }
 
@@ -264,17 +267,17 @@ void Content::RemoveSourceEditor(const wxString &fileName)
 	}
 }
 
-void Content::OnPageClose(wxAuiNotebookEvent& evt)
+void Content::OnPageClose(wxAuiNotebookEvent &event)
 {
-	SourceEditor *sourceEditor = static_cast<SourceEditor*>(GetPage(evt.GetSelection()));
+	SourceEditor *sourceEditor = static_cast<SourceEditor*>(GetPage(event.GetSelection()));
 	if (sourceEditor)
 		RemoveSourceEditor(sourceEditor->GetCurrentFile());
 }
 
-void Content::OnPageChanged(wxAuiNotebookEvent& evt)
+void Content::OnPageChanged(wxAuiNotebookEvent& event)
 {
-	int oldSelection = evt.GetOldSelection();
-	int newSelection = evt.GetSelection();
+	int oldSelection = event.GetOldSelection();
+	int newSelection = event.GetSelection();
 
 	if (oldSelection == newSelection)
 		return;

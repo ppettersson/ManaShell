@@ -39,8 +39,8 @@ private:
 	void AutoSizeLastCol(int winWidth);
 
 	void OnChanged(wxGridEvent &event);
-	void OnSize(wxSizeEvent& event);
-	void OnColSize(wxGridSizeEvent& event);
+	void OnSize(wxSizeEvent &event);
+	void OnColSize(wxGridSizeEvent &event);
 
 	wxDECLARE_EVENT_TABLE();
 };

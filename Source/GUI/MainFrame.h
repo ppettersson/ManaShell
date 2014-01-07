@@ -5,12 +5,12 @@
 #include "wx/aui/aui.h"
 #include "SupportedViews.h"
 
-class Content;
 class Breakpoints;
 class Callstack;
+class Console;
+class Content;
 class Debugger;
 class Locals;
-class Console;
 class PipedProcess;
 class Registers;
 class SourceEditor;
@@ -39,10 +39,11 @@ public:
 	void UpdateSource(unsigned line, const wxString &fileName = wxEmptyString, bool moveDebugMarker = true);
 	void DebuggerTermination();
 
+	Breakpoints *GetBreakpoints()		{ return breakpoints; }
 	Callstack *GetCallstack()			{ return callstack; }
 	Content *GetContent()				{ return content; }
 	Watch *GetWatch()					{ return watch; }
-	Breakpoints *GetBreakpoints()		{ return breakpoints; }
+
 	bool IsWaitingForResponse() const	{ return waitingForResponse; }
 
 	void GetWatchValue(unsigned index, const wxString &variable);
@@ -126,11 +127,11 @@ private:
 	wxAuiToolBar					*toolBar;
 
 	// Frames.
-	Content							*content;
 	Breakpoints						*breakpoints;
 	Callstack						*callstack;
-	Locals							*locals;
 	Console							*console;
+	Content							*content;
+	Locals							*locals;
 	Registers						*registers;
 	Threads							*threads;
 	Watch							*watch;

@@ -13,6 +13,7 @@
 				- Stepping (over, in, out)
 					- Issue with tail calling and updating the callstack.
 				- Continue
+					- "Program received signal SIGTRAP, Trace/breakpoint trap. <func> at <path:line>"
 				- UserBreak / Stop
 					- Issue with premature program exit.
 					- Empty command queue / stack for expected output?
@@ -39,14 +40,13 @@
 				- configurable.
 			- Toolbar bitmaps.
 			- Save/Load perspectives.
-			- Output text control.
+			- Console.
+				- Tabs - one console per process.
 				- Separate output for debugger and process?
 				- Local toolbar:
 					- Clear all.
 					- Word wrap.
 					- Save as...
-			- Input text control:
-				- history.
 			- Menu.
 				- disable unavailable options.
 					- Tools.
@@ -62,32 +62,51 @@
 					- Editable if in DryRun mode.
 			- Breakpoints.
 				- Option to strip away path when displaying.
-			- Grid polish.
-				- Automatic size adjustments of grid cells.
-				- Reduce height of the header.
+				- Option to add breakpoints in files without path.
+				- Remember the last dir in the file browser dialog.
 			- Source editor:
-				- It should update the source editor caption with the loaded file.
+				- Open file.
 				- Goto line.
 				- Find.
-				- Multiple tabs.
 				- Markers are positioned wrong horizontally.
 				- Code folding.
 				- Only center the cursor when stepping.
+				- Automatically figure out syntax highlighting from files that
+					start with "#! /usr/bin/python" or similar.
+				- Options:
+					- font size.
+					- tab / spaces.
 			- Start Debugger Dialog:
 				- all options should be persistent.
 					- editable dropdown with recent items.
 				- merge with attach.
+			- Frames should have a minimum size when floating.
+			- About dialog:
+				- List of contributors (alphabetical).
+				- License: BSD 2 clause - include URL?
+				- URL to project homepage - github.
+
+			Bugs:
+				- debugger dialog:
+					- The debugger choice control no longer has a default.
+					- File selector should also offer the "All files option".
+				- Notebook:
+					- It no longer loads any file where the path isn't correct.
+				- Command history:
+					- It's no longer possible to send empty strings (to repeat last command).
+
 
 0.7	[todo]	JDB plugin: http://docs.oracle.com/javase/1.3/docs/tooldocs/solaris/jdb.html
 			- Very basic java debugging.
 
 0.8	[todo]	Port.
-			- Upgrade to wxWidgets 3.0
+			- Upgrade to wxWidgets 3.x
 			- Linux.
 			- OSX.
 			- Windows.
+			- Icon.
 			- Installers.
-			- Clean up code.
+			- Clean up code and add more comments.
 
 0.9	[todo]	Write docs.
 			- License (BSD 2 clause).
