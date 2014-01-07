@@ -57,7 +57,18 @@ void MouseHover::OnEnterWindow(wxMouseEvent& event)
 void MouseHover::OnLeaveWindow(wxMouseEvent& event)
 {
 	if (client)
+	{
+		client->Disconnect(wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_MIDDLE_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_MIDDLE_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_MIDDLE_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_RIGHT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
+		client->Disconnect(wxEVT_RIGHT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnButton);
 		client->Disconnect(wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&MouseHover::OnMotion);
+	}
 	wxTimer::Stop();
 	event.Skip();
 }
