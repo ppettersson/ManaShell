@@ -29,6 +29,7 @@ DebuggerDialog::DebuggerDialog(wxWindow *parent, std::vector<Debugger *> &d)
 		for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
 			debuggerNames.Add((*i)->GetName());
 		debuggerControl = new wxChoice(this, kDebuggerId, wxDefaultPosition, wxDefaultSize, debuggerNames);
+		debuggerControl->SetSelection(0);
 		debuggerControl->Bind(wxEVT_CHOICE, &DebuggerDialog::OnDebugger, this);
 		topSizer->Add(debuggerControl, 0, wxGROW | wxALL, 5);
 

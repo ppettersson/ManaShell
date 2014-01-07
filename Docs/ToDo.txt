@@ -88,7 +88,6 @@
 
 			Bugs:
 				- debugger dialog:
-					- The debugger choice control no longer has a default.
 					- File selector should also offer the "All files option".
 				- Notebook:
 					- It no longer loads any file where the path isn't correct.
