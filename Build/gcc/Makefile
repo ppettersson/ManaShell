@@ -71,7 +71,8 @@ EXES += $(MANA_SHELL_EXE)
 OBJS += $(MANA_SHELL_OBJS)
 
 WXWIDGETS ?= ~/Code/wxWidgets
-WX_CONFIG := $(WXWIDGETS)/build-$(BUILD)/wx-config
+WX_CONFIG_CUSTOM := $(WXWIDGETS)/build-$(BUILD)/wx-config
+WX_CONFIG := $(if $(wildcard $(WX_CONFIG_CUSTOM)),$(WX_CONFIG_CUSTOM),wx-config)
 
 $(MANA_SHELL_EXE): LDFLAGS += $(shell $(WX_CONFIG) --libs all)
 $(MANA_SHELL_OBJS): CXXFLAGS += $(shell $(WX_CONFIG) --cxxflags)
