@@ -87,8 +87,6 @@
 				- URL to project homepage - github.
 
 			Bugs:
-				- debugger dialog:
-					- File selector should also offer the "All files option".
 				- Notebook:
 					- It no longer loads any file where the path isn't correct.
 				- Command history:
