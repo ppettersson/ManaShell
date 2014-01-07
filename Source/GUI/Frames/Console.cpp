@@ -72,6 +72,8 @@ void Console::OnEnter(wxCommandEvent &event)
 	historyPos = history.size();
 	input->Clear();
 
+	// Always send the command. And empty string is often used by debuggers to
+	// mean "repeat the last command".
 	command += "\n";
 	host->SendCommand(command, true);
 }

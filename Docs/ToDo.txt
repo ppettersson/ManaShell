@@ -85,8 +85,6 @@
 			Bugs:
 				- Notebook:
 					- It no longer loads any file where the path isn't correct.
-				- Command history:
-					- It's no longer possible to send empty strings (to repeat last command).
 
 
 0.7	[todo]	JDB plugin: http://docs.oracle.com/javase/1.3/docs/tooldocs/solaris/jdb.html
