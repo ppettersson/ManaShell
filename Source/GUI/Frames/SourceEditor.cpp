@@ -21,7 +21,9 @@ SourceEditor::SourceEditor(MainFrame *parent)
 	SetWrapMode(wxSTC_WRAP_NONE);
 
 	// Set up a regular monospace font.
-	wxFont font(10, wxMODERN, wxNORMAL, wxNORMAL);
+	// ToDo: Font size needs to be tweaked per OS.
+	//	8 on linux is about the same as 10 on windows.
+	wxFont font(8, wxMODERN, wxNORMAL, wxNORMAL);
 	StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 
 	//SetProperty("Caret.HighlightCurrentLine", "1");

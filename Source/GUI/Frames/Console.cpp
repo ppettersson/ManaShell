@@ -10,6 +10,13 @@ Console::Console(MainFrame *parent)
 
 	output = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition,
 							wxDefaultSize, wxNO_BORDER | wxTE_MULTILINE | wxTE_READONLY);
+
+	// Set up a regular monospace font.
+	// ToDo: Font size needs to be tweaked per OS.
+	//	8 on linux is about the same as 10 on windows.
+	wxFont font(8, wxMODERN, wxNORMAL, wxNORMAL);
+	output->SetFont(font);
+
 	sizer->Add(output, wxSizerFlags(1).Expand());
 
 	input = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition,
