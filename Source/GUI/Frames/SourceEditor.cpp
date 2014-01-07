@@ -228,8 +228,8 @@ void SourceEditor::SetupHighlighting()
 	{
 		kInvalid,
 		kCpp,
-		kPython,
-		kJava
+		kJava,
+		kPython
 	} syntax = kInvalid;
 
 	if (1)
@@ -243,15 +243,6 @@ void SourceEditor::SetupHighlighting()
 	}
 	if (syntax == kInvalid)
 	{
-		for (int i = 0; i < WXSIZEOF(pythonPatterns); ++i)
-			if (ext == pythonPatterns[i])
-			{
-				syntax = kPython;
-				break;
-			}
-	}
-	if (syntax == kInvalid)
-	{
 		for (int i = 0; i < WXSIZEOF(javaPatterns); ++i)
 			if (ext == javaPatterns[i])
 			{
@@ -259,12 +250,29 @@ void SourceEditor::SetupHighlighting()
 				break;
 			}
 	}
+	if (syntax == kInvalid)
+	{
+		for (int i = 0; i < WXSIZEOF(pythonPatterns); ++i)
+			if (ext == pythonPatterns[i])
+			{
+				syntax = kPython;
+				break;
+			}
+	}
+
+	// As a last resort, check if it's a script with a "shebang".
+	if (syntax == kInvalid)
+	{
+		wxString line = GetLine(0);
+		if (line.Matches("#! ?*python?*"))
+			syntax = kPython;
+	}
 
 	switch (syntax)
 	{
 	case kCpp:		SetupCpp();		break;
-	case kPython:	SetupPython();	break;
 	case kJava:		SetupJava();	break;
+	case kPython:	SetupPython();	break;
 	}
 }
 

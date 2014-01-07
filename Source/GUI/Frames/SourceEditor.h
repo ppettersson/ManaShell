@@ -50,8 +50,8 @@ private:
 	void SetupHighlighting();
 
 	void SetupCpp();
-	void SetupPython();
 	void SetupJava();
+	void SetupPython();
 
 	bool OpenFile(const wxString &fileName);
 

@@ -71,8 +71,6 @@
 				- Markers are positioned wrong horizontally.
 				- Code folding.
 				- Only center the cursor when stepping.
-				- Automatically figure out syntax highlighting from files that
-					start with "#! /usr/bin/python" or similar.
 				- Options:
 					- font size.
 					- tab / spaces.
