@@ -27,6 +27,7 @@ Content::Content(MainFrame *parent)
 
 Content::~Content()
 {
+	delete mouseHover;
 }
 
 SourceEditor *Content::GetSourceEditor(const wxString &fileName)
