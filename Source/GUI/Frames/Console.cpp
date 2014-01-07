@@ -54,20 +54,19 @@ void Console::ClearOutput()
 void Console::OnEnter(wxCommandEvent &event)
 {
 	wxString command = input->GetLineText(0);
-	if (!command.IsEmpty())
+
+	// Only add new comands to the history.
+	if (!command.IsEmpty() && (historyPos >= history.size() || command != history[historyPos]))
 	{
 		history.push_back(command);
 		historyPos = history.size();
-		input->Clear();
-		command += "\n";
-		host->SendCommand(command, true);
-	}
-	else if (historyPos < history.size())
-	{
-		history.erase(history.begin() + historyPos);
 	}
 
 	historyPos = history.size();
+	input->Clear();
+
+	command += "\n";
+	host->SendCommand(command, true);
 }
 
 void Console::OnKeyDown(wxKeyEvent &event)
@@ -101,7 +100,7 @@ void Console::OnKeyDown(wxKeyEvent &event)
 			}
 			else
 			{
-				history[oldPos] = input->GetLineText(0);
+				history[oldPos] = command;
 			}
 		}
 
