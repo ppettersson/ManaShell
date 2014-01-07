@@ -71,17 +71,11 @@ EXES += $(MANA_SHELL_EXE)
 OBJS += $(MANA_SHELL_OBJS)
 
 WXWIDGETS ?= ~/Code/wxWidgets
+WX_CONFIG := $(WXWIDGETS)/build-$(BUILD)/wx-config
 
 # Hack! Keep this after the other apps to not poison the flags
-ifeq ($(BUILD), debug)
-  LDFLAGS += $(shell $(WXWIDGETS)/build-debug/wx-config --libs all)
-  CXXFLAGS += $(shell $(WXWIDGETS)/build-debug/wx-config --cxxflags)
-endif
-ifeq ($(BUILD), release)
-  LDFLAGS += $(shell $(WXWIDGETS)/build-release/wx-config --libs all)
-  CXXFLAGS += $(shell $(WXWIDGETS)/build-release/wx-config --cxxflags)
-endif
-
+LDFLAGS += $(shell $(WX_CONFIG) --libs all)
+CXXFLAGS += $(shell $(WX_CONFIG) --cxxflags)
 
 $(MANA_SHELL_EXE): $(MANA_SHELL_OBJS) $(LIBS)
 
