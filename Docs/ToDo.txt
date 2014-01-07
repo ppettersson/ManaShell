@@ -65,8 +65,6 @@
 				- Option to add breakpoints in files without path.
 				- Remember the last dir in the file browser dialog.
 			- Source editor:
-				- Open file.
-				- Goto line.
 				- Find.
 				- Markers are positioned wrong horizontally.
 				- Code folding.

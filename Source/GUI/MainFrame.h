@@ -59,6 +59,8 @@ private:
 		kUserId						= wxID_HIGHEST + 1000,
 
 		// -- Menu identifiers -----------------------------------------------
+		kFile_OpenFile,
+		kFile_GotoLine,
 		//kFile_Exit,				// Use pre-defined value.
 
 		kView_EditorSource,
@@ -149,6 +151,8 @@ private:
 
 
 	// -- Menu handlers ------------------------------------------------------
+	void OnFileOpenFile(wxCommandEvent &event);
+	void OnFileGotoLine(wxCommandEvent &event);
 	void OnFileExit(wxCommandEvent &event);
 
 	void OnViewEditorSource(wxCommandEvent &event);

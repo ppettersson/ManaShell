@@ -10,13 +10,16 @@
 #include "Frames/Watch.h"
 #include "MainFrame.h"
 #include "PipedProcess.h"
-#include "wx/filename.h"
-#include "wx/utils.h"
 #include "wx/artprov.h"
+#include "wx/filename.h"
+#include "wx/numdlg.h"
+#include "wx/utils.h"
 #include <algorithm>
 
 
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
+	EVT_MENU(kFile_OpenFile,				MainFrame::OnFileOpenFile)
+	EVT_MENU(kFile_GotoLine,				MainFrame::OnFileGotoLine)
 	EVT_MENU(kFile_Exit,					MainFrame::OnFileExit)
 	EVT_MENU(kView_EditorSource,			MainFrame::OnViewEditorSource)
 	EVT_MENU(kView_EditorAssembly,			MainFrame::OnViewEditorAssembly)
@@ -292,6 +295,38 @@ void MainFrame::RequestClearAllBreakpoints()
 	content->RemoveAllBreakpoints();
 	if (debugger)
 		debugger->ClearAllBreakpoints();
+}
+
+void MainFrame::OnFileOpenFile(wxCommandEvent &event)
+{
+	// See if we have a filter we can use.
+	wxString filter = "All files (*.*)|*";
+	if (debugger)
+		filter = debugger->GetScriptFilter();
+
+	// Browse for the file.
+	wxString result = wxFileSelector("Open a file", wxEmptyString,
+									 wxEmptyString, wxEmptyString, filter,
+									 wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	// If the dialog was cancelled then this is empty.
+	if (!result.IsEmpty())
+		content->UpdateSource(0, result, false);
+}
+
+void MainFrame::OnFileGotoLine(wxCommandEvent &event)
+{
+	SourceEditor *se = content->GetSelectedSourceEditor();
+	if (se)
+	{
+		int currentLine = se->GetCurrentLine() + 1;
+		int numLines = se->GetLineCount();
+		long line = wxGetNumberFromUser(wxEmptyString, wxEmptyString,
+										"Goto Line", currentLine, 1, numLines,
+										this);
+		if (line != -1)
+			se->GotoLine(line, false);
+	}
 }
 
 void MainFrame::OnFileExit(wxCommandEvent &event)
@@ -643,6 +678,9 @@ void MainFrame::SetupMenu()
 
 	// File.
 	wxMenu *menu = new wxMenu;
+	menu->Append(kFile_OpenFile, "&Open File...\tCtrl+O");
+	menu->Append(kFile_GotoLine, "&Goto Line...\tCtrl+G");
+	menu->AppendSeparator();
 	menu->Append(kFile_Exit, "&Exit");
 	menuBar->Append(menu, "&File");
 
