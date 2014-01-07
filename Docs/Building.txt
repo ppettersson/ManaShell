@@ -12,6 +12,7 @@ but is otherwise unmodified.
 
 * Linux
 
+	Optionally build wxWidgets (system wxWidgets is used if wx-config cannot be found by using the WXWIDGETS env variable):
 	mkdir build-debug ; cd build-debug ; ../configure --enable-debug --with-gtk --enable-unicode --disable-shared ; make -j8 ; cd ..
 	mkdir build-release ; cd build-release ; ../configure --with-gtk --enable-unicode --disable-shared ; make -j8 ; cd ..
 	export WXWIDGETS=/full/path/to/wxWidgets
