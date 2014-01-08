@@ -268,18 +268,23 @@ void MainFrame::ToggleBreakpoint(const wxString &fileName, int line)
 	SourceEditor* sourceEditor = content->GetSourceEditor(fileName);
 
 	Breakpoints::ToggleResult result = breakpoints->ToggleBreak(fileName, line);
+
+	// Remove the path from the fileName.
+	wxFileName fn;
+	fn.Assign(fileName);
+
 	switch (result)
 	{
 	case Breakpoints::kAdded:
 		if (debugger)
-			debugger->AddBreakpoint(fileName, line);
+			debugger->AddBreakpoint(fn.GetFullName(), line);
 		if (sourceEditor)
 			sourceEditor->AddBreakpoint(line);		// Assume it's the current file.
 		break;
 
 	case Breakpoints::kRemoved:
 		if (debugger)
-			debugger->RemoveBreakpoint(fileName, line);
+			debugger->RemoveBreakpoint(fn.GetFullName(), line);
 		if (sourceEditor)
 			sourceEditor->RemoveBreakpoint(line);	// Assume it's the current file.
 		break;
