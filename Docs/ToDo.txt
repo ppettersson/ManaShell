@@ -26,8 +26,6 @@
 
 			Bugs:
 				- gdb won't accept absolute paths.
-				- Source Editor has underlines when it shouldn't.
-					- Probably something to do with SetSyntaxCpp
 
 0.6	[todo]	UI polish.
 			- More plugin-ish:
@@ -85,6 +83,8 @@
 			Bugs:
 				- Notebook:
 					- It no longer loads any file where the path isn't correct.
+				- Source Editor has underlines when it shouldn't.
+					- Probably something to do with SetSyntaxCpp
 
 
 0.7	[todo]	JDB plugin: http://docs.oracle.com/javase/1.3/docs/tooldocs/solaris/jdb.html
