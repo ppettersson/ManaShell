@@ -1,6 +1,7 @@
 #include "../Dialogs/AddEditBreakpointDialog.h"
 #include "../MainFrame.h"
 #include "Breakpoints.h"
+#include "wx/filename.h"
 
 BEGIN_EVENT_TABLE(Breakpoints, wxListBox)
 	EVT_LISTBOX_DCLICK(wxID_ANY, Breakpoints::OnDClick)
@@ -81,7 +82,13 @@ void Breakpoints::UpdateUI()
 {
 	Clear();
 	for (std::vector<Break>::const_iterator i = breaks.begin(); i != breaks.end(); ++i)
-		Append(wxString::Format("%s:%d", i->fileName, i->line));
+	{
+		// Don't show the full path.
+		wxFileName fn;
+		fn.Assign(i->fileName);
+
+		Append(wxString::Format("%s:%d", fn.GetFullName(), i->line));
+	}
 }
 
 void Breakpoints::OnDClick(wxCommandEvent &event)

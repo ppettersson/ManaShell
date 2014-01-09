@@ -114,7 +114,7 @@ private:
 	// for more input.
 	std::queue<CommandItem>		commandQueue;
 
-	// We parse thr output depending on the last command we sent to the
+	// We parse the output depending on the last command we sent to the
 	// debugger.
 	ExpectedOutput				expectedOutput;
 

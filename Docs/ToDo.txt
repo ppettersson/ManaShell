@@ -7,9 +7,15 @@
 
 0.5	[todo]	GDB Command Line plugin: https://sourceware.org/gdb/current/onlinedocs/gdb/
 			- Not using the Machine Interpreter mode (that would be a separate plugin).
+
 			- Stack based state + Command queue?
 			- Make each command it's own class?
+			- FSM based flow.
+
 			- Very basic gdb debugging.
+
+				[needs to be a good experience debugging android ndk samples]
+
 				- Stepping (over, in, out)
 					- Issue with tail calling and updating the callstack.
 				- Continue
@@ -17,9 +23,12 @@
 				- UserBreak / Stop
 					- Issue with premature program exit.
 					- Empty command queue / stack for expected output?
+				- Callstack
+					- Always get the full callstack when resuming after 'unexpected output'.
 				- Breakpoints
 					- Should only be added/removed after confirmation from the debugger,
 						not be UI driven like they are right now.
+					- Allow adding breakpoints on function names.
 				- Watches
 					- Different output formats.
 				- Intercept user input
@@ -51,6 +60,9 @@
 			- Options.
 				- Persistent on disc.
 			- Callstack.
+				- Manual refresh.
+					- user input.
+					- context menu.
 				- Option to toggle:
 					- return type.
 					- argument values.
@@ -59,7 +71,6 @@
 				- Popup menu with filename and line number.
 					- Editable if in DryRun mode.
 			- Breakpoints.
-				- Option to strip away path when displaying.
 				- Option to add breakpoints in files without path.
 				- Remember the last dir in the file browser dialog.
 			- Source editor:

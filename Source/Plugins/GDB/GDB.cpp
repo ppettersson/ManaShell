@@ -341,7 +341,7 @@ bool GDB::ParseStartupOutput(wxStringTokenizer &lineTokenizer)
 			// Verify that we don't have any more lines.
 			//wxASSERT(!lineTokenizer.HasMoreTokens());
 
-				// Issue a warning if we didn't manage to load any symbols.
+			// Issue a warning if we didn't manage to load any symbols.
 			if (!hasSymbols)
 				wxMessageBox("Couldn't read any symbols", "Warning", wxOK | wxCENTRE | wxICON_WARNING, host);
 
@@ -668,7 +668,7 @@ bool GDB::ParseDefaultOutput(const wxString &line)
 	else if (line == "(gdb) ")
 	{
 		// We got a prompt where we didn't expect it.
-		wxASSERT(false);
+		//wxASSERT(false);
 	}
 	else
 	{
