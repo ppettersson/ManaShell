@@ -185,12 +185,13 @@ void MainFrame::SendInterrupt()
 	{
 		// Process id.
 		int pid = runningProcesses[0]->GetPid();
+
+		const unsigned kErrorIcon = wxICON_ERROR | wxOK | wxCENTRE;
+		const wxString kErrorCaption = "Send interrupt failed";
+
 #ifdef __WXMSW__
 		if (debugger)
 		{
-			const DWORD kErrorIcon = wxICON_ERROR | wxOK | wxCENTRE;
-			const wxString kErrorCaption = "Send interrupt failed";
-
 			switch (debugger->GetInterruptMethod())
 			{
 			case Debugger::kDebugBreakProcess:
@@ -240,7 +241,32 @@ void MainFrame::SendInterrupt()
 			}
 		}
 #else
-		wxProcess::Kill(pid, wxSIGINT);
+		switch (wxProcess::Kill(pid, wxSIGINT, wxKILL_CHILDREN))
+		{
+		case wxKILL_OK:
+			break;
+
+		case wxKILL_BAD_SIGNAL:
+			wxMessageBox("Error: Sending SIGINT to process failed with 'no such signal'",
+						 kErrorCaption, kErrorIcon, this);
+			break;
+
+		case wxKILL_ACCESS_DENIED:
+			wxMessageBox("Error: Sending SIGINT to process failed with 'permission denied'",
+						 kErrorCaption, kErrorIcon, this);
+			break;
+
+		case wxKILL_NO_PROCESS:
+			wxMessageBox("Error: Sending SIGINT to process failed with 'no such process'",
+						 kErrorCaption, kErrorIcon, this);
+			break;
+
+		case wxKILL_ERROR:
+		default:
+			wxMessageBox("Error: Sending SIGINT to process failed - internal / unknown error",
+						 kErrorCaption, kErrorIcon, this);
+			break;
+		}
 #endif
 		waitingForResponse = true;
 	}
@@ -458,8 +484,11 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	}
 
 	// Run the command and attach to the input and output.
+	// Make sure that the process acts as a group leader to help sending signals
+	// if it's a shell script that starts the actual debugger.
 	PipedProcess *process = new PipedProcess(this);
-	activeProcessId = wxExecute(debugger->GetCommand(), wxEXEC_ASYNC, process, env);
+	activeProcessId = wxExecute(debugger->GetCommand(),
+								wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, process, env);
 	if (!activeProcessId)
 	{
 		wxMessageBox("Failed to start the debugger", "Error");
