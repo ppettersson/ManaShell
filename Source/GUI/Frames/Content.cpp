@@ -39,7 +39,7 @@ SourceEditor *Content::GetSourceEditor(const wxString &fileName)
 
 void Content::UpdateSource(unsigned line, const wxString &fileName, bool moveDebugMarker)
 {
-	SourceEditor *sourceEditor = (wxEmptyString == fileName) ? selectedEditor : SelectSourceEditor(fileName);
+	SourceEditor *sourceEditor = (wxEmptyString == fileName) ? debugMarkedEditor : SelectSourceEditor(fileName);
 
 	if (!sourceEditor)
 	{
