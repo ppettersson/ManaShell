@@ -39,27 +39,7 @@ SourceEditor *Content::GetSourceEditor(const wxString &fileName)
 
 void Content::UpdateSource(unsigned line, const wxString &fileName, bool moveDebugMarker)
 {
-	SourceEditor *sourceEditor = (wxEmptyString == fileName) ? debugMarkedEditor : SelectSourceEditor(fileName);
-
-	if (!sourceEditor)
-	{
-		sourceEditor = NewSourceEditor(fileName, true);
-		if (!OpenFile(sourceEditor, fileName))
-		{
-			// Failed to open file.
-			RemoveSourceEditor(fileName);
-			DeletePage(GetPageIndex(sourceEditor));
-			sourceEditor = NULL;
-		}
-		else
-		{
-			// Add existing breakpoints.
-			std::vector<int> lines;
-			host->GetBreakpoints()->GetLines(fileName, lines);
-			for (std::vector<int>::const_iterator it = lines.begin(), endIt = lines.end(); it != endIt; ++it)
-				sourceEditor->AddBreakpoint(*it);
-		}
-	}
+	SourceEditor *sourceEditor = (wxEmptyString == fileName) ? debugMarkedEditor : OpenFile(fileName);
 
 	if (moveDebugMarker && sourceEditor != debugMarkedEditor)
 	{
@@ -108,25 +88,27 @@ SourceEditor *Content::SelectSourceEditor(const wxString &fileName)
 	return editor;
 }
 
-SourceEditor *Content::NewSourceEditor(const wxString &fileName, bool select)
+void Content::AddSourceEditor(SourceEditor *sourceEditor, bool select)
 {
-	wxASSERT(sourceEditors.find(fileName) == sourceEditors.end());
-	sourceEditors[fileName] = selectedEditor = new SourceEditor(host);
+	wxASSERT(sourceEditors.find(sourceEditor->GetCurrentFile()) == sourceEditors.end());
+	sourceEditors[sourceEditor->GetCurrentFile()] = selectedEditor = sourceEditor;
 
 	Freeze();
 	wxBitmap pageBmp = wxArtProvider::GetBitmap(wxART_NORMAL_FILE, wxART_OTHER, wxSize(16, 16));
-	AddPage(selectedEditor, wxFileNameFromPath(fileName), select, pageBmp);
-	SetPageToolTip(GetPageIndex(selectedEditor), fileName);
+	AddPage(selectedEditor, wxFileNameFromPath(selectedEditor->GetCurrentFile()), select, pageBmp);
+	SetPageToolTip(GetPageIndex(selectedEditor), selectedEditor->GetCurrentFile());
 	Thaw();
-
-	return selectedEditor;
 }
 
-bool Content::OpenFile(SourceEditor *editor, const wxString &fileName)
+SourceEditor *Content::OpenFile(const wxString &fileName)
 {
+	std::vector<wxString> fileNamesToTry;
+
 	// First try to open it as is.
-	if (wxFileExists(fileName) && editor->Load(fileName))
-		return true;
+	SourceEditor *sourceEditor = SelectSourceEditor(fileName);
+	if (sourceEditor)
+		return sourceEditor;
+	fileNamesToTry.push_back(fileName);
 
 	// If it was a relative path, then try to figure out the absolute
 	// path from the working directory.
@@ -137,8 +119,10 @@ bool Content::OpenFile(SourceEditor *editor, const wxString &fileName)
 		if (fn.MakeAbsolute(workingDir))
 		{
 			wxString fullPath = fn.GetFullPath();
-			if (wxFileExists(fullPath) && editor->Load(fullPath))
-				return true;
+			sourceEditor = SelectSourceEditor(fullPath);
+			if (sourceEditor)
+				return sourceEditor;
+			fileNamesToTry.push_back(fullPath);
 		}
 	}
 
@@ -147,37 +131,80 @@ bool Content::OpenFile(SourceEditor *editor, const wxString &fileName)
 	if (i != sourceMapping.end())
 	{
 		const wxString &fullPath = i->second;
-		if (wxFileExists(fullPath) && editor->Load(fullPath))
-			return true;
+		sourceEditor = SelectSourceEditor(fullPath);
+		if (sourceEditor)
+			return sourceEditor;
+		fileNamesToTry.push_back(fullPath);
 	}
 
-	// Check if we can infer the path from previous source mappings.
-	if (InferPath(editor, fileName))
-		return true;
-
-	// If that fails as well, then ask the user to locate the file.
-	wxString result = wxFileSelector(
-		wxString::Format("Please locate this file: %s", fileName),
-		fn.GetPath(), fn.GetName(), fn.GetExt(),
-		"All files (*.*)|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-
-	// If the dialog was cancelled then this is empty.
-	if (!result.IsEmpty())
+	// Check if the filename starts with something we've matched before.
+	for (std::vector<Mapping>::iterator i = inferMapping.begin();
+			i != inferMapping.end(); ++i)
 	{
-		if (wxFileExists(result) && editor->Load(result))
+		const Mapping &m = *i;
+		if (fileName.StartsWith(m.original))
 		{
-			// Store this mapping in case it's requested again.
-			sourceMapping[fileName] = result;
+			// Replace the start of the path with the mapped version.
+			wxString inferredFileName = m.mapped;
+			inferredFileName += fileName.Mid(m.original.length());
 
-			// Store the relative change to help with infering other files.
-			AddInferPath(fileName, result);
-			return true;
+			sourceEditor = SelectSourceEditor(inferredFileName);
+			if (sourceEditor)
+				return sourceEditor;
+			fileNamesToTry.push_back(inferredFileName);
 		}
 	}
 
-	wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error",
-				 wxOK | wxCENTRE | wxICON_ERROR, GetParent());
-	return false;
+	// Couldn't find any source editor. Try to open file.
+	sourceEditor = new SourceEditor(host);
+	for (auto i = fileNamesToTry.begin(), end = fileNamesToTry.end(); i != end; ++i)
+	{
+		if (wxFileExists(*i) && sourceEditor->Load(*i))
+			break;
+	}
+
+	// If that fails as well, then ask the user to locate the file.
+	if (sourceEditor->GetCurrentFile() == wxEmptyString)
+	{
+		wxString result = wxFileSelector(
+			wxString::Format("Please locate this file: %s", fileName),
+			fn.GetPath(), fn.GetName(), fn.GetExt(),
+			"All files (*.*)|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+		// If the dialog was cancelled then this is empty.
+		if (!result.IsEmpty())
+		{
+			if (wxFileExists(result) && sourceEditor->Load(result))
+			{
+				// Store this mapping in case it's requested again.
+				sourceMapping[fileName] = result;
+
+				// Store the relative change to help with infering other files.
+				AddInferPath(fileName, result);
+			}
+		}
+	}
+
+	if (sourceEditor->GetCurrentFile() != wxEmptyString)
+	{
+		// Add a new tab for the source editor.
+		AddSourceEditor(sourceEditor, true);
+		// Add existing breakpoints.
+		std::vector<int> lines;
+		host->GetBreakpoints()->GetLines(fileName, lines);
+		for (std::vector<int>::const_iterator it = lines.begin(), endIt = lines.end(); it != endIt; ++it)
+			sourceEditor->AddBreakpoint(*it);
+		return sourceEditor;
+	}
+	else
+	{
+		delete sourceEditor;
+		sourceEditor = NULL;
+		wxMessageBox(wxString::Format("Failed to open file: %s", fileName), "Error",
+					 wxOK | wxCENTRE | wxICON_ERROR, GetParent());
+	}
+
+	return sourceEditor;
 }
 
 void Content::AddInferPath(const wxString &original, const wxString &mapped)
@@ -214,28 +241,6 @@ void Content::AddInferPath(const wxString &original, const wxString &mapped)
 	m.original	= originalUniquePart;
 	m.mapped	= mappedUniquePart;
 	inferMapping.push_back(m);
-}
-
-bool Content::InferPath(SourceEditor *editor, const wxString &fileName)
-{
-	// Check if the filename starts with something we've matched before.
-	for (std::vector<Mapping>::iterator i = inferMapping.begin();
-			i != inferMapping.end(); ++i)
-	{
-		const Mapping &m = *i;
-		if (fileName.StartsWith(m.original))
-		{
-			// Replace the start of the path with the mapped version.
-			wxString inferredFileName = m.mapped;
-			inferredFileName += fileName.Mid(m.original.length());
-
-			// If the file exists then we use it.
-			if (wxFileExists(inferredFileName) && editor->Load(inferredFileName))
-				return true;
-		}
-	}
-
-	return false;
 }
 
 void Content::iterateSourceEditors(std::function<void (SourceEditor&)> f)

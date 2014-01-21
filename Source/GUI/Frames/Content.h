@@ -49,12 +49,11 @@ private:
 	MouseHover							*mouseHover;
 
 	SourceEditor *SelectSourceEditor(const wxString &fileName);
-	SourceEditor *NewSourceEditor(const wxString &fileName, bool select);
+	void AddSourceEditor(SourceEditor *sourceEditor, bool select);
 
-	bool OpenFile(SourceEditor *editor, const wxString &fileName);
+	SourceEditor *OpenFile(const wxString &fileName);
 
 	void AddInferPath(const wxString &original, const wxString &mapped);
-	bool InferPath(SourceEditor *editor, const wxString &fileName);
 
 	// Iterate a function over all source editors. The function takes a SourceEditor reference as argument.
 	void iterateSourceEditors(std::function<void (const SourceEditor&)> f) const;
