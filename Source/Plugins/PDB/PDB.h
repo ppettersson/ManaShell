@@ -11,6 +11,8 @@ public:
 	PDB(MainFrame *host);
 	virtual ~PDB();
 
+	virtual void SetHost(MainFrame *h)						{ host = h; }
+
 
 	// -- Run-time interface --------------------------------------------------
 
@@ -46,6 +48,9 @@ public:
 	// Build up the full command from the current executable, script and
 	// parameters with any extra glue that is necessary.
 	virtual wxString GetCommand() const;
+
+	// If this plugin should be selected based on the requested command line name.
+	virtual bool Select(const wxString &name) const;
 
 
 private:

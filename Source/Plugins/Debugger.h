@@ -5,14 +5,18 @@
 #include "../GUI/SupportedViews.h"
 
 class MainFrame;
+class wxCmdLineParser;
 
 class Debugger
 {
 public:
 	static Debugger *Create(MainFrame *host);
+	static Debugger *Create(wxCmdLineParser &parser);
 
 	Debugger(MainFrame *host) : useCustomCommand(false)		{ }
 	virtual ~Debugger()										{ }
+
+	virtual void SetHost(MainFrame *host)					{ }
 
 
 	// -- Run-time interface --------------------------------------------------
@@ -48,7 +52,7 @@ public:
 
 	// The UI name for this plugin.
 	virtual wxString GetName() const						{ return "Custom"; }
-	
+
 	// Get the file match for things this plugin can debug and use to debug.
 	virtual wxString GetScriptFilter() const				{ return "All files (*.*)|*"; }
 	virtual wxString GetExecFilter() const					{ return "All files (*.*)|*"; }
@@ -74,6 +78,10 @@ public:
 
 	const wxString &GetWorkingDir() const					{ return workingDir; }
 	void SetWorkingDir(const wxString &w)					{ workingDir = w; }
+
+
+	// If this plugin should be selected based on the requested command line name.
+	virtual bool Select(const wxString &name) const			{ return false; }
 
 
 #ifdef __WXMSW__

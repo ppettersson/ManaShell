@@ -2,7 +2,6 @@
 #define ADD_EDIT_BREAKPOINT_DIALOG_H
 
 #include "wx/wx.h"
-#include "wx/spinctrl.h"
 
 class AddEditBreakpointDialog : public wxDialog
 {

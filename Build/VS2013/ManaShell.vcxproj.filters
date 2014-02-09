@@ -84,6 +84,12 @@
     <ClCompile Include="..\..\Source\GUI\Frames\Console.cpp">
       <Filter>Source\GUI\Frames</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\MouseHover.cpp">
+      <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GUI\Frames\Content.cpp">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Docs\Building.txt">
@@ -149,6 +155,12 @@
       <Filter>Source\GUI\Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GUI\Frames\Console.h">
+      <Filter>Source\GUI\Frames</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\MouseHover.h">
+      <Filter>Source\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GUI\Frames\Content.h">
       <Filter>Source\GUI\Frames</Filter>
     </ClInclude>
   </ItemGroup>

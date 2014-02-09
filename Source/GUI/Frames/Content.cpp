@@ -210,8 +210,8 @@ SourceEditor *Content::OpenFile(const wxString &fileName)
 void Content::AddInferPath(const wxString &original, const wxString &mapped)
 {
 	// Try to match up as much as possible of the path.
-	int originalEnd = original.length();
-	int mappedEnd = mapped.length();
+	size_t originalEnd = original.length();
+	size_t mappedEnd = mapped.length();
 
 	while (originalEnd > 0 && mappedEnd > 0 &&
 			(original[originalEnd] == mapped[mappedEnd]))

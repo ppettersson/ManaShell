@@ -1,4 +1,5 @@
 #include "AddEditBreakpointDialog.h"
+#include "wx/spinctrl.h"
 #include "wx/valgen.h"
 
 BEGIN_EVENT_TABLE(AddEditBreakpointDialog, wxDialog)

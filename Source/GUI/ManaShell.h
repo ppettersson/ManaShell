@@ -3,6 +3,7 @@
 
 #include "wx/wx.h"
 
+class Debugger;
 class MainFrame;
 
 // The main application object.
@@ -14,9 +15,12 @@ public:
 
 
 private:
+	Debugger	*debugger;
 	MainFrame	*mainFrame;
 
 	virtual bool OnInit();
+	virtual void OnInitCmdLine(wxCmdLineParser &parser);
+	virtual bool OnCmdLineParsed(wxCmdLineParser &parser);
 };
 
 wxDECLARE_APP(ManaShellApp);

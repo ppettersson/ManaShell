@@ -3,19 +3,79 @@
 #include "Debugger.h"
 #include "GDB/GDB.h"
 #include "PDB/PDB.h"
+#include "wx/cmdline.h"
 
-Debugger *Debugger::Create(MainFrame *host)
+static void InitAllPlugins(std::vector<Debugger *> &debuggers, MainFrame *host)
 {
-	std::vector<Debugger *> debuggers;
 	debuggers.push_back(new GDB(host));
 	//debuggers.push_back(new JDB(host));
 	debuggers.push_back(new PDB(host));
 	debuggers.push_back(new Debugger(host));
+}
+
+Debugger *Debugger::Create(MainFrame *host)
+{
+	std::vector<Debugger *> debuggers;
+	InitAllPlugins(debuggers, host);
 
 	DebuggerDialog dialog(host, debuggers);
 	if (wxID_OK == dialog.ShowModal())
 		return dialog.GetDebugger();
 
+	return NULL;
+}
+
+Debugger *Debugger::Create(wxCmdLineParser &parser)
+{
+	std::vector<Debugger *> debuggers;
+	InitAllPlugins(debuggers, NULL);
+
+	do
+	{
+		wxString plugin;
+		if (!parser.Found("p", &plugin))
+			break;
+
+		Debugger *debugger = NULL;
+		for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
+		{
+			if ((*i)->Select(plugin))
+			{
+				debugger = *i;
+				break;
+			}
+		}
+
+		if (!debugger)
+			break;
+
+		wxString executable;
+		if (parser.Found("e", &executable))
+			debugger->SetExecutable(executable);
+
+		wxString script;
+		if (parser.Found("s", &script))
+			debugger->SetScript(script);
+
+		// ToDo: script arguments.
+
+		wxString custom;
+		if (parser.Found("c", &custom))
+		{
+			debugger->SetUseCustomCommand(true);
+			debugger->SetCustomCommand(custom);
+		}
+
+		wxString workingDir;
+		if (parser.Found("w", &workingDir))
+			debugger->SetWorkingDir(workingDir);
+
+		return debugger;
+	} while (0);
+
+	// Failed to initalize, clean up.
+	for (std::vector<Debugger *>::iterator i = debuggers.begin(); i != debuggers.end(); ++i)
+		delete *i;
 	return NULL;
 }
 

@@ -26,6 +26,8 @@ public:
 	MainFrame();
 	virtual ~MainFrame();
 
+	void StartDebugSession(Debugger *debugger);
+
 	// Redo the layout for the UI components.
 	void UpdateFrames();
 
@@ -203,6 +205,7 @@ private:
 	void SetupMenu();
 	void SetupInitialView();
 	void UpdateViews(const SupportedViews &views);
+
 
 	// -- Internal ----------------------------------------------------------
 

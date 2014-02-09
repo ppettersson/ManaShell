@@ -45,6 +45,7 @@
 			- Highlight current line in the source editor.
 			- Keyboard shortcuts.
 				- configurable.
+				- Shift+F10 to step out doesn't work on Linux.
 			- Toolbar bitmaps.
 			- Save/Load perspectives.
 			- Console.

@@ -71,7 +71,7 @@ bool Breakpoints::HasBreakpoint(const wxString &fileName, int line)
 {
 	for (std::vector<Break>::const_iterator it = breaks.begin(), endIt = breaks.end(); it != endIt; ++it)
 	{
-		if (it->fileName == fileName && it->line == line)
+		if (it->fileName == fileName && (int)it->line == line)
 			return true;
 	}
 

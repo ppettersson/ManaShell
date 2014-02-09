@@ -91,6 +91,57 @@ MainFrame::~MainFrame()
 		delete runningProcesses[i];
 }
 
+void MainFrame::StartDebugSession(Debugger *d)
+{
+	debugger = d;
+	debugger->SetHost(this);
+	if (!debugger->Start())
+		return;
+
+	// Hide frames that aren't supported by this debugger.
+	UpdateViews(debugger->GetSupportedFeatures());
+
+	// Show wait cursor to indicate that we're working.
+	// Starting a process can take some time.
+	wxBusyCursor wait;
+
+	// Remove all output from the last run before we start.
+	console->ClearOutput();
+
+	// Check if we should set the current working directory.
+	wxExecuteEnv *env = NULL;
+	wxExecuteEnv environment;
+	if (!debugger->GetWorkingDir().IsEmpty())
+	{
+		// ToDo: Should also support environment variables here.
+
+		environment.cwd = debugger->GetWorkingDir();
+		env = &environment;
+
+		// Let the source editor know this as well to help with opening files.
+		content->SetWorkingDirectory(environment.cwd);
+	}
+
+	// Run the command and attach to the input and output.
+	PipedProcess *process = new PipedProcess(this);
+	activeProcessId = wxExecute(debugger->GetCommand(), wxEXEC_ASYNC, process, env);
+	if (!activeProcessId)
+	{
+		wxMessageBox("Failed to start the debugger", "Error");
+		delete process;
+		return;
+	}
+
+	AddPipedProcess(process);
+
+	console->EnableInput(true);
+
+#ifdef __WXMSW__
+	hasConsoleAttached = false;
+	hasInterruptHandlerSet = false;
+#endif
+}
+
 // Redo the layout for the UI components.
 void MainFrame::UpdateFrames()
 {
@@ -456,54 +507,7 @@ void MainFrame::OnDebugStart(wxCommandEvent &event)
 	if (!debugger)
 		return;
 
-	if (!debugger->Start())
-		return;
-
-	// Hide frames that aren't supported by this debugger.
-	UpdateViews(debugger->GetSupportedFeatures());
-
-	// Show wait cursor to indicate that we're working.
-	// Starting a process can take some time.
-	wxBusyCursor wait;
-
-	// Remove all output from the last run before we start.
-	console->ClearOutput();
-
-	// Check if we should set the current working directory.
-	wxExecuteEnv *env = NULL;
-	wxExecuteEnv environment;
-	if (!debugger->GetWorkingDir().IsEmpty())
-	{
-		// ToDo: Should also support environment variables here.
-
-		environment.cwd = debugger->GetWorkingDir();
-		env = &environment;
-
-		// Let the source editor know this as well to help with opening files.
-		content->SetWorkingDirectory(environment.cwd);
-	}
-
-	// Run the command and attach to the input and output.
-	// Make sure that the process acts as a group leader to help sending signals
-	// if it's a shell script that starts the actual debugger.
-	PipedProcess *process = new PipedProcess(this);
-	activeProcessId = wxExecute(debugger->GetCommand(),
-								wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, process, env);
-	if (!activeProcessId)
-	{
-		wxMessageBox("Failed to start the debugger", "Error");
-		delete process;
-		return;
-	}
-
-	AddPipedProcess(process);
-
-	console->EnableInput(true);
-
-#ifdef __WXMSW__
-	hasConsoleAttached		= false;
-	hasInterruptHandlerSet	= false;
-#endif
+	StartDebugSession(debugger);
 }
 
 void MainFrame::OnDebugStop(wxCommandEvent &event)

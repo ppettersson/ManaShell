@@ -283,6 +283,19 @@ wxString PDB::GetCommand() const
 	return result;
 }
 
+// If this plugin should be selected based on the requested command line name.
+bool PDB::Select(const wxString &name) const
+{
+	if (!name.CmpNoCase("python"))
+		return true;
+	if (!name.CmpNoCase("pdb"))
+		return true;
+	if (!name.CmpNoCase("py"))
+		return true;
+
+	return false;
+}
+
 void PDB::ParseBreakpointOutput(wxStringTokenizer &lineTokenizer)
 {
 	// ToDo: Should probably verify that we get the result we're already

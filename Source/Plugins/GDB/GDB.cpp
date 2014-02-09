@@ -200,6 +200,21 @@ wxString GDB::GetCommand() const
 	return result;
 }
 
+// If this plugin should be selected based on the requested command line name.
+bool GDB::Select(const wxString &name) const
+{
+	if (!name.CmpNoCase("gdb"))
+		return true;
+	if (!name.CmpNoCase("c"))
+		return true;
+	if (!name.CmpNoCase("cpp"))
+		return true;
+	if (!name.CmpNoCase("c++"))
+		return true;
+
+	return false;
+}
+
 bool GDB::ParseBreakpointError(wxStringTokenizer &lineTokenizer)
 {
 	return true;
